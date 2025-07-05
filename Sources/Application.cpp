@@ -115,7 +115,7 @@ void Application::Update() {
 
     b2Vec2 position = b2Body_GetPosition(rigidBody.bodyId);
     b2Rot angle = b2Body_GetRotation(rigidBody.bodyId);
-    float angleDegrees = b2Rot_GetAngle(angle);
+    f32 angleDegrees = b2Rot_GetAngle(angle);
 
     transform.x = position.x * PIXELS_PER_METER;
     transform.y = position.y * PIXELS_PER_METER;

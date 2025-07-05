@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Types.hpp"
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
 #include <SDL3/SDL.h>
@@ -29,6 +30,6 @@ private:
   entt::registry registry;
   bool running;
 
-  const float PIXELS_PER_METER = 30.0f;
-  const float TIME_STEP = 1.0f / 165.0f;
+  const f32 PIXELS_PER_METER = 30.0f;
+  const f32 TIME_STEP = 1.0f / 165.0f;
 };
