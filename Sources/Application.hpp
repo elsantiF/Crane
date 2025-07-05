@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SDL3/SDL.h>
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
+#include <SDL3/SDL.h>
 
 class Application {
 public:

@@ -58,8 +58,7 @@ void Application::InitializeEntities() {
   {
     auto ground = registry.create();
     registry.emplace<Transform>(ground, 512, 700);
-    registry.emplace<Renderable>(ground, SDL_FColor{0.f, 1.f, 0.f, 1.f}, 1000,
-                                 50);
+    registry.emplace<Renderable>(ground, SDL_FColor{0.f, 1.f, 0.f, 1.f}, 1000, 50);
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = b2_staticBody;
     bodyDef.position = {512 / PIXELS_PER_METER, 700 / PIXELS_PER_METER};
@@ -76,15 +75,13 @@ void Application::InitializeEntities() {
   {
     auto box = registry.create();
     registry.emplace<Transform>(box, 400.0f, 100.0f);
-    registry.emplace<Renderable>(box, SDL_FColor{1.f, 0.f, 0.f, 1.f}, 40.0f,
-                                 40.0f);
+    registry.emplace<Renderable>(box, SDL_FColor{1.f, 0.f, 0.f, 1.f}, 40.0f, 40.0f);
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = {400.f / PIXELS_PER_METER, 100.f / PIXELS_PER_METER};
     b2BodyId bodyId = b2CreateBody(worldId, &bodyDef);
 
-    b2Polygon boxShape =
-        b2MakeBox(20 / PIXELS_PER_METER, 20 / PIXELS_PER_METER);
+    b2Polygon boxShape = b2MakeBox(20 / PIXELS_PER_METER, 20 / PIXELS_PER_METER);
     b2ShapeDef shapeDef = b2DefaultShapeDef();
     shapeDef.density = 1.0f;
     b2CreatePolygonShape(bodyId, &shapeDef, &boxShape);
@@ -98,9 +95,7 @@ void Application::HandleEvents() {
   while (SDL_PollEvent(&event)) {
     ImGui_ImplSDL3_ProcessEvent(&event);
     switch (event.type) {
-    case SDL_EVENT_QUIT:
-      running = false;
-      break;
+    case SDL_EVENT_QUIT: running = false; break;
     case SDL_EVENT_KEY_DOWN:
       if (event.key.key == SDLK_ESCAPE) {
         running = false;
@@ -137,12 +132,8 @@ void Application::Render() {
     const auto &transform = view.get<Transform>(entity);
     const auto &renderable = view.get<Renderable>(entity);
 
-    SDL_SetRenderDrawColorFloat(renderer, renderable.color.r,
-                                renderable.color.g, renderable.color.b,
-                                renderable.color.a);
-    SDL_FRect rect{transform.x - renderable.width / 2.0f,
-                   transform.y - renderable.height / 2.0f, renderable.width,
-                   renderable.height};
+    SDL_SetRenderDrawColorFloat(renderer, renderable.color.r, renderable.color.g, renderable.color.b, renderable.color.a);
+    SDL_FRect rect{transform.x - renderable.width / 2.0f, transform.y - renderable.height / 2.0f, renderable.width, renderable.height};
 
     SDL_RenderFillRect(renderer, &rect);
   }
