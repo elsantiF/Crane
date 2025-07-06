@@ -42,6 +42,7 @@ bool Application::InitializeSDL() {
 void Application::InitializeImGui() {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
+  ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
   ImGui::StyleColorsDark();
   ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
   ImGui_ImplSDLRenderer3_Init(renderer);
