@@ -12,7 +12,6 @@ bool Application::Initialize() {
     return false;
   }
   InitializeImGui();
-  InitializeBox2D();
   InitializeEntities();
   running = true;
   return true;
@@ -48,13 +47,9 @@ void Application::InitializeImGui() {
   ImGui_ImplSDLRenderer3_Init(renderer);
 }
 
-void Application::InitializeBox2D() {
-  b2WorldDef worldDef = b2DefaultWorldDef();
-  worldDef.gravity = {0.0f, 9.81f};
-  worldId = b2CreateWorld(&worldDef);
-}
-
 void Application::InitializeEntities() {
+  auto &registry = world.GetRegistry();
+  auto worldId = world.GetWorldId();
   // Create ground body
   {
     auto ground = registry.create();
@@ -106,28 +101,13 @@ void Application::HandleEvents() {
   }
 }
 
-void Application::Update() {
-  b2World_Step(worldId, TIME_STEP, 4);
-
-  auto view = registry.view<Rigidbody, Transform>();
-  for (auto entity : view) {
-    auto &rigidBody = view.get<Rigidbody>(entity);
-    auto &transform = view.get<Transform>(entity);
-
-    b2Vec2 position = b2Body_GetPosition(rigidBody.bodyId);
-    b2Rot angle = b2Body_GetRotation(rigidBody.bodyId);
-    f32 angleDegrees = b2Rot_GetAngle(angle);
-
-    transform.x = position.x * PIXELS_PER_METER;
-    transform.y = position.y * PIXELS_PER_METER;
-    transform.rotation = angleDegrees;
-  }
-}
+void Application::Update() { world.Update(TIME_STEP); }
 
 void Application::Render() {
   SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
   SDL_RenderClear(renderer);
 
+  auto &registry = world.GetRegistry();
   auto view = registry.view<Transform, Renderable>();
   for (auto entity : view) {
     const auto &transform = view.get<Transform>(entity);
@@ -163,10 +143,6 @@ void Application::Run() {
 }
 
 void Application::Cleanup() {
-  if (worldId.index1 != 0) {
-    b2DestroyWorld(worldId);
-  }
-
   ImGui_ImplSDLRenderer3_Shutdown();
   ImGui_ImplSDL3_Shutdown();
   ImGui::DestroyContext();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Types.hpp"
+#include "Core/World.hpp"
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
 #include <SDL3/SDL.h>
@@ -16,7 +17,6 @@ public:
 private:
   bool InitializeSDL();
   void InitializeImGui();
-  void InitializeBox2D();
   void InitializeEntities();
   void HandleEvents();
   void Update();
@@ -26,8 +26,7 @@ private:
 private:
   SDL_Window *window;
   SDL_Renderer *renderer;
-  b2WorldId worldId;
-  entt::registry registry;
+  World world;
   bool running;
 
   const f32 PIXELS_PER_METER = 30.0f;
