@@ -4,9 +4,9 @@
 #include "Components/Transform.hpp"
 #include "Graphics/Color.hpp"
 #include "Graphics/Rect.hpp"
+#include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
-#include <imgui_impl_sdlrenderer3.h>
 #include <iostream>
 
 bool Application::Initialize() {
@@ -32,13 +32,11 @@ bool Application::InitializeSDL() {
     return false;
   }
 
-  m_Renderer = SDL_CreateRenderer(m_Window, NULL);
-  if (!m_Renderer) {
-    std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+  m_Renderer = MakeScope<SDLRenderer>(m_Window);
+  if (!m_Renderer->Initialize()) {
+    std::cerr << "SDLRenderer Initialization Error: " << SDL_GetError() << std::endl;
     return false;
   }
-
-  SDL_SetRenderVSync(m_Renderer, 1);
 
   return true;
 }
@@ -48,8 +46,7 @@ void Application::InitializeImGui() {
   ImGui::CreateContext();
   ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
   ImGui::StyleColorsDark();
-  ImGui_ImplSDL3_InitForSDLRenderer(m_Window, m_Renderer);
-  ImGui_ImplSDLRenderer3_Init(m_Renderer);
+  m_Renderer->InitializeImGui();
 }
 
 void Application::InitializeEntities() {
@@ -109,8 +106,8 @@ void Application::HandleEvents() {
 void Application::Update(f64 deltaTime) { m_World.Update(deltaTime); }
 
 void Application::Render() {
-  SDL_SetRenderDrawColor(m_Renderer, 30, 30, 30, 255);
-  SDL_RenderClear(m_Renderer);
+  m_Renderer->BeginFrame();
+  m_Renderer->Clear(Color{30, 30, 30, 255});
 
   auto &registry = m_World.GetRegistry();
   auto view = registry.view<Transform, Renderable>();
@@ -118,17 +115,12 @@ void Application::Render() {
     const auto &transform = view.get<Transform>(entity);
     const auto &renderable = view.get<Renderable>(entity);
 
-    SDL_Color color = renderable.color.ToSDLColor();
-    SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
-
     Rect rect{transform.x - renderable.width / 2.0f, transform.y - renderable.height / 2.0f, renderable.width, renderable.height};
-    SDL_FRect sdlRect = rect.ToSDLRect();
 
-    SDL_RenderFillRect(m_Renderer, &sdlRect);
+    m_Renderer->DrawRect(rect, renderable.color);
   }
 
-  ImGui_ImplSDLRenderer3_NewFrame();
-  ImGui_ImplSDL3_NewFrame();
+  m_Renderer->BeginImGuiFrame();
   ImGui::NewFrame();
 
   ImGui::Begin("Stats");
@@ -138,8 +130,9 @@ void Application::Render() {
   ImGui::End();
 
   ImGui::Render();
-  ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_Renderer);
-  SDL_RenderPresent(m_Renderer);
+  m_Renderer->EndImGuiFrame();
+  m_Renderer->Present();
+  m_Renderer->EndFrame();
 }
 
 void Application::Run() {
@@ -155,13 +148,8 @@ void Application::Run() {
 }
 
 void Application::Cleanup() {
-  ImGui_ImplSDLRenderer3_Shutdown();
-  ImGui_ImplSDL3_Shutdown();
+  m_Renderer->ShutdownImGui();
   ImGui::DestroyContext();
-
-  if (m_Renderer) {
-    SDL_DestroyRenderer(m_Renderer);
-  }
 
   if (m_Window) {
     SDL_DestroyWindow(m_Window);

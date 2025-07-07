@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Core/Memory.hpp"
 #include "Core/Types.hpp"
 #include "Core/World.hpp"
+#include "Graphics/IRenderer.hpp"
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
 #include <SDL3/SDL.h>
@@ -25,7 +27,7 @@ private:
 
 private:
   SDL_Window *m_Window;
-  SDL_Renderer *m_Renderer;
+  Scope<IRenderer> m_Renderer;
   World m_World;
   bool m_Running;
 
