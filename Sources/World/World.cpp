@@ -1,6 +1,6 @@
 #include "World.hpp"
-#include "Components/Rigidbody.hpp"
-#include "Components/Transform.hpp"
+#include "Components/RigidbodyComponent.hpp"
+#include "Components/TransformComponent.hpp"
 
 World::World() {
   b2WorldDef worldDef = b2DefaultWorldDef();
@@ -17,10 +17,10 @@ World::~World() {
 void World::Update(f64 deltaTime) {
   b2World_Step(m_WorldId, static_cast<float>(deltaTime), PHYSICS_STEPS);
 
-  auto view = m_Registry.view<Rigidbody, Transform>();
+  auto view = m_Registry.view<RigidbodyComponent, TransformComponent>();
   for (auto entity : view) {
-    auto &rigidBody = view.get<Rigidbody>(entity);
-    auto &transform = view.get<Transform>(entity);
+    auto &rigidBody = view.get<RigidbodyComponent>(entity);
+    auto &transform = view.get<TransformComponent>(entity);
 
     b2Vec2 position = b2Body_GetPosition(rigidBody.bodyId);
     b2Rot angle = b2Body_GetRotation(rigidBody.bodyId);

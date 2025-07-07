@@ -1,7 +1,7 @@
 #include "Application.hpp"
-#include "Components/Renderable.hpp"
-#include "Components/Rigidbody.hpp"
-#include "Components/Transform.hpp"
+#include "Components/RenderableComponent.hpp"
+#include "Components/RigidbodyComponent.hpp"
+#include "Components/TransformComponent.hpp"
 #include "Graphics/Color.hpp"
 #include "Graphics/Rect.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
@@ -55,8 +55,8 @@ void Application::InitializeEntities() {
   // Create ground body
   {
     auto ground = registry.create();
-    registry.emplace<Transform>(ground, 512, 700);
-    registry.emplace<Renderable>(ground, Color{0, 255, 0, 255}, 1000, 50);
+    registry.emplace<TransformComponent>(ground, 512, 700);
+    registry.emplace<RenderableComponent>(ground, Color{0, 255, 0, 255}, 1000, 50);
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = b2_staticBody;
     bodyDef.position = {512 / PIXELS_PER_METER, 700 / PIXELS_PER_METER};
@@ -66,14 +66,14 @@ void Application::InitializeEntities() {
     b2ShapeDef shapeDef = b2DefaultShapeDef();
     b2CreatePolygonShape(bodyId, &shapeDef, &box);
 
-    registry.emplace<Rigidbody>(ground, bodyId);
+    registry.emplace<RigidbodyComponent>(ground, bodyId);
   }
 
   // Create a dynamic box body
   {
     auto box = registry.create();
-    registry.emplace<Transform>(box, 400.0f, 100.0f);
-    registry.emplace<Renderable>(box, Color{255, 0, 0, 255}, 40.0f, 40.0f);
+    registry.emplace<TransformComponent>(box, 400.0f, 100.0f);
+    registry.emplace<RenderableComponent>(box, Color{255, 0, 0, 255}, 40.0f, 40.0f);
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = {400.f / PIXELS_PER_METER, 100.f / PIXELS_PER_METER};
@@ -84,7 +84,7 @@ void Application::InitializeEntities() {
     shapeDef.density = 1.0f;
     b2CreatePolygonShape(bodyId, &shapeDef, &boxShape);
 
-    registry.emplace<Rigidbody>(box, bodyId);
+    registry.emplace<RigidbodyComponent>(box, bodyId);
   }
 }
 
@@ -110,10 +110,10 @@ void Application::Render() {
   m_Renderer->Clear(Color{30, 30, 30, 255});
 
   auto &registry = m_World.GetRegistry();
-  auto view = registry.view<Transform, Renderable>();
+  auto view = registry.view<TransformComponent, RenderableComponent>();
   for (auto entity : view) {
-    const auto &transform = view.get<Transform>(entity);
-    const auto &renderable = view.get<Renderable>(entity);
+    const auto &transform = view.get<TransformComponent>(entity);
+    const auto &renderable = view.get<RenderableComponent>(entity);
 
     Rect rect{transform.x - renderable.width / 2.0f, transform.y - renderable.height / 2.0f, renderable.width, renderable.height};
 

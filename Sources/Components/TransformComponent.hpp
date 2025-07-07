@@ -2,11 +2,11 @@
 
 #include "Core/Types.hpp"
 
-struct Transform {
+struct TransformComponent {
   f32 x, y;
   f32 rotation;
   f32 scaleX, scaleY;
 
-  Transform(f32 x = 0.0f, f32 y = 0.0f, f32 rotation = 0.0f, f32 scaleX = 1.0f, f32 scaleY = 1.0f)
+  TransformComponent(f32 x = 0.0f, f32 y = 0.0f, f32 rotation = 0.0f, f32 scaleX = 1.0f, f32 scaleY = 1.0f)
       : x(x), y(y), rotation(rotation), scaleX(scaleX), scaleY(scaleY) {}
 };
