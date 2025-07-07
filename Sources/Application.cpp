@@ -13,7 +13,7 @@ bool Application::Initialize() {
   }
   InitializeImGui();
   InitializeEntities();
-  running = true;
+  m_Running = true;
   m_LastTime = SDL_GetTicks() / 1000.0;
   return true;
 }
@@ -24,19 +24,19 @@ bool Application::InitializeSDL() {
     return false;
   }
 
-  window = SDL_CreateWindow("Crane", 1600, 900, NULL);
-  if (!window) {
+  m_Window = SDL_CreateWindow("Crane", 1600, 900, NULL);
+  if (!m_Window) {
     std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
     return false;
   }
 
-  renderer = SDL_CreateRenderer(window, NULL);
-  if (!renderer) {
+  m_Renderer = SDL_CreateRenderer(m_Window, NULL);
+  if (!m_Renderer) {
     std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
     return false;
   }
 
-  SDL_SetRenderVSync(renderer, 1);
+  SDL_SetRenderVSync(m_Renderer, 1);
 
   return true;
 }
@@ -46,13 +46,13 @@ void Application::InitializeImGui() {
   ImGui::CreateContext();
   ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
   ImGui::StyleColorsDark();
-  ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
-  ImGui_ImplSDLRenderer3_Init(renderer);
+  ImGui_ImplSDL3_InitForSDLRenderer(m_Window, m_Renderer);
+  ImGui_ImplSDLRenderer3_Init(m_Renderer);
 }
 
 void Application::InitializeEntities() {
-  auto &registry = world.GetRegistry();
-  auto worldId = world.GetWorldId();
+  auto &registry = m_World.GetRegistry();
+  auto worldId = m_World.GetWorldId();
   // Create ground body
   {
     auto ground = registry.create();
@@ -94,32 +94,32 @@ void Application::HandleEvents() {
   while (SDL_PollEvent(&event)) {
     ImGui_ImplSDL3_ProcessEvent(&event);
     switch (event.type) {
-    case SDL_EVENT_QUIT: running = false; break;
+    case SDL_EVENT_QUIT: m_Running = false; break;
     case SDL_EVENT_KEY_DOWN:
       if (event.key.key == SDLK_ESCAPE) {
-        running = false;
+        m_Running = false;
       }
       break;
     }
   }
 }
 
-void Application::Update(f64 deltaTime) { world.Update(deltaTime); }
+void Application::Update(f64 deltaTime) { m_World.Update(deltaTime); }
 
 void Application::Render() {
-  SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
-  SDL_RenderClear(renderer);
+  SDL_SetRenderDrawColor(m_Renderer, 30, 30, 30, 255);
+  SDL_RenderClear(m_Renderer);
 
-  auto &registry = world.GetRegistry();
+  auto &registry = m_World.GetRegistry();
   auto view = registry.view<Transform, Renderable>();
   for (auto entity : view) {
     const auto &transform = view.get<Transform>(entity);
     const auto &renderable = view.get<Renderable>(entity);
 
-    SDL_SetRenderDrawColorFloat(renderer, renderable.color.r, renderable.color.g, renderable.color.b, renderable.color.a);
+    SDL_SetRenderDrawColorFloat(m_Renderer, renderable.color.r, renderable.color.g, renderable.color.b, renderable.color.a);
     SDL_FRect rect{transform.x - renderable.width / 2.0f, transform.y - renderable.height / 2.0f, renderable.width, renderable.height};
 
-    SDL_RenderFillRect(renderer, &rect);
+    SDL_RenderFillRect(m_Renderer, &rect);
   }
 
   ImGui_ImplSDLRenderer3_NewFrame();
@@ -133,12 +133,12 @@ void Application::Render() {
   ImGui::End();
 
   ImGui::Render();
-  ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
-  SDL_RenderPresent(renderer);
+  ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_Renderer);
+  SDL_RenderPresent(m_Renderer);
 }
 
 void Application::Run() {
-  while (running) {
+  while (m_Running) {
     HandleEvents();
     Update(m_DeltaTime);
     Render();
@@ -154,12 +154,12 @@ void Application::Cleanup() {
   ImGui_ImplSDL3_Shutdown();
   ImGui::DestroyContext();
 
-  if (renderer) {
-    SDL_DestroyRenderer(renderer);
+  if (m_Renderer) {
+    SDL_DestroyRenderer(m_Renderer);
   }
 
-  if (window) {
-    SDL_DestroyWindow(window);
+  if (m_Window) {
+    SDL_DestroyWindow(m_Window);
   }
 
   SDL_Quit();

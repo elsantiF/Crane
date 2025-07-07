@@ -5,19 +5,19 @@
 World::World() {
   b2WorldDef worldDef = b2DefaultWorldDef();
   worldDef.gravity = {0.0f, 9.81f};
-  worldId = b2CreateWorld(&worldDef);
+  m_WorldId = b2CreateWorld(&worldDef);
 }
 
 World::~World() {
-  if (worldId.index1 != 0) {
-    b2DestroyWorld(worldId);
+  if (m_WorldId.index1 != 0) {
+    b2DestroyWorld(m_WorldId);
   }
 }
 
 void World::Update(f32 deltaTime) {
-  b2World_Step(worldId, deltaTime, PHYSICS_STEPS);
+  b2World_Step(m_WorldId, deltaTime, PHYSICS_STEPS);
 
-  auto view = registry.view<Rigidbody, Transform>();
+  auto view = m_Registry.view<Rigidbody, Transform>();
   for (auto entity : view) {
     auto &rigidBody = view.get<Rigidbody>(entity);
     auto &transform = view.get<Transform>(entity);

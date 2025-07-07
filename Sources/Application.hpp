@@ -8,7 +8,7 @@
 
 class Application {
 public:
-  Application() : window(nullptr), renderer(nullptr), running(false) {}
+  Application() : m_Window(nullptr), m_Renderer(nullptr), m_Running(false) {}
   ~Application() { Cleanup(); }
 
   bool Initialize();
@@ -24,10 +24,10 @@ private:
   void Cleanup();
 
 private:
-  SDL_Window *window;
-  SDL_Renderer *renderer;
-  World world;
-  bool running;
+  SDL_Window *m_Window;
+  SDL_Renderer *m_Renderer;
+  World m_World;
+  bool m_Running;
 
   f64 m_DeltaTime = 0.0;
   f64 m_LastTime = 0.0;
