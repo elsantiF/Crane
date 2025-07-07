@@ -3,6 +3,7 @@
 #include "Components/Rigidbody.hpp"
 #include "Components/Transform.hpp"
 #include "Graphics/Color.hpp"
+#include "Graphics/Rect.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
@@ -119,9 +120,11 @@ void Application::Render() {
 
     SDL_Color color = renderable.color.ToSDLColor();
     SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
-    SDL_FRect rect{transform.x - renderable.width / 2.0f, transform.y - renderable.height / 2.0f, renderable.width, renderable.height};
 
-    SDL_RenderFillRect(m_Renderer, &rect);
+    Rect rect{transform.x - renderable.width / 2.0f, transform.y - renderable.height / 2.0f, renderable.width, renderable.height};
+    SDL_FRect sdlRect = rect.ToSDLRect();
+
+    SDL_RenderFillRect(m_Renderer, &sdlRect);
   }
 
   ImGui_ImplSDLRenderer3_NewFrame();
