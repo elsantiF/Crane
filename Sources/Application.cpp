@@ -35,6 +35,8 @@ bool Application::InitializeSDL() {
     return false;
   }
 
+  SDL_SetRenderVSync(renderer, 1);
+
   return true;
 }
 
@@ -138,7 +140,6 @@ void Application::Run() {
     HandleEvents();
     Update();
     Render();
-    SDL_Delay(6);
   }
 }
 
