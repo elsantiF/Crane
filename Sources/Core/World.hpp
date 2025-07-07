@@ -9,7 +9,7 @@ public:
   World();
   ~World();
 
-  void Update(f32 deltaTime);
+  void Update(f64 deltaTime);
 
   b2WorldId GetWorldId() const { return m_WorldId; }
   entt::registry &GetRegistry() { return m_Registry; }

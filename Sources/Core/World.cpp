@@ -14,8 +14,8 @@ World::~World() {
   }
 }
 
-void World::Update(f32 deltaTime) {
-  b2World_Step(m_WorldId, deltaTime, PHYSICS_STEPS);
+void World::Update(f64 deltaTime) {
+  b2World_Step(m_WorldId, static_cast<float>(deltaTime), PHYSICS_STEPS);
 
   auto view = m_Registry.view<Rigidbody, Transform>();
   for (auto entity : view) {
