@@ -2,6 +2,7 @@
 #include "Components/Renderable.hpp"
 #include "Components/Rigidbody.hpp"
 #include "Components/Transform.hpp"
+#include "Graphics/Color.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
@@ -57,7 +58,7 @@ void Application::InitializeEntities() {
   {
     auto ground = registry.create();
     registry.emplace<Transform>(ground, 512, 700);
-    registry.emplace<Renderable>(ground, SDL_FColor{0.f, 1.f, 0.f, 1.f}, 1000, 50);
+    registry.emplace<Renderable>(ground, Color{0, 255, 0, 255}, 1000, 50);
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = b2_staticBody;
     bodyDef.position = {512 / PIXELS_PER_METER, 700 / PIXELS_PER_METER};
@@ -74,7 +75,7 @@ void Application::InitializeEntities() {
   {
     auto box = registry.create();
     registry.emplace<Transform>(box, 400.0f, 100.0f);
-    registry.emplace<Renderable>(box, SDL_FColor{1.f, 0.f, 0.f, 1.f}, 40.0f, 40.0f);
+    registry.emplace<Renderable>(box, Color{255, 0, 0, 255}, 40.0f, 40.0f);
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = {400.f / PIXELS_PER_METER, 100.f / PIXELS_PER_METER};
@@ -116,7 +117,8 @@ void Application::Render() {
     const auto &transform = view.get<Transform>(entity);
     const auto &renderable = view.get<Renderable>(entity);
 
-    SDL_SetRenderDrawColorFloat(m_Renderer, renderable.color.r, renderable.color.g, renderable.color.b, renderable.color.a);
+    SDL_Color color = renderable.color.ToSDLColor();
+    SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
     SDL_FRect rect{transform.x - renderable.width / 2.0f, transform.y - renderable.height / 2.0f, renderable.width, renderable.height};
 
     SDL_RenderFillRect(m_Renderer, &rect);
