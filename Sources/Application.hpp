@@ -19,7 +19,7 @@ private:
   void InitializeImGui();
   void InitializeEntities();
   void HandleEvents();
-  void Update();
+  void Update(f64 deltaTime);
   void Render();
   void Cleanup();
 
@@ -29,6 +29,8 @@ private:
   World world;
   bool running;
 
+  f64 m_DeltaTime = 0.0;
+  f64 m_LastTime = 0.0;
+
   const f32 PIXELS_PER_METER = 30.0f;
-  const f32 TIME_STEP = 1.0f / 165.0f;
 };

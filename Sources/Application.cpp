@@ -14,6 +14,7 @@ bool Application::Initialize() {
   InitializeImGui();
   InitializeEntities();
   running = true;
+  m_LastTime = SDL_GetTicks() / 1000.0;
   return true;
 }
 
@@ -103,7 +104,7 @@ void Application::HandleEvents() {
   }
 }
 
-void Application::Update() { world.Update(TIME_STEP); }
+void Application::Update(f64 deltaTime) { world.Update(deltaTime); }
 
 void Application::Render() {
   SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
@@ -127,6 +128,7 @@ void Application::Render() {
 
   ImGui::Begin("Stats");
   ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
+  ImGui::Text("Delta: %.3f ms", m_DeltaTime * 1000.0);
   ImGui::Text("ESC to exit");
   ImGui::End();
 
@@ -138,8 +140,12 @@ void Application::Render() {
 void Application::Run() {
   while (running) {
     HandleEvents();
-    Update();
+    Update(m_DeltaTime);
     Render();
+
+    const f64 currentTime = SDL_GetTicks() / 1000.0;
+    m_DeltaTime = currentTime - m_LastTime;
+    m_LastTime = currentTime;
   }
 }
 
