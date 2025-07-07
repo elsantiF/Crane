@@ -48,17 +48,15 @@ void SDLRenderer::EndFrame() {
 }
 
 void SDLRenderer::Clear(const Color &color) {
-  SDL_Color sdlColor = color.ToSDLColor();
-  SDL_SetRenderDrawColor(m_Renderer, sdlColor.r, sdlColor.g, sdlColor.b, sdlColor.a);
+  SDL_SetRenderDrawColor(m_Renderer, color.GetR(), color.GetG(), color.GetB(), color.GetA());
   SDL_RenderClear(m_Renderer);
 }
 
 void SDLRenderer::Present() { SDL_RenderPresent(m_Renderer); }
 
 void SDLRenderer::DrawRect(const Rect &rect, const Color &color) {
-  SDL_Color sdlColor = color.ToSDLColor();
-  SDL_SetRenderDrawColor(m_Renderer, sdlColor.r, sdlColor.g, sdlColor.b, sdlColor.a);
+  SDL_SetRenderDrawColor(m_Renderer, color.GetR(), color.GetG(), color.GetB(), color.GetA());
 
-  SDL_FRect sdlRect = rect.ToSDLRect();
+  SDL_FRect sdlRect = static_cast<SDL_FRect>(rect);
   SDL_RenderFillRect(m_Renderer, &sdlRect);
 }
