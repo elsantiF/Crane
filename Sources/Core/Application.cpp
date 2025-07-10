@@ -5,6 +5,7 @@
 #include "Graphics/Color.hpp"
 #include "Graphics/Rect.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
+#include "World/Entity.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <iostream>
@@ -85,6 +86,12 @@ namespace Crane::Core {
       b2CreatePolygonShape(bodyId, &shapeDef, &boxShape);
 
       registry.emplace<Components::Rigidbody>(box, bodyId);
+    }
+
+    World::Entity blueBox = m_World.CreateEntity();
+    {
+      blueBox.AddComponent<Components::Transform>(600.0f, 100.0f);
+      blueBox.AddComponent<Components::Renderable>(Graphics::Color{0, 0, 255, 255}, 40.0f, 40.0f);
     }
   }
 

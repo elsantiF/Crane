@@ -1,6 +1,7 @@
 #include "World.hpp"
 #include "Components/RigidBody.hpp"
 #include "Components/Transform.hpp"
+#include "Entity.hpp"
 
 namespace Crane::World {
   World::World() {
@@ -34,5 +35,10 @@ namespace Crane::World {
       transform.y = position.y * PIXELS_PER_METER;
       transform.rotation = angleDegrees;
     }
+  }
+
+  Entity World::CreateEntity() {
+    auto entity = m_Registry.create();
+    return Entity(this, entity);
   }
 }

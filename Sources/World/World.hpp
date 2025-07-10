@@ -5,12 +5,16 @@
 #include <entt/entt.hpp>
 
 namespace Crane::World {
+  class Entity;
+
   class World {
   public:
     World();
     ~World();
 
     void Update(f64 deltaTime);
+
+    Entity CreateEntity();
 
     b2WorldId GetWorldId() const { return m_WorldId; }
     entt::registry &GetRegistry() { return m_Registry; }
