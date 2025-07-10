@@ -16,7 +16,6 @@ bool Application::Initialize() {
   InitializeImGui();
   InitializeEntities();
   m_Running = true;
-  m_LastTime = SDL_GetTicks() / 1000.0;
   return true;
 }
 
@@ -136,14 +135,22 @@ void Application::Render() {
 }
 
 void Application::Run() {
+  f64 lastTime = SDL_GetTicks() / 1000.0;
   while (m_Running) {
+    const f64 currentTime = SDL_GetTicks() / 1000.0;
+    m_DeltaTime = currentTime - lastTime;
+
+    if (m_DeltaTime < DELTA_LOW_CAP) {
+      m_DeltaTime = DELTA_LOW_CAP;
+    } else if (m_DeltaTime > DELTA_HIGH_CAP) {
+      m_DeltaTime = DELTA_HIGH_CAP;
+    }
+
     HandleEvents();
     Update(m_DeltaTime);
     Render();
 
-    const f64 currentTime = SDL_GetTicks() / 1000.0;
-    m_DeltaTime = currentTime - m_LastTime;
-    m_LastTime = currentTime;
+    lastTime = currentTime;
   }
 }
 
