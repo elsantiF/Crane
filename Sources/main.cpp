@@ -2,7 +2,7 @@
 #include <iostream>
 
 int main() {
-  Application crane;
+  Crane::Core::Application crane;
   if (!crane.Initialize()) {
     std::cerr << "Failed to initialize Crane." << std::endl;
     return -1;

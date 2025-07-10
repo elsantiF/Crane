@@ -2,35 +2,37 @@
 #include "Components/RigidbodyComponent.hpp"
 #include "Components/TransformComponent.hpp"
 
-World::World() {
-  b2WorldDef worldDef = b2DefaultWorldDef();
-  worldDef.gravity = {0.0f, 9.81f};
-  m_WorldId = b2CreateWorld(&worldDef);
+namespace Crane {
+  World::World() {
+    b2WorldDef worldDef = b2DefaultWorldDef();
+    worldDef.gravity = {0.0f, 9.81f};
+    m_WorldId = b2CreateWorld(&worldDef);
 
-  m_Registry.group<RigidbodyComponent, TransformComponent>();
-}
-
-World::~World() {
-  if (b2World_IsValid(m_WorldId)) {
-    b2DestroyWorld(m_WorldId);
+    m_Registry.group<Components::RigidbodyComponent, Components::TransformComponent>();
   }
-}
 
-void World::Update(f64 deltaTime) {
-  b2World_Step(m_WorldId, static_cast<float>(deltaTime), PHYSICS_STEPS);
-
-  auto view = m_Registry.view<RigidbodyComponent, TransformComponent>();
-  for (auto [entity, rigidBody, transform] : view.each()) {
-    if (!b2Body_IsValid(rigidBody.bodyId)) {
-      continue;
+  World::~World() {
+    if (b2World_IsValid(m_WorldId)) {
+      b2DestroyWorld(m_WorldId);
     }
+  }
 
-    b2Vec2 position = b2Body_GetPosition(rigidBody.bodyId);
-    b2Rot angle = b2Body_GetRotation(rigidBody.bodyId);
-    f32 angleDegrees = b2Rot_GetAngle(angle);
+  void World::Update(f64 deltaTime) {
+    b2World_Step(m_WorldId, static_cast<float>(deltaTime), PHYSICS_STEPS);
 
-    transform.x = position.x * PIXELS_PER_METER;
-    transform.y = position.y * PIXELS_PER_METER;
-    transform.rotation = angleDegrees;
+    auto view = m_Registry.view<Components::RigidbodyComponent, Components::TransformComponent>();
+    for (auto [entity, rigidBody, transform] : view.each()) {
+      if (!b2Body_IsValid(rigidBody.bodyId)) {
+        continue;
+      }
+
+      b2Vec2 position = b2Body_GetPosition(rigidBody.bodyId);
+      b2Rot angle = b2Body_GetRotation(rigidBody.bodyId);
+      f32 angleDegrees = b2Rot_GetAngle(angle);
+
+      transform.x = position.x * PIXELS_PER_METER;
+      transform.y = position.y * PIXELS_PER_METER;
+      transform.rotation = angleDegrees;
+    }
   }
 }
