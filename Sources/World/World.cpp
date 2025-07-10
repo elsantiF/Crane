@@ -2,7 +2,7 @@
 #include "Components/RigidBody.hpp"
 #include "Components/Transform.hpp"
 
-namespace Crane {
+namespace Crane::World {
   World::World() {
     b2WorldDef worldDef = b2DefaultWorldDef();
     worldDef.gravity = {0.0f, 9.81f};

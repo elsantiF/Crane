@@ -4,7 +4,7 @@
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
 
-namespace Crane {
+namespace Crane::World {
   class World {
   public:
     World();
