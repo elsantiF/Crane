@@ -1,6 +1,6 @@
 #include "World.hpp"
-#include "Components/RigidbodyComponent.hpp"
-#include "Components/TransformComponent.hpp"
+#include "Components/RigidBody.hpp"
+#include "Components/Transform.hpp"
 
 namespace Crane {
   World::World() {
@@ -8,7 +8,7 @@ namespace Crane {
     worldDef.gravity = {0.0f, 9.81f};
     m_WorldId = b2CreateWorld(&worldDef);
 
-    m_Registry.group<Components::RigidbodyComponent, Components::TransformComponent>();
+    m_Registry.group<Components::Rigidbody, Components::Transform>();
   }
 
   World::~World() {
@@ -20,7 +20,7 @@ namespace Crane {
   void World::Update(f64 deltaTime) {
     b2World_Step(m_WorldId, static_cast<float>(deltaTime), PHYSICS_STEPS);
 
-    auto view = m_Registry.view<Components::RigidbodyComponent, Components::TransformComponent>();
+    auto view = m_Registry.view<Components::Rigidbody, Components::Transform>();
     for (auto [entity, rigidBody, transform] : view.each()) {
       if (!b2Body_IsValid(rigidBody.bodyId)) {
         continue;

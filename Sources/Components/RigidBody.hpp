@@ -3,9 +3,9 @@
 #include <box2d/box2d.h>
 
 namespace Crane::Components {
-  struct RigidbodyComponent {
+  struct Rigidbody {
     b2BodyId bodyId;
 
-    RigidbodyComponent(b2BodyId id) : bodyId(id) {}
+    Rigidbody(b2BodyId id) : bodyId(id) {}
   };
 }

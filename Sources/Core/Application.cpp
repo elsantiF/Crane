@@ -1,7 +1,7 @@
 #include "Application.hpp"
-#include "Components/RenderableComponent.hpp"
-#include "Components/RigidbodyComponent.hpp"
-#include "Components/TransformComponent.hpp"
+#include "Components/Renderable.hpp"
+#include "Components/RigidBody.hpp"
+#include "Components/Transform.hpp"
 #include "Graphics/Color.hpp"
 #include "Graphics/Rect.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
@@ -55,8 +55,8 @@ namespace Crane::Core {
     // Create ground body
     {
       auto ground = registry.create();
-      registry.emplace<Components::TransformComponent>(ground, 512, 700);
-      registry.emplace<Components::RenderableComponent>(ground, Graphics::Color{0, 255, 0, 255}, 1000, 50);
+      registry.emplace<Components::Transform>(ground, 512, 700);
+      registry.emplace<Components::Renderable>(ground, Graphics::Color{0, 255, 0, 255}, 1000, 50);
       b2BodyDef bodyDef = b2DefaultBodyDef();
       bodyDef.type = b2_staticBody;
       bodyDef.position = {512 / PIXELS_PER_METER, 700 / PIXELS_PER_METER};
@@ -66,14 +66,14 @@ namespace Crane::Core {
       b2ShapeDef shapeDef = b2DefaultShapeDef();
       b2CreatePolygonShape(bodyId, &shapeDef, &box);
 
-      registry.emplace<Components::RigidbodyComponent>(ground, bodyId);
+      registry.emplace<Components::Rigidbody>(ground, bodyId);
     }
 
     // Create a dynamic box body
     {
       auto box = registry.create();
-      registry.emplace<Components::TransformComponent>(box, 400.0f, 100.0f);
-      registry.emplace<Components::RenderableComponent>(box, Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
+      registry.emplace<Components::Transform>(box, 400.0f, 100.0f);
+      registry.emplace<Components::Renderable>(box, Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
       b2BodyDef bodyDef = b2DefaultBodyDef();
       bodyDef.type = b2_dynamicBody;
       bodyDef.position = {400.f / PIXELS_PER_METER, 100.f / PIXELS_PER_METER};
@@ -84,7 +84,7 @@ namespace Crane::Core {
       shapeDef.density = 1.0f;
       b2CreatePolygonShape(bodyId, &shapeDef, &boxShape);
 
-      registry.emplace<Components::RigidbodyComponent>(box, bodyId);
+      registry.emplace<Components::Rigidbody>(box, bodyId);
     }
   }
 
@@ -110,10 +110,10 @@ namespace Crane::Core {
     m_Renderer->Clear(Graphics::Color{30, 30, 30, 255});
 
     auto &registry = m_World.GetRegistry();
-    auto view = registry.view<Components::TransformComponent, Components::RenderableComponent>();
+    auto view = registry.view<Components::Transform, Components::Renderable>();
     for (auto entity : view) {
-      const auto &transform = view.get<Components::TransformComponent>(entity);
-      const auto &renderable = view.get<Components::RenderableComponent>(entity);
+      const auto &transform = view.get<Components::Transform>(entity);
+      const auto &renderable = view.get<Components::Renderable>(entity);
 
       Graphics::Rect rect{transform.x - renderable.width / 2.0f, transform.y - renderable.height / 2.0f, renderable.width, renderable.height};
 
