@@ -20,11 +20,12 @@ namespace Crane::World {
 
     Entity CreateEntity();
 
-    Physics::PhysicsWorld *GetPhysicsWorld() const { return m_PhysicsWorld.get(); }
+    Physics::PhysicsWorld &GetPhysicsWorld() { return m_PhysicsWorld; }
+    const Physics::PhysicsWorld &GetPhysicsWorld() const { return m_PhysicsWorld; }
     entt::registry &GetRegistry() { return m_Registry; }
 
   private:
-    Scope<Physics::PhysicsWorld> m_PhysicsWorld;
+    Physics::PhysicsWorld m_PhysicsWorld;
     entt::registry m_Registry;
 
     const f32 PIXELS_PER_METER = 30.0f;

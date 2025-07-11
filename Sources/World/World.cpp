@@ -4,13 +4,10 @@
 #include "Entity.hpp"
 
 namespace Crane::World {
-  World::World() {
-    m_PhysicsWorld = MakeScope<Physics::PhysicsWorld>();
-    m_Registry.group<Components::Rigidbody, Components::Transform>();
-  }
+  World::World() : m_PhysicsWorld() { m_Registry.group<Components::Rigidbody, Components::Transform>(); }
 
   void World::Update(f64 deltaTime) {
-    m_PhysicsWorld->Update(deltaTime);
+    m_PhysicsWorld.Update(deltaTime);
 
     auto view = m_Registry.view<Components::Rigidbody, Components::Transform>();
     for (auto [entity, rigidBody, transform] : view.each()) {
