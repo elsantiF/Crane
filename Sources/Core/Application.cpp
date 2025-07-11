@@ -102,7 +102,7 @@ namespace Crane::Core {
 
   void Application::Render() {
     m_Renderer->BeginFrame();
-    m_Renderer->Clear(Graphics::Color{30, 30, 30, 255});
+    m_Renderer->Clear(Graphics::Color{0.05f, 0.05f, 0.05f, 1.0f});
 
     auto &registry = m_World.GetRegistry();
     auto view = registry.view<Components::Transform, Components::Renderable>();

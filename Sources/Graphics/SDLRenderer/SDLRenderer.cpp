@@ -49,14 +49,14 @@ namespace Crane::Graphics::SDLRenderer {
   }
 
   void SDLRenderer::Clear(const Color &color) {
-    SDL_SetRenderDrawColor(m_Renderer, color.GetR(), color.GetG(), color.GetB(), color.GetA());
+    SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
     SDL_RenderClear(m_Renderer);
   }
 
   void SDLRenderer::Present() { SDL_RenderPresent(m_Renderer); }
 
   void SDLRenderer::DrawRect(const Rect &rect, const Color &color) {
-    SDL_SetRenderDrawColor(m_Renderer, color.GetR(), color.GetG(), color.GetB(), color.GetA());
+    SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
 
     SDL_FRect sdlRect = static_cast<SDL_FRect>(rect);
     SDL_RenderFillRect(m_Renderer, &sdlRect);
