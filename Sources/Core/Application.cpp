@@ -2,6 +2,7 @@
 #include "Components/Renderable.hpp"
 #include "Components/RigidBody.hpp"
 #include "Components/Transform.hpp"
+#include "Editor/EntityDisplay.hpp"
 #include "Graphics/Color.hpp"
 #include "Graphics/Rect.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
@@ -122,6 +123,8 @@ namespace Crane::Core {
     ImGui::Text("Delta: %.3f ms", m_DeltaTime * 1000.0);
     ImGui::Text("ESC to exit");
     ImGui::End();
+
+    Crane::Editor::EntityDisplay::DrawEntityList(registry);
 
     ImGui::Render();
     m_Renderer->EndImGuiFrame();

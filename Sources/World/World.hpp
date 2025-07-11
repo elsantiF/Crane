@@ -25,6 +25,9 @@ namespace Crane::World {
     entt::registry &GetRegistry() { return m_Registry; }
 
   private:
+    void WakeUpBodies();
+
+  private:
     Physics::PhysicsWorld m_PhysicsWorld;
     entt::registry m_Registry;
 
