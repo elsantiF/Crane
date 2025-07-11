@@ -5,6 +5,7 @@
 #include "Graphics/Color.hpp"
 #include "Graphics/Rect.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
+#include "Physics/PhysicsFactory.hpp"
 #include "World/Entity.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -52,21 +53,15 @@ namespace Crane::Core {
 
   void Application::InitializeEntities() {
     auto &registry = m_World.GetRegistry();
+    auto &physicsWorld = m_World.GetPhysicsWorld();
 
     // Create ground body
     {
       auto ground = registry.create();
       registry.emplace<Components::Transform>(ground, 512, 700);
       registry.emplace<Components::Renderable>(ground, Graphics::Color{0, 255, 0, 255}, 1000, 50);
-      b2BodyDef bodyDef = b2DefaultBodyDef();
-      bodyDef.type = b2_staticBody;
-      bodyDef.position = {512 / PIXELS_PER_METER, 700 / PIXELS_PER_METER};
-      b2BodyId bodyId = m_World.GetPhysicsWorld().CreateBody(bodyDef);
 
-      b2Polygon box = b2MakeBox(500 / PIXELS_PER_METER, 25 / PIXELS_PER_METER);
-      b2ShapeDef shapeDef = b2DefaultShapeDef();
-      b2CreatePolygonShape(bodyId, &shapeDef, &box);
-
+      b2BodyId bodyId = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {512, 700, 1000, 50, Physics::BodyType::Static}, PIXELS_PER_METER);
       registry.emplace<Components::Rigidbody>(ground, bodyId);
     }
 
@@ -75,16 +70,8 @@ namespace Crane::Core {
       auto box = registry.create();
       registry.emplace<Components::Transform>(box, 400.0f, 100.0f);
       registry.emplace<Components::Renderable>(box, Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
-      b2BodyDef bodyDef = b2DefaultBodyDef();
-      bodyDef.type = b2_dynamicBody;
-      bodyDef.position = {400.f / PIXELS_PER_METER, 100.f / PIXELS_PER_METER};
-      b2BodyId bodyId = m_World.GetPhysicsWorld().CreateBody(bodyDef);
 
-      b2Polygon boxShape = b2MakeBox(20 / PIXELS_PER_METER, 20 / PIXELS_PER_METER);
-      b2ShapeDef shapeDef = b2DefaultShapeDef();
-      shapeDef.density = 1.0f;
-      b2CreatePolygonShape(bodyId, &shapeDef, &boxShape);
-
+      b2BodyId bodyId = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {400, 100, 40, 40, Physics::BodyType::Dynamic}, PIXELS_PER_METER);
       registry.emplace<Components::Rigidbody>(box, bodyId);
     }
 
