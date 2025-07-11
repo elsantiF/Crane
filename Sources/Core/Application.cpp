@@ -16,6 +16,7 @@ namespace Crane::Core {
       return false;
     }
     InitializeImGui();
+    m_World = MakeScope<World::World>();
     InitializeEntities();
     m_Running = true;
     return true;
@@ -51,8 +52,8 @@ namespace Crane::Core {
   }
 
   void Application::InitializeEntities() {
-    auto &registry = m_World.GetRegistry();
-    auto worldId = m_World.GetWorldId();
+    auto &registry = m_World->GetRegistry();
+
     // Create ground body
     {
       auto ground = registry.create();
@@ -61,7 +62,7 @@ namespace Crane::Core {
       b2BodyDef bodyDef = b2DefaultBodyDef();
       bodyDef.type = b2_staticBody;
       bodyDef.position = {512 / PIXELS_PER_METER, 700 / PIXELS_PER_METER};
-      b2BodyId bodyId = b2CreateBody(worldId, &bodyDef);
+      b2BodyId bodyId = m_World->GetPhysicsWorld()->CreateBody(bodyDef);
 
       b2Polygon box = b2MakeBox(500 / PIXELS_PER_METER, 25 / PIXELS_PER_METER);
       b2ShapeDef shapeDef = b2DefaultShapeDef();
@@ -78,7 +79,7 @@ namespace Crane::Core {
       b2BodyDef bodyDef = b2DefaultBodyDef();
       bodyDef.type = b2_dynamicBody;
       bodyDef.position = {400.f / PIXELS_PER_METER, 100.f / PIXELS_PER_METER};
-      b2BodyId bodyId = b2CreateBody(worldId, &bodyDef);
+      b2BodyId bodyId = m_World->GetPhysicsWorld()->CreateBody(bodyDef);
 
       b2Polygon boxShape = b2MakeBox(20 / PIXELS_PER_METER, 20 / PIXELS_PER_METER);
       b2ShapeDef shapeDef = b2DefaultShapeDef();
@@ -88,7 +89,7 @@ namespace Crane::Core {
       registry.emplace<Components::Rigidbody>(box, bodyId);
     }
 
-    World::Entity blueBox = m_World.CreateEntity();
+    World::Entity blueBox = m_World->CreateEntity();
     {
       blueBox.AddComponent<Components::Transform>(600.0f, 100.0f);
       blueBox.AddComponent<Components::Renderable>(Graphics::Color{0, 0, 255, 255}, 40.0f, 40.0f);
@@ -110,13 +111,13 @@ namespace Crane::Core {
     }
   }
 
-  void Application::Update(f64 deltaTime) { m_World.Update(deltaTime); }
+  void Application::Update(f64 deltaTime) { m_World->Update(deltaTime); }
 
   void Application::Render() {
     m_Renderer->BeginFrame();
     m_Renderer->Clear(Graphics::Color{30, 30, 30, 255});
 
-    auto &registry = m_World.GetRegistry();
+    auto &registry = m_World->GetRegistry();
     auto view = registry.view<Components::Transform, Components::Renderable>();
     for (auto entity : view) {
       const auto &transform = view.get<Components::Transform>(entity);

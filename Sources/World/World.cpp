@@ -5,21 +5,12 @@
 
 namespace Crane::World {
   World::World() {
-    b2WorldDef worldDef = b2DefaultWorldDef();
-    worldDef.gravity = {0.0f, 9.81f};
-    m_WorldId = b2CreateWorld(&worldDef);
-
+    m_PhysicsWorld = MakeScope<Physics::PhysicsWorld>();
     m_Registry.group<Components::Rigidbody, Components::Transform>();
   }
 
-  World::~World() {
-    if (b2World_IsValid(m_WorldId)) {
-      b2DestroyWorld(m_WorldId);
-    }
-  }
-
   void World::Update(f64 deltaTime) {
-    b2World_Step(m_WorldId, static_cast<float>(deltaTime), PHYSICS_STEPS);
+    m_PhysicsWorld->Update(deltaTime);
 
     auto view = m_Registry.view<Components::Rigidbody, Components::Transform>();
     for (auto [entity, rigidBody, transform] : view.each()) {

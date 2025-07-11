@@ -28,7 +28,7 @@ namespace Crane::Core {
   private:
     SDL_Window *m_Window;
     Scope<Graphics::IRenderer> m_Renderer;
-    World::World m_World;
+    Scope<World::World> m_World;
     bool m_Running;
 
     f64 m_DeltaTime = 0.0;
