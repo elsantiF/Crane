@@ -53,27 +53,26 @@ namespace Crane::Core {
   }
 
   void Application::InitializeEntities() {
-    auto &registry = m_World.GetRegistry();
     auto &physicsWorld = m_World.GetPhysicsWorld();
 
     // Create ground body
+    World::Entity ground = m_World.CreateEntity();
     {
-      auto ground = registry.create();
-      registry.emplace<Components::Transform>(ground, Math::Vec2f{512.0f, 725.0f});
-      registry.emplace<Components::Renderable>(ground, Graphics::Color{0, 255, 0, 255}, 1000, 50);
+      ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f});
+      ground.AddComponent<Components::Renderable>(Graphics::Color{0, 255, 0, 255}, 1000.0f, 50.0f);
 
       b2BodyId bodyId = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {512, 700, 1000, 50, Physics::BodyType::Static}, PIXELS_PER_METER);
-      registry.emplace<Components::Rigidbody>(ground, bodyId);
+      ground.AddComponent<Components::Rigidbody>(bodyId);
     }
 
     // Create a dynamic box body
+    World::Entity box = m_World.CreateEntity();
     {
-      auto box = registry.create();
-      registry.emplace<Components::Transform>(box, Math::Vec2f{400.0f, 100.0f});
-      registry.emplace<Components::Renderable>(box, Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
+      box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
+      box.AddComponent<Components::Renderable>(Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
 
       b2BodyId bodyId = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {400, 100, 40, 40, Physics::BodyType::Dynamic}, PIXELS_PER_METER);
-      registry.emplace<Components::Rigidbody>(box, bodyId);
+      box.AddComponent<Components::Rigidbody>(bodyId);
     }
 
     World::Entity blueBox = m_World.CreateEntity();
