@@ -10,10 +10,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 add_subdirectory("External")
 
-file(GLOB_RECURSE SOURCE_FILES
-    "Sources/*.cpp"
-    "Sources/*.h"
-)
+file(GLOB_RECURSE SOURCE_FILES "Sources/*.cpp")
 
 add_executable(Crane ${SOURCE_FILES})
 target_include_directories(Crane PUBLIC "Sources")
