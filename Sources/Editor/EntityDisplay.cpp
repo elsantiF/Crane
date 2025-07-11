@@ -1,4 +1,5 @@
 #include "EntityDisplay.hpp"
+#include "Components/Renderable.hpp"
 #include "Components/Transform.hpp"
 #include "Core/Types.hpp"
 #include <imgui.h>
@@ -28,6 +29,15 @@ namespace Crane::Editor {
         if (positionChanged || rotationChanged || scaleChanged) {
           transform.dirty = true;
         }
+      }
+    }
+
+    if (registry.any_of<Components::Renderable>(entity)) {
+      if (ImGui::CollapsingHeader("Renderable")) {
+        auto &renderable = registry.get<Components::Renderable>(entity);
+        ImGui::ColorEdit4("Color", &renderable.color.r);
+        ImGui::DragFloat("Width", &renderable.width, 0.1f);
+        ImGui::DragFloat("Height", &renderable.height, 0.1f);
       }
     }
 
