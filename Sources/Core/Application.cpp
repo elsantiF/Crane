@@ -59,7 +59,7 @@ namespace Crane::Core {
     // Create ground body
     {
       auto ground = registry.create();
-      registry.emplace<Components::Transform>(ground, 512, 700);
+      registry.emplace<Components::Transform>(ground, Math::Vec2f{512.0f, 725.0f});
       registry.emplace<Components::Renderable>(ground, Graphics::Color{0, 255, 0, 255}, 1000, 50);
 
       b2BodyId bodyId = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {512, 700, 1000, 50, Physics::BodyType::Static}, PIXELS_PER_METER);
@@ -69,7 +69,7 @@ namespace Crane::Core {
     // Create a dynamic box body
     {
       auto box = registry.create();
-      registry.emplace<Components::Transform>(box, 400.0f, 100.0f);
+      registry.emplace<Components::Transform>(box, Math::Vec2f{400.0f, 100.0f});
       registry.emplace<Components::Renderable>(box, Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
 
       b2BodyId bodyId = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {400, 100, 40, 40, Physics::BodyType::Dynamic}, PIXELS_PER_METER);
@@ -78,7 +78,7 @@ namespace Crane::Core {
 
     World::Entity blueBox = m_World.CreateEntity();
     {
-      blueBox.AddComponent<Components::Transform>(600.0f, 100.0f);
+      blueBox.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
       blueBox.AddComponent<Components::Renderable>(Graphics::Color{0, 0, 255, 255}, 40.0f, 40.0f);
     }
   }
@@ -110,7 +110,8 @@ namespace Crane::Core {
       const auto &transform = view.get<Components::Transform>(entity);
       const auto &renderable = view.get<Components::Renderable>(entity);
 
-      Graphics::Rect rect{transform.x - renderable.width / 2.0f, transform.y - renderable.height / 2.0f, renderable.width, renderable.height};
+      Graphics::Rect rect{transform.position.x - renderable.width / 2.0f, transform.position.y - renderable.height / 2.0f, renderable.width,
+                          renderable.height};
 
       m_Renderer->DrawRect(rect, renderable.color);
     }

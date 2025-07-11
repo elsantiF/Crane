@@ -1,5 +1,6 @@
 add_subdirectory("box2d")
 add_subdirectory("entt")
+add_subdirectory("glm")
 add_subdirectory("SDL")
 
 file(GLOB IMGUI_SOURCES

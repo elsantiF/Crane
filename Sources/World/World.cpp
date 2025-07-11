@@ -14,7 +14,7 @@ namespace Crane::World {
         continue;
       }
 
-      b2Vec2 position = {transform.x / PIXELS_PER_METER, transform.y / PIXELS_PER_METER};
+      b2Vec2 position = {transform.position.x / PIXELS_PER_METER, transform.position.y / PIXELS_PER_METER};
       b2Rot angle = b2MakeRot(transform.rotation);
       b2Body_SetTransform(rigidBody.bodyId, position, angle);
       b2Body_SetAwake(rigidBody.bodyId, true);
@@ -38,8 +38,8 @@ namespace Crane::World {
       b2Rot angle = b2Body_GetRotation(rigidBody.bodyId);
       f32 angleDegrees = b2Rot_GetAngle(angle);
 
-      transform.x = position.x * PIXELS_PER_METER;
-      transform.y = position.y * PIXELS_PER_METER;
+      transform.position.x = position.x * PIXELS_PER_METER;
+      transform.position.y = position.y * PIXELS_PER_METER;
       transform.rotation = angleDegrees;
     }
   }
