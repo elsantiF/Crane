@@ -17,6 +17,12 @@ namespace Crane::World {
       b2Vec2 position = {transform.position.x / PIXELS_PER_METER, transform.position.y / PIXELS_PER_METER};
       b2Rot angle = b2MakeRot(transform.rotation);
       b2Body_SetTransform(rigidBody.bodyId, position, angle);
+
+      // TODO: This is a temporary fix to the energy accumulation issue.
+      // Should find a better way to handle this.
+      b2Body_SetLinearVelocity(rigidBody.bodyId, {0.0f, 0.0f});
+      b2Body_SetAngularVelocity(rigidBody.bodyId, 0.0f);
+
       b2Body_SetAwake(rigidBody.bodyId, true);
       transform.dirty = false;
       anyTransformDirty = true;
