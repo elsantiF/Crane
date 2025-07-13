@@ -4,7 +4,6 @@
 #include "Components/Transform.hpp"
 #include "Editor/EntityDisplay.hpp"
 #include "Graphics/Color.hpp"
-#include "Graphics/Rect.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Physics/PhysicsFactory.hpp"
 #include "World/Entity.hpp"
@@ -53,6 +52,9 @@ namespace Crane::Core {
   }
 
   void Application::InitializeEntities() {
+    // TODO: Replace with an appropiate system creation method
+    m_RenderingSystem = Systems::RenderingSystem(m_Renderer.get());
+
     auto &physicsWorld = m_World.GetPhysicsWorld();
 
     // Create ground body
@@ -103,17 +105,7 @@ namespace Crane::Core {
     m_Renderer->BeginFrame();
     m_Renderer->Clear(Graphics::Color{0.05f, 0.05f, 0.05f, 1.0f});
 
-    auto &registry = m_World.GetRegistry();
-    auto view = registry.view<Components::Transform, Components::Renderable>();
-    for (auto entity : view) {
-      const auto &transform = view.get<Components::Transform>(entity);
-      const auto &renderable = view.get<Components::Renderable>(entity);
-
-      Graphics::Rect rect{transform.position.x - renderable.width / 2.0f, transform.position.y - renderable.height / 2.0f, renderable.width,
-                          renderable.height};
-
-      m_Renderer->DrawRect(rect, renderable.color);
-    }
+    m_RenderingSystem.Update(m_World, m_DeltaTime);
 
     m_Renderer->BeginImGuiFrame();
     ImGui::NewFrame();
@@ -124,6 +116,7 @@ namespace Crane::Core {
     ImGui::Text("ESC to exit");
     ImGui::End();
 
+    auto &registry = m_World.GetRegistry();
     Crane::Editor::EntityDisplay::DrawEntityList(registry);
 
     ImGui::Render();
