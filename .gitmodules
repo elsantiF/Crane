@@ -13,3 +13,6 @@
 [submodule "External/glm"]
 	path = External/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "External/tracy"]
+	path = External/tracy
+	url = https://github.com/wolfpld/tracy.git
