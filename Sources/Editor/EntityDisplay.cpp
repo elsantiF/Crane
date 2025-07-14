@@ -24,9 +24,8 @@ namespace Crane::Editor {
         auto &transform = registry.get<Components::Transform>(entity);
         bool positionChanged = ImGui::DragFloat2("Position", &transform.position.x, 0.1f);
         bool rotationChanged = ImGui::DragFloat("Rotation", &transform.rotation, 0.1f);
-        bool scaleChanged = ImGui::DragFloat2("Scale", &transform.scale.x, 0.1f);
 
-        if (positionChanged || rotationChanged || scaleChanged) {
+        if (positionChanged || rotationChanged) {
           transform.dirty = true;
         }
       }
