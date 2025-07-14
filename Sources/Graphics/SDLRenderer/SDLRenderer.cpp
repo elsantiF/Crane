@@ -1,9 +1,11 @@
 #include "SDLRenderer.hpp"
+#include "Core/Profiler.hpp"
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
 
 namespace Crane::Graphics::SDLRenderer {
   bool SDLRenderer::Initialize() {
+    PROFILE_SCOPE();
     m_Renderer = SDL_CreateRenderer(m_Window, NULL);
     if (!m_Renderer) {
       return false;
@@ -49,13 +51,18 @@ namespace Crane::Graphics::SDLRenderer {
   }
 
   void SDLRenderer::Clear(const Color &color) {
+    PROFILE_SCOPE();
     SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
     SDL_RenderClear(m_Renderer);
   }
 
-  void SDLRenderer::Present() { SDL_RenderPresent(m_Renderer); }
+  void SDLRenderer::Present() {
+    PROFILE_SCOPE();
+    SDL_RenderPresent(m_Renderer);
+  }
 
   void SDLRenderer::DrawRect(const Rect &rect, const Color &color) {
+    PROFILE_SCOPE();
     SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
 
     SDL_FRect sdlRect = static_cast<SDL_FRect>(rect);

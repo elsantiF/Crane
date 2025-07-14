@@ -6,6 +6,7 @@
 #include "Graphics/Color.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Physics/PhysicsFactory.hpp"
+#include "Profiler.hpp"
 #include "World/Entity.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -13,6 +14,7 @@
 
 namespace Crane::Core {
   bool Application::Initialize() {
+    PROFILE_SCOPE();
     if (!InitializeSDL()) {
       return false;
     }
@@ -23,6 +25,7 @@ namespace Crane::Core {
   }
 
   bool Application::InitializeSDL() {
+    PROFILE_SCOPE();
     if (!SDL_Init(SDL_INIT_VIDEO)) {
       std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
       return false;
@@ -52,6 +55,7 @@ namespace Crane::Core {
   }
 
   void Application::InitializeEntities() {
+    PROFILE_SCOPE();
     auto &physicsWorld = m_World.GetPhysicsWorld();
 
     // Create ground body
@@ -99,9 +103,13 @@ namespace Crane::Core {
     }
   }
 
-  void Application::Update(f64 deltaTime) { m_World.Update(deltaTime); }
+  void Application::Update(f64 deltaTime) {
+    PROFILE_SCOPE();
+    m_World.Update(deltaTime);
+  }
 
   void Application::Render() {
+    PROFILE_SCOPE();
     m_Renderer->BeginFrame();
     m_Renderer->Clear(Graphics::Color{0.05f, 0.05f, 0.05f, 1.0f});
 

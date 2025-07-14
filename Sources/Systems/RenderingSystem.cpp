@@ -1,11 +1,13 @@
 #include "RenderingSystem.hpp"
 #include "Components/Renderable.hpp"
 #include "Components/Transform.hpp"
+#include "Core/Profiler.hpp"
 #include "Graphics/IRenderer.hpp"
 #include "World/World.hpp"
 
 namespace Crane::Systems {
   void RenderingSystem::Render(World::World &world, Graphics::IRenderer &renderer) {
+    PROFILE_SCOPE();
     auto &registry = world.GetRegistry();
     auto view = registry.view<Components::Transform, Components::Renderable>();
 

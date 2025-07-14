@@ -2,10 +2,12 @@
 #include "Components/BoxCollider.hpp"
 #include "Components/RigidBody.hpp"
 #include "Components/Transform.hpp"
+#include "Core/Profiler.hpp"
 #include "World/World.hpp"
 
 namespace Crane::Systems {
   void PhysicsSystem::Update(World::World &world, f64 deltaTime) {
+    PROFILE_SCOPE();
     auto &registry = world.GetRegistry();
     auto view = registry.view<Components::Rigidbody, Components::BoxCollider, Components::Transform>();
     auto ppm = world.GetPixelsPerMeter();

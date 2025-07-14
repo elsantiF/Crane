@@ -1,4 +1,5 @@
 #include "PhysicsWorld.hpp"
+#include "Core/Profiler.hpp"
 
 namespace Crane::Physics {
   PhysicsWorld::PhysicsWorld() {
@@ -13,7 +14,10 @@ namespace Crane::Physics {
     }
   }
 
-  void PhysicsWorld::Update(f64 deltaTime) { b2World_Step(m_WorldId, static_cast<float>(deltaTime), PHYSICS_STEPS); }
+  void PhysicsWorld::Update(f64 deltaTime) {
+    PROFILE_SCOPE();
+    b2World_Step(m_WorldId, static_cast<float>(deltaTime), PHYSICS_STEPS);
+  }
 
   b2BodyId PhysicsWorld::CreateBody(const b2BodyDef &bodyDef) {
     b2BodyId bodyId = b2CreateBody(m_WorldId, &bodyDef);

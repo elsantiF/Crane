@@ -2,11 +2,13 @@
 #include "Components/BoxCollider.hpp"
 #include "Components/Renderable.hpp"
 #include "Components/Transform.hpp"
+#include "Core/Profiler.hpp"
 #include "Core/Types.hpp"
 #include <imgui.h>
 
 namespace Crane::Editor {
   void EntityDisplay::DrawEntityList(entt::registry &registry) {
+    PROFILE_SCOPE();
     ImGui::Begin("Entities");
 
     for (auto entity : registry.view<entt::entity>()) {
@@ -17,6 +19,7 @@ namespace Crane::Editor {
   }
 
   void EntityDisplay::DrawEntity(entt::registry &registry, entt::entity entity) {
+    PROFILE_SCOPE();
     ImGui::PushID(static_cast<i32>(entity));
     ImGui::Text("Entity ID: %d", static_cast<i32>(entity));
 

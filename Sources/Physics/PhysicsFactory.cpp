@@ -1,8 +1,10 @@
 #include "PhysicsFactory.hpp"
+#include "Core/Profiler.hpp"
 #include "PhysicsWorld.hpp"
 
 namespace Crane::Physics {
   Pair<Components::Rigidbody, Components::BoxCollider> PhysicsFactory::CreateBoxBody(PhysicsWorld &world, BodyConfig config, f32 ppm) {
+    PROFILE_SCOPE();
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = static_cast<b2BodyType>(config.type);
     bodyDef.position = {config.x / ppm, config.y / ppm};
