@@ -1,4 +1,5 @@
 #include "EntityDisplay.hpp"
+#include "Components/BoxCollider.hpp"
 #include "Components/Renderable.hpp"
 #include "Components/Transform.hpp"
 #include "Core/Types.hpp"
@@ -37,6 +38,17 @@ namespace Crane::Editor {
         ImGui::ColorEdit4("Color", &renderable.color.r);
         ImGui::DragFloat("Width", &renderable.width, 0.1f);
         ImGui::DragFloat("Height", &renderable.height, 0.1f);
+      }
+    }
+
+    if (registry.any_of<Components::BoxCollider>(entity)) {
+      if (ImGui::CollapsingHeader("Box Collider")) {
+        auto &boxCollider = registry.get<Components::BoxCollider>(entity);
+        bool changed = ImGui::DragFloat2("Dimensions", &boxCollider.dimensions.x, 0.1f);
+
+        if (changed) {
+          boxCollider.dirty = true;
+        }
       }
     }
 

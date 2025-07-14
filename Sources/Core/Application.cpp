@@ -60,8 +60,10 @@ namespace Crane::Core {
       ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f});
       ground.AddComponent<Components::Renderable>(Graphics::Color{0, 255, 0, 255}, 1000.0f, 50.0f);
 
-      b2BodyId bodyId = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {512, 700, 1000, 50, Physics::BodyType::Static}, PIXELS_PER_METER);
-      ground.AddComponent<Components::Rigidbody>(bodyId);
+      auto [rb, boxcollider] =
+          Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {512, 700, 1000, 50, Physics::BodyType::Static}, PIXELS_PER_METER);
+      ground.AddComponent<Components::Rigidbody>(rb);
+      ground.AddComponent<Components::BoxCollider>(boxcollider);
     }
 
     // Create a dynamic box body
@@ -70,8 +72,9 @@ namespace Crane::Core {
       box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
       box.AddComponent<Components::Renderable>(Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
 
-      b2BodyId bodyId = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {400, 100, 40, 40, Physics::BodyType::Dynamic}, PIXELS_PER_METER);
-      box.AddComponent<Components::Rigidbody>(bodyId);
+      auto [rb, boxcollider] = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {400, 100, 40, 40, Physics::BodyType::Dynamic}, PIXELS_PER_METER);
+      box.AddComponent<Components::Rigidbody>(rb);
+      box.AddComponent<Components::BoxCollider>(boxcollider);
     }
 
     World::Entity blueBox = m_World.CreateEntity();

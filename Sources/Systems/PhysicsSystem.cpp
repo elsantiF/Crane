@@ -1,4 +1,5 @@
 #include "PhysicsSystem.hpp"
+#include "Components/BoxCollider.hpp"
 #include "Components/RigidBody.hpp"
 #include "Components/Transform.hpp"
 #include "World/World.hpp"
@@ -6,18 +7,28 @@
 namespace Crane::Systems {
   void PhysicsSystem::Update(World::World &world, f64 deltaTime) {
     auto &registry = world.GetRegistry();
-    auto view = registry.view<Components::Rigidbody, Components::Transform>();
+    auto view = registry.view<Components::Rigidbody, Components::BoxCollider, Components::Transform>();
     auto ppm = world.GetPixelsPerMeter();
     bool anyTransformDirty = false;
 
-    for (auto [entity, rigidBody, transform] : view.each()) {
-      if (!b2Body_IsValid(rigidBody.bodyId) || !transform.dirty) {
+    for (auto [entity, rigidBody, boxCollider, transform] : view.each()) {
+      if (!b2Body_IsValid(rigidBody.bodyId) || (!transform.dirty && !boxCollider.dirty)) {
         continue;
       }
 
-      b2Vec2 position = {transform.position.x / ppm, transform.position.y / ppm};
-      b2Rot angle = b2MakeRot(transform.rotation);
-      b2Body_SetTransform(rigidBody.bodyId, position, angle);
+      if (transform.dirty) {
+        b2Vec2 position = {transform.position.x / ppm, transform.position.y / ppm};
+        b2Rot angle = b2MakeRot(transform.rotation);
+        b2Body_SetTransform(rigidBody.bodyId, position, angle);
+      }
+
+      if (boxCollider.dirty) {
+        b2ShapeId shapeId = boxCollider.shapeId;
+        if (b2Shape_IsValid(shapeId)) {
+          b2Polygon boxShape = b2MakeBox(boxCollider.dimensions.x / 2 / ppm, boxCollider.dimensions.y / 2 / ppm);
+          b2Shape_SetPolygon(shapeId, &boxShape);
+        }
+      }
 
       // TODO: This is a temporary fix to the energy accumulation issue.
       // Should find a better way to handle this.
@@ -26,6 +37,7 @@ namespace Crane::Systems {
 
       b2Body_SetAwake(rigidBody.bodyId, true);
       transform.dirty = false;
+      boxCollider.dirty = false;
       anyTransformDirty = true;
     }
 
@@ -41,7 +53,7 @@ namespace Crane::Systems {
 
     world.GetPhysicsWorld().Update(deltaTime);
 
-    for (auto [entity, rigidBody, transform] : view.each()) {
+    for (auto [entity, rigidBody, boxCollider, transform] : view.each()) {
       if (!b2Body_IsValid(rigidBody.bodyId)) {
         continue;
       }

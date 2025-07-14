@@ -1,6 +1,8 @@
 #pragma once
 
 #include "BodyStructs.hpp"
+#include "Components/BoxCollider.hpp"
+#include "Components/RigidBody.hpp"
 #include "Core/Types.hpp"
 
 namespace Crane::Physics {
@@ -8,6 +10,6 @@ namespace Crane::Physics {
 
   class PhysicsFactory {
   public:
-    static b2BodyId CreateBoxBody(PhysicsWorld &world, BodyConfig config, f32 ppm);
+    static Pair<Components::Rigidbody, Components::BoxCollider> CreateBoxBody(PhysicsWorld &world, BodyConfig config, f32 ppm);
   };
 }
