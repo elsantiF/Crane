@@ -1,66 +1,28 @@
 #include "World.hpp"
-#include "Components/RigidBody.hpp"
-#include "Components/Transform.hpp"
 #include "Entity.hpp"
+#include "Systems/PhysicsSystem.hpp"
+#include "Systems/RenderingSystem.hpp"
 
 namespace Crane::World {
-  World::World() : m_PhysicsWorld() { m_Registry.group<Components::Rigidbody, Components::Transform>(); }
+  World::World() : m_PhysicsWorld() {
+    m_UpdateSystems.emplace_back(new Systems::PhysicsSystem());
+    m_RenderSystems.emplace_back(new Systems::RenderingSystem());
+  }
 
   void World::Update(f64 deltaTime) {
-    auto dirtyView = m_Registry.view<Components::Rigidbody, Components::Transform>();
-    bool anyTransformDirty = false;
-    for (auto [entity, rigidBody, transform] : dirtyView.each()) {
-      if (!b2Body_IsValid(rigidBody.bodyId) || !transform.dirty) {
-        continue;
-      }
-
-      b2Vec2 position = {transform.position.x / PIXELS_PER_METER, transform.position.y / PIXELS_PER_METER};
-      b2Rot angle = b2MakeRot(transform.rotation);
-      b2Body_SetTransform(rigidBody.bodyId, position, angle);
-
-      // TODO: This is a temporary fix to the energy accumulation issue.
-      // Should find a better way to handle this.
-      b2Body_SetLinearVelocity(rigidBody.bodyId, {0.0f, 0.0f});
-      b2Body_SetAngularVelocity(rigidBody.bodyId, 0.0f);
-
-      b2Body_SetAwake(rigidBody.bodyId, true);
-      transform.dirty = false;
-      anyTransformDirty = true;
+    for (auto system : m_UpdateSystems) {
+      system->Update(*this, deltaTime);
     }
+  }
 
-    if (anyTransformDirty) {
-      WakeUpBodies();
-    }
-
-    m_PhysicsWorld.Update(deltaTime);
-
-    auto view = m_Registry.view<Components::Rigidbody, Components::Transform>();
-    for (auto [entity, rigidBody, transform] : view.each()) {
-      if (!b2Body_IsValid(rigidBody.bodyId)) {
-        continue;
-      }
-
-      b2Vec2 position = b2Body_GetPosition(rigidBody.bodyId);
-      b2Rot angle = b2Body_GetRotation(rigidBody.bodyId);
-      f32 angleDegrees = b2Rot_GetAngle(angle);
-
-      transform.position.x = position.x * PIXELS_PER_METER;
-      transform.position.y = position.y * PIXELS_PER_METER;
-      transform.rotation = angleDegrees;
+  void World::Render(Graphics::IRenderer &renderer) {
+    for (auto system : m_RenderSystems) {
+      system->Render(*this, renderer);
     }
   }
 
   Entity World::CreateEntity() {
     auto entity = m_Registry.create();
     return Entity(this, entity);
-  }
-
-  void World::WakeUpBodies() {
-    auto view = m_Registry.view<Components::Rigidbody>();
-    for (auto [entity, rigidBody] : view.each()) {
-      if (b2Body_IsValid(rigidBody.bodyId)) {
-        b2Body_SetAwake(rigidBody.bodyId, true);
-      }
-    }
   }
 }

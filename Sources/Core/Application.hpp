@@ -8,11 +8,10 @@
 #include <entt/entt.hpp>
 #include <SDL3/SDL.h>
 
-
 namespace Crane::Core {
   class Application {
   public:
-    Application() : m_Window(nullptr), m_Renderer(nullptr), m_RenderingSystem(nullptr), m_Running(false) {}
+    Application() : m_Window(nullptr), m_Renderer(nullptr), m_Running(false) {}
     ~Application() { Cleanup(); }
 
     bool Initialize();
@@ -30,7 +29,6 @@ namespace Crane::Core {
   private:
     SDL_Window *m_Window;
     Scope<Graphics::IRenderer> m_Renderer;
-    Systems::RenderingSystem m_RenderingSystem;
     World::World m_World;
     bool m_Running;
 

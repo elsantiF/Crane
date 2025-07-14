@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Types.hpp"
 #include "ISystem.hpp"
 
 namespace Crane::Graphics {
@@ -8,13 +7,10 @@ namespace Crane::Graphics {
 }
 
 namespace Crane::Systems {
-  class RenderingSystem : public ISystem {
+  class RenderingSystem : public IRenderSystem {
   public:
-    explicit RenderingSystem(Graphics::IRenderer *renderer) : m_Renderer(renderer) {}
+    RenderingSystem() = default;
 
-    void Update(World::World &world, f64 deltaTime) override;
-
-  private:
-    Graphics::IRenderer *m_Renderer;
+    void Render(World::World &world, Graphics::IRenderer &renderer) override;
   };
 }

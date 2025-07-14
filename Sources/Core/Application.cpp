@@ -52,9 +52,6 @@ namespace Crane::Core {
   }
 
   void Application::InitializeEntities() {
-    // TODO: Replace with an appropiate system creation method
-    m_RenderingSystem = Systems::RenderingSystem(m_Renderer.get());
-
     auto &physicsWorld = m_World.GetPhysicsWorld();
 
     // Create ground body
@@ -105,7 +102,7 @@ namespace Crane::Core {
     m_Renderer->BeginFrame();
     m_Renderer->Clear(Graphics::Color{0.05f, 0.05f, 0.05f, 1.0f});
 
-    m_RenderingSystem.Update(m_World, m_DeltaTime);
+    m_World.Render(*m_Renderer);
 
     m_Renderer->BeginImGuiFrame();
     ImGui::NewFrame();
