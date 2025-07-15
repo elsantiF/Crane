@@ -17,6 +17,6 @@ namespace Crane::Physics {
     shapeDef.density = 1.0f;
     b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &boxShape);
 
-    return std::make_pair(Components::Rigidbody(bodyId), Components::BoxCollider(Math::Vec2f{width, height}, shapeId));
+    return MakePair(Components::Rigidbody(bodyId), Components::BoxCollider(Math::Vec2f{width, height}, shapeId));
   }
 }

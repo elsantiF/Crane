@@ -42,6 +42,11 @@ using UnorderedMap = std::unordered_map<K, V>;
 template <typename T, typename U>
 using Pair = std::pair<T, U>;
 
+template <typename T, typename U>
+Pair<T, U> MakePair(T &&first, U &&second) {
+  return std::make_pair<T, U>(std::forward<T>(first), std::forward<U>(second));
+}
+
 // -- Optional Type --
 template <typename T>
 using Optional = std::optional<T>;
