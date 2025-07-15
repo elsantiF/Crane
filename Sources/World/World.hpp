@@ -17,6 +17,7 @@ namespace Crane::World {
     World(const World &) = delete;
     World &operator=(const World &) = delete;
 
+    void FixedUpdate(f64 deltaTime);
     void Update(f64 deltaTime);
     void Render(Graphics::IRenderer &renderer);
 
@@ -33,6 +34,7 @@ namespace Crane::World {
   private:
     Physics::PhysicsWorld m_PhysicsWorld;
     entt::registry m_Registry;
+    Vector<Scope<Systems::IFixedUpdateSystem>> m_FixedUpdateSystems;
     Vector<Scope<Systems::IUpdateSystem>> m_UpdateSystems;
     Vector<Scope<Systems::IRenderSystem>> m_RenderSystems;
 

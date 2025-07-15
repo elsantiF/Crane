@@ -4,10 +4,10 @@
 #include "ISystem.hpp"
 
 namespace Crane::Systems {
-  class PhysicsSystem : public IUpdateSystem {
+  class PhysicsSystem : public IFixedUpdateSystem {
   public:
     PhysicsSystem() = default;
 
-    void Update(World::World &world, f64 deltaTime) override;
+    void FixedUpdate(World::World &world, f64 deltaTime) override;
   };
 }

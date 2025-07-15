@@ -11,6 +11,12 @@ namespace Crane::Graphics {
 }
 
 namespace Crane::Systems {
+  class IFixedUpdateSystem {
+  public:
+    virtual ~IFixedUpdateSystem() = default;
+    virtual void FixedUpdate(World::World &world, f64 deltaTime) = 0;
+  };
+
   class IUpdateSystem {
   public:
     virtual ~IUpdateSystem() = default;

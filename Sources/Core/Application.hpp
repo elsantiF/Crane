@@ -22,6 +22,7 @@ namespace Crane::Core {
     void InitializeImGui();
     void InitializeEntities();
     void HandleEvents();
+    void FixedUpdate();
     void Update(f64 deltaTime);
     void Render();
     void Cleanup();
@@ -33,9 +34,8 @@ namespace Crane::Core {
     bool m_Running;
 
     f64 m_DeltaTime = 0.0;
-
-    const f32 DELTA_LOW_CAP = 0.0167f; // 60 FPS, keep below it
-    const f32 DELTA_HIGH_CAP = 0.1f;   // 10 FPS, keep above it
+    f64 m_Accumulator = 0.0;
+    const f64 PHYSICS_TIMESTEP = 1.0 / 60.0;
 
     const i32 WINDOW_WIDTH = 1600;
     const i32 WINDOW_HEIGHT = 900;

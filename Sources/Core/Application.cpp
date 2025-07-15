@@ -103,6 +103,11 @@ namespace Crane::Core {
     }
   }
 
+  void Application::FixedUpdate() {
+    PROFILE_SCOPE();
+    m_World.FixedUpdate(PHYSICS_TIMESTEP);
+  }
+
   void Application::Update(f64 deltaTime) {
     PROFILE_SCOPE();
     m_World.Update(deltaTime);
@@ -138,14 +143,15 @@ namespace Crane::Core {
     while (m_Running) {
       const f64 currentTime = SDL_GetTicks() / 1000.0;
       m_DeltaTime = currentTime - lastTime;
-
-      if (m_DeltaTime < DELTA_LOW_CAP) {
-        m_DeltaTime = DELTA_LOW_CAP;
-      } else if (m_DeltaTime > DELTA_HIGH_CAP) {
-        m_DeltaTime = DELTA_HIGH_CAP;
-      }
+      m_Accumulator += m_DeltaTime;
 
       HandleEvents();
+
+      while (m_Accumulator >= PHYSICS_TIMESTEP) {
+        FixedUpdate();
+        m_Accumulator -= PHYSICS_TIMESTEP;
+      }
+
       Update(m_DeltaTime);
       Render();
 

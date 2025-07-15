@@ -6,7 +6,7 @@
 #include "World/World.hpp"
 
 namespace Crane::Systems {
-  void PhysicsSystem::Update(World::World &world, f64 deltaTime) {
+  void PhysicsSystem::FixedUpdate(World::World &world, f64 deltaTime) {
     PROFILE_SCOPE();
     auto &registry = world.GetRegistry();
     auto view = registry.view<Components::Rigidbody, Components::BoxCollider, Components::Transform>();

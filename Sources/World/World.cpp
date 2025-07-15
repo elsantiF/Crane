@@ -6,8 +6,15 @@
 
 namespace Crane::World {
   World::World() : m_PhysicsWorld() {
-    m_UpdateSystems.emplace_back(MakeScope<Systems::PhysicsSystem>());
+    m_FixedUpdateSystems.emplace_back(MakeScope<Systems::PhysicsSystem>());
     m_RenderSystems.emplace_back(MakeScope<Systems::RenderingSystem>());
+  }
+
+  void World::FixedUpdate(f64 deltaTime) {
+    PROFILE_SCOPE();
+    for (auto &system : m_FixedUpdateSystems) {
+      system->FixedUpdate(*this, deltaTime);
+    }
   }
 
   void World::Update(f64 deltaTime) {
