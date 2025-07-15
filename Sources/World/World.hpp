@@ -33,8 +33,8 @@ namespace Crane::World {
   private:
     Physics::PhysicsWorld m_PhysicsWorld;
     entt::registry m_Registry;
-    Vector<Systems::IUpdateSystem *> m_UpdateSystems;
-    Vector<Systems::IRenderSystem *> m_RenderSystems;
+    Vector<Scope<Systems::IUpdateSystem>> m_UpdateSystems;
+    Vector<Scope<Systems::IRenderSystem>> m_RenderSystems;
 
     const f32 PIXELS_PER_METER = 30.0f;
   };

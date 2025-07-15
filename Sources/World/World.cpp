@@ -6,20 +6,20 @@
 
 namespace Crane::World {
   World::World() : m_PhysicsWorld() {
-    m_UpdateSystems.emplace_back(new Systems::PhysicsSystem());
-    m_RenderSystems.emplace_back(new Systems::RenderingSystem());
+    m_UpdateSystems.emplace_back(MakeScope<Systems::PhysicsSystem>());
+    m_RenderSystems.emplace_back(MakeScope<Systems::RenderingSystem>());
   }
 
   void World::Update(f64 deltaTime) {
     PROFILE_SCOPE();
-    for (auto system : m_UpdateSystems) {
+    for (auto &system : m_UpdateSystems) {
       system->Update(*this, deltaTime);
     }
   }
 
   void World::Render(Graphics::IRenderer &renderer) {
     PROFILE_SCOPE();
-    for (auto system : m_RenderSystems) {
+    for (auto &system : m_RenderSystems) {
       system->Render(*this, renderer);
     }
   }
