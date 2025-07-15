@@ -5,10 +5,7 @@
 #include "Systems/RenderingSystem.hpp"
 
 namespace Crane::World {
-  World::World() : m_PhysicsWorld() {
-    m_FixedUpdateSystems.emplace_back(MakeScope<Systems::PhysicsSystem>());
-    m_RenderSystems.emplace_back(MakeScope<Systems::RenderingSystem>());
-  }
+  World::World() : m_PhysicsWorld() { m_FixedUpdateSystems.emplace_back(MakeScope<Systems::PhysicsSystem>()); }
 
   void World::FixedUpdate(f64 deltaTime) {
     PROFILE_SCOPE();
@@ -21,13 +18,6 @@ namespace Crane::World {
     PROFILE_SCOPE();
     for (auto &system : m_UpdateSystems) {
       system->Update(*this, deltaTime);
-    }
-  }
-
-  void World::Render(Graphics::IRenderer &renderer) {
-    PROFILE_SCOPE();
-    for (auto &system : m_RenderSystems) {
-      system->Render(*this, renderer);
     }
   }
 

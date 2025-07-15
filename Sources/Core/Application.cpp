@@ -18,6 +18,8 @@ namespace Crane::Core {
     if (!InitializeSDL()) {
       return false;
     }
+    m_World = MakeScope<World::World>();
+    m_RenderingSystem = MakeScope<Systems::RenderingSystem>(*m_Renderer, *m_World);
     InitializeImGui();
     InitializeEntities();
     m_Running = true;
@@ -56,11 +58,11 @@ namespace Crane::Core {
 
   void Application::InitializeEntities() {
     PROFILE_SCOPE();
-    auto &physicsWorld = m_World.GetPhysicsWorld();
-    auto ppm = m_World.GetPixelsPerMeter();
+    auto &physicsWorld = m_World->GetPhysicsWorld();
+    auto ppm = m_World->GetPixelsPerMeter();
 
     // Create ground body
-    World::Entity ground = m_World.CreateEntity();
+    World::Entity ground = m_World->CreateEntity();
     {
       ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f});
       ground.AddComponent<Components::Renderable>(Graphics::Color{0, 255, 0, 255}, 1000.0f, 50.0f);
@@ -71,7 +73,7 @@ namespace Crane::Core {
     }
 
     // Create a dynamic box body
-    World::Entity box = m_World.CreateEntity();
+    World::Entity box = m_World->CreateEntity();
     {
       box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
       box.AddComponent<Components::Renderable>(Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
@@ -81,7 +83,7 @@ namespace Crane::Core {
       box.AddComponent<Components::BoxCollider>(boxcollider);
     }
 
-    World::Entity blueBox = m_World.CreateEntity();
+    World::Entity blueBox = m_World->CreateEntity();
     {
       blueBox.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
       blueBox.AddComponent<Components::Renderable>(Graphics::Color{0, 0, 255, 255}, 40.0f, 40.0f);
@@ -105,12 +107,12 @@ namespace Crane::Core {
 
   void Application::FixedUpdate() {
     PROFILE_SCOPE();
-    m_World.FixedUpdate(PHYSICS_TIMESTEP);
+    m_World->FixedUpdate(PHYSICS_TIMESTEP);
   }
 
   void Application::Update(f64 deltaTime) {
     PROFILE_SCOPE();
-    m_World.Update(deltaTime);
+    m_World->Update(deltaTime);
   }
 
   void Application::Render() {
@@ -118,7 +120,7 @@ namespace Crane::Core {
     m_Renderer->BeginFrame();
     m_Renderer->Clear(Graphics::Color{0.05f, 0.05f, 0.05f, 1.0f});
 
-    m_World.Render(*m_Renderer);
+    m_RenderingSystem->Render();
 
     m_Renderer->BeginImGuiFrame();
     ImGui::NewFrame();
@@ -129,7 +131,7 @@ namespace Crane::Core {
     ImGui::Text("ESC to exit");
     ImGui::End();
 
-    auto &registry = m_World.GetRegistry();
+    auto &registry = m_World->GetRegistry();
     Crane::Editor::EntityDisplay::DrawEntityList(registry);
 
     ImGui::Render();

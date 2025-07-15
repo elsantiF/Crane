@@ -3,6 +3,7 @@
 #include "Core/Types.hpp"
 #include "Physics/PhysicsWorld.hpp"
 #include "Systems/ISystem.hpp"
+#include "Systems/RenderingSystem.hpp"
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
 
@@ -19,7 +20,6 @@ namespace Crane::World {
 
     void FixedUpdate(f64 deltaTime);
     void Update(f64 deltaTime);
-    void Render(Graphics::IRenderer &renderer);
 
     Entity CreateEntity();
 
@@ -36,7 +36,6 @@ namespace Crane::World {
     entt::registry m_Registry;
     Vector<Scope<Systems::IFixedUpdateSystem>> m_FixedUpdateSystems;
     Vector<Scope<Systems::IUpdateSystem>> m_UpdateSystems;
-    Vector<Scope<Systems::IRenderSystem>> m_RenderSystems;
 
     const f32 PIXELS_PER_METER = 30.0f;
   };

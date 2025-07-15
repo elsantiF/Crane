@@ -1,16 +1,23 @@
 #pragma once
 
-#include "ISystem.hpp"
-
-namespace Crane::Graphics {
-  class IRenderer;
+namespace Crane {
+  namespace Graphics {
+    class IRenderer;
+  }
+  namespace World {
+    class World;
+  }
 }
 
 namespace Crane::Systems {
-  class RenderingSystem : public IRenderSystem {
+  class RenderingSystem {
   public:
-    RenderingSystem() = default;
+    RenderingSystem(Graphics::IRenderer &renderer, World::World &world) : m_Renderer(renderer), m_World(world) {}
 
-    void Render(World::World &world, Graphics::IRenderer &renderer) override;
+    void Render();
+
+  private:
+    Graphics::IRenderer &m_Renderer;
+    World::World &m_World;
   };
 }
