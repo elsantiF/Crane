@@ -23,6 +23,7 @@ namespace Crane::Core {
     InitializeImGui();
     InitializeEntities();
     m_Running = true;
+    OnInitialize();
     return true;
   }
 
@@ -107,21 +108,25 @@ namespace Crane::Core {
 
   void Application::FixedUpdate() {
     PROFILE_SCOPE();
+    OnPreFixedUpdate();
     m_World->FixedUpdate(PHYSICS_TIMESTEP);
+    OnPostFixedUpdate();
   }
 
   void Application::Update(f64 deltaTime) {
     PROFILE_SCOPE();
+    OnPreUpdate();
     m_World->Update(deltaTime);
+    OnPostUpdate();
   }
 
   void Application::Render() {
     PROFILE_SCOPE();
     m_Renderer->BeginFrame();
     m_Renderer->Clear(Graphics::Color{0.05f, 0.05f, 0.05f, 1.0f});
-
+    OnPreRender();
     m_RenderingSystem->Render();
-
+    OnPostRender();
     m_Renderer->BeginImGuiFrame();
     ImGui::NewFrame();
 
@@ -133,6 +138,7 @@ namespace Crane::Core {
 
     auto &registry = m_World->GetRegistry();
     Crane::Editor::EntityDisplay::DrawEntityList(registry);
+    OnImGui();
 
     ImGui::Render();
     m_Renderer->EndImGuiFrame();

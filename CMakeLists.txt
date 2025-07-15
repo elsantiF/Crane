@@ -22,7 +22,7 @@ add_subdirectory("External")
 
 file(GLOB_RECURSE SOURCE_FILES "Sources/*.cpp")
 
-add_executable(Crane ${SOURCE_FILES})
+add_library(Crane ${SOURCE_FILES})
 target_include_directories(Crane PUBLIC "Sources")
 target_include_directories(Crane PUBLIC "External/entt/src")
 target_link_libraries(Crane PUBLIC imgui SDL3::SDL3 box2d glm::glm Tracy::TracyClient)
@@ -45,3 +45,5 @@ else()
         target_compile_definitions(Crane PUBLIC NDEBUG)
     endif()
 endif()
+
+add_subdirectory("Samples")

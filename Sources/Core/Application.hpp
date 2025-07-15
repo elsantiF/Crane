@@ -27,6 +27,16 @@ namespace Crane::Core {
     void Render();
     void Cleanup();
 
+  protected:
+    virtual void OnInitialize() = 0;
+    virtual void OnPreFixedUpdate() = 0;
+    virtual void OnPostFixedUpdate() = 0;
+    virtual void OnPreUpdate() = 0;
+    virtual void OnPostUpdate() = 0;
+    virtual void OnPreRender() = 0;
+    virtual void OnPostRender() = 0;
+    virtual void OnImGui() = 0;
+
   private:
     SDL_Window *m_Window;
     Scope<Graphics::IRenderer> m_Renderer;
