@@ -1,11 +1,7 @@
 #include "Application.hpp"
-#include "Components/Renderable.hpp"
-#include "Components/RigidBody.hpp"
-#include "Components/Transform.hpp"
 #include "Editor/EntityDisplay.hpp"
 #include "Graphics/Color.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
-#include "Physics/PhysicsFactory.hpp"
 #include "Profiler.hpp"
 #include "World/Entity.hpp"
 #include <imgui.h>
@@ -21,7 +17,6 @@ namespace Crane::Core {
     m_World = MakeScope<World::World>();
     m_RenderingSystem = MakeScope<Systems::RenderingSystem>(*m_Renderer, *m_World);
     InitializeImGui();
-    InitializeEntities();
     m_Running = true;
     OnInitialize();
     return true;
@@ -55,40 +50,6 @@ namespace Crane::Core {
     ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     ImGui::StyleColorsDark();
     m_Renderer->InitializeImGui();
-  }
-
-  void Application::InitializeEntities() {
-    PROFILE_SCOPE();
-    auto &physicsWorld = m_World->GetPhysicsWorld();
-    auto ppm = m_World->GetPixelsPerMeter();
-
-    // Create ground body
-    World::Entity ground = m_World->CreateEntity();
-    {
-      ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f});
-      ground.AddComponent<Components::Renderable>(Graphics::Color{0, 255, 0, 255}, 1000.0f, 50.0f);
-
-      auto [rb, boxcollider] = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {512, 700, 1000, 50, Physics::BodyType::Static}, ppm);
-      ground.AddComponent<Components::Rigidbody>(rb);
-      ground.AddComponent<Components::BoxCollider>(boxcollider);
-    }
-
-    // Create a dynamic box body
-    World::Entity box = m_World->CreateEntity();
-    {
-      box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
-      box.AddComponent<Components::Renderable>(Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
-
-      auto [rb, boxcollider] = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {400, 100, 40, 40, Physics::BodyType::Dynamic}, ppm);
-      box.AddComponent<Components::Rigidbody>(rb);
-      box.AddComponent<Components::BoxCollider>(boxcollider);
-    }
-
-    World::Entity blueBox = m_World->CreateEntity();
-    {
-      blueBox.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
-      blueBox.AddComponent<Components::Renderable>(Graphics::Color{0, 0, 255, 255}, 40.0f, 40.0f);
-    }
   }
 
   void Application::HandleEvents() {

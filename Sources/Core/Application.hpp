@@ -17,10 +17,11 @@ namespace Crane::Core {
     bool Initialize();
     void Run();
 
+    World::World &GetWorld() { return *m_World; }
+
   private:
     bool InitializeSDL();
     void InitializeImGui();
-    void InitializeEntities();
     void HandleEvents();
     void FixedUpdate();
     void Update(f64 deltaTime);
