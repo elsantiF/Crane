@@ -1,5 +1,6 @@
 #include "PhysicsWorld.hpp"
 #include "Core/Profiler.hpp"
+#include <Core/Config.hpp>
 
 namespace Crane::Physics {
   PhysicsWorld::PhysicsWorld() {

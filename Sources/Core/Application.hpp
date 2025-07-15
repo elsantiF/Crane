@@ -47,9 +47,5 @@ namespace Crane::Core {
 
     f64 m_DeltaTime = 0.0;
     f64 m_Accumulator = 0.0;
-    const f64 PHYSICS_TIMESTEP = 1.0 / 60.0;
-
-    const i32 WINDOW_WIDTH = 1600;
-    const i32 WINDOW_HEIGHT = 900;
   };
 }

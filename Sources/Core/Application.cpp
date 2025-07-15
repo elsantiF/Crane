@@ -1,6 +1,6 @@
 #include "Application.hpp"
+#include "Config.hpp"
 #include "Editor/EntityDisplay.hpp"
-#include "Graphics/Color.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Profiler.hpp"
 #include "World/Entity.hpp"
@@ -84,7 +84,7 @@ namespace Crane::Core {
   void Application::Render() {
     PROFILE_SCOPE();
     m_Renderer->BeginFrame();
-    m_Renderer->Clear(Graphics::Color{0.05f, 0.05f, 0.05f, 1.0f});
+    m_Renderer->Clear(Colors::CLEAR_COLOR);
     OnPreRender();
     m_RenderingSystem->Render();
     OnPostRender();

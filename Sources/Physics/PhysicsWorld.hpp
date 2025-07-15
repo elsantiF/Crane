@@ -18,7 +18,5 @@ namespace Crane::Physics {
 
   private:
     b2WorldId m_WorldId;
-
-    const i32 PHYSICS_STEPS = 4;
   };
 }
