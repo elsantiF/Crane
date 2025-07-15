@@ -9,11 +9,11 @@ namespace Crane::Systems {
   void PhysicsSystem::FixedUpdate(World::World &world, f64 deltaTime) {
     PROFILE_SCOPE();
     auto &registry = world.GetRegistry();
-    auto view = registry.view<Components::Rigidbody, Components::BoxCollider, Components::Transform>();
+    auto group = registry.group<Components::Rigidbody, Components::BoxCollider, Components::Transform>();
     auto ppm = world.GetPixelsPerMeter();
     bool anyTransformDirty = false;
 
-    for (auto [entity, rigidBody, boxCollider, transform] : view.each()) {
+    for (auto [entity, rigidBody, boxCollider, transform] : group.each()) {
       if (!b2Body_IsValid(rigidBody.bodyId) || (!transform.dirty && !boxCollider.dirty)) {
         continue;
       }
@@ -55,7 +55,7 @@ namespace Crane::Systems {
 
     world.GetPhysicsWorld().Update(deltaTime);
 
-    for (auto [entity, rigidBody, boxCollider, transform] : view.each()) {
+    for (auto [entity, rigidBody, boxCollider, transform] : group.each()) {
       if (!b2Body_IsValid(rigidBody.bodyId)) {
         continue;
       }
