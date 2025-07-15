@@ -57,6 +57,7 @@ namespace Crane::Core {
   void Application::InitializeEntities() {
     PROFILE_SCOPE();
     auto &physicsWorld = m_World.GetPhysicsWorld();
+    auto ppm = m_World.GetPixelsPerMeter();
 
     // Create ground body
     World::Entity ground = m_World.CreateEntity();
@@ -64,8 +65,7 @@ namespace Crane::Core {
       ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f});
       ground.AddComponent<Components::Renderable>(Graphics::Color{0, 255, 0, 255}, 1000.0f, 50.0f);
 
-      auto [rb, boxcollider] =
-          Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {512, 700, 1000, 50, Physics::BodyType::Static}, PIXELS_PER_METER);
+      auto [rb, boxcollider] = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {512, 700, 1000, 50, Physics::BodyType::Static}, ppm);
       ground.AddComponent<Components::Rigidbody>(rb);
       ground.AddComponent<Components::BoxCollider>(boxcollider);
     }
@@ -76,7 +76,7 @@ namespace Crane::Core {
       box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
       box.AddComponent<Components::Renderable>(Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
 
-      auto [rb, boxcollider] = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {400, 100, 40, 40, Physics::BodyType::Dynamic}, PIXELS_PER_METER);
+      auto [rb, boxcollider] = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {400, 100, 40, 40, Physics::BodyType::Dynamic}, ppm);
       box.AddComponent<Components::Rigidbody>(rb);
       box.AddComponent<Components::BoxCollider>(boxcollider);
     }
