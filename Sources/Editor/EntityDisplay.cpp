@@ -23,34 +23,30 @@ namespace Crane::Editor {
     ImGui::PushID(static_cast<i32>(entity));
     ImGui::Text("Entity ID: %d", static_cast<i32>(entity));
 
-    if (registry.any_of<Components::Transform>(entity)) {
+    if (auto *transform = registry.try_get<Components::Transform>(entity)) {
       if (ImGui::CollapsingHeader("Transform")) {
-        auto &transform = registry.get<Components::Transform>(entity);
-        bool positionChanged = ImGui::DragFloat2("Position", &transform.position.x, 0.1f);
-        bool rotationChanged = ImGui::DragFloat("Rotation", &transform.rotation, 0.1f);
+        bool positionChanged = ImGui::DragFloat2("Position", &transform->position.x, 0.1f);
+        bool rotationChanged = ImGui::DragFloat("Rotation", &transform->rotation, 0.1f);
 
         if (positionChanged || rotationChanged) {
-          transform.dirty = true;
+          transform->dirty = true;
         }
       }
     }
 
-    if (registry.any_of<Components::Renderable>(entity)) {
+    if (auto *renderable = registry.try_get<Components::Renderable>(entity)) {
       if (ImGui::CollapsingHeader("Renderable")) {
-        auto &renderable = registry.get<Components::Renderable>(entity);
-        ImGui::ColorEdit4("Color", &renderable.color.r);
-        ImGui::DragFloat("Width", &renderable.width, 0.1f);
-        ImGui::DragFloat("Height", &renderable.height, 0.1f);
+        ImGui::ColorEdit4("Color", &renderable->color.r);
+        ImGui::DragFloat("Width", &renderable->width, 0.1f);
+        ImGui::DragFloat("Height", &renderable->height, 0.1f);
       }
     }
 
-    if (registry.any_of<Components::BoxCollider>(entity)) {
+    if (auto *boxCollider = registry.try_get<Components::BoxCollider>(entity)) {
       if (ImGui::CollapsingHeader("Box Collider")) {
-        auto &boxCollider = registry.get<Components::BoxCollider>(entity);
-        bool changed = ImGui::DragFloat2("Dimensions", &boxCollider.dimensions.x, 0.1f);
-
+        bool changed = ImGui::DragFloat2("Dimensions", &boxCollider->dimensions.x, 0.1f);
         if (changed) {
-          boxCollider.dirty = true;
+          boxCollider->dirty = true;
         }
       }
     }
