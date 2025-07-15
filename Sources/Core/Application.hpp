@@ -36,5 +36,8 @@ namespace Crane::Core {
 
     const f32 DELTA_LOW_CAP = 0.0167f; // 60 FPS, keep below it
     const f32 DELTA_HIGH_CAP = 0.1f;   // 10 FPS, keep above it
+
+    const i32 WINDOW_WIDTH = 1600;
+    const i32 WINDOW_HEIGHT = 900;
   };
 }
