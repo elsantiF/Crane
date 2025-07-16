@@ -12,7 +12,7 @@ namespace Crane::World {
 
   class World {
   public:
-    World();
+    World() : m_PhysicsWorld() {};
     ~World() = default;
 
     World(const World &) = delete;
@@ -22,6 +22,15 @@ namespace Crane::World {
     void Update(f64 deltaTime);
 
     Entity CreateEntity();
+
+    template <typename T, typename... Args>
+    void AddSystem(Args &&...args) {
+      if constexpr (std::is_base_of_v<Systems::IFixedUpdateSystem, T>) {
+        m_FixedUpdateSystems.emplace_back(MakeScope<T>(std::forward<Args>(args)...));
+      } else if constexpr (std::is_base_of_v<Systems::IUpdateSystem, T>) {
+        m_UpdateSystems.emplace_back(MakeScope<T>(std::forward<Args>(args)...));
+      }
+    }
 
     Physics::PhysicsWorld &GetPhysicsWorld() { return m_PhysicsWorld; }
     const Physics::PhysicsWorld &GetPhysicsWorld() const { return m_PhysicsWorld; }

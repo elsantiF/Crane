@@ -1,12 +1,9 @@
 #include "World.hpp"
 #include "Core/Profiler.hpp"
 #include "Entity.hpp"
-#include "Systems/PhysicsSystem.hpp"
 #include "Systems/RenderingSystem.hpp"
 
 namespace Crane::World {
-  World::World() : m_PhysicsWorld() { m_FixedUpdateSystems.emplace_back(MakeScope<Systems::PhysicsSystem>()); }
-
   void World::FixedUpdate(f64 deltaTime) {
     PROFILE_SCOPE();
     for (auto &system : m_FixedUpdateSystems) {
