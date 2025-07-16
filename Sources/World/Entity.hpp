@@ -7,7 +7,7 @@ namespace Crane::World {
 
   class Entity {
   public:
-    Entity(World *world, entt::entity handle) : m_Entity(handle), m_World(world) {}
+    Entity(World &world, entt::entity handle) : m_Entity(handle), m_World(world) {}
 
     entt::entity GetHandle() const { return m_Entity; }
 
@@ -19,7 +19,7 @@ namespace Crane::World {
 
   private:
     entt::entity m_Entity{entt::null};
-    World *m_World = nullptr;
+    World &m_World;
   };
 }
 
