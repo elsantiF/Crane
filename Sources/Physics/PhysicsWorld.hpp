@@ -14,8 +14,6 @@ namespace Crane::Physics {
 
     b2BodyId CreateBody(const b2BodyDef &bodyDef);
 
-    b2WorldId GetWorldId() const { return m_WorldId; }
-
   private:
     b2WorldId m_WorldId;
   };
