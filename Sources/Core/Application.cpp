@@ -91,19 +91,16 @@ namespace Crane::Core {
     m_RenderingSystem->Render();
     OnPostRender();
     m_Renderer->BeginImGuiFrame();
-    ImGui::NewFrame();
 
     ImGui::Begin("Stats");
     ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
     ImGui::Text("Delta: %.3f ms", m_DeltaTime * 1000.0);
     ImGui::Text("ESC to exit");
-    ImGui::End();
 
     auto &registry = m_World->GetRegistry();
     Crane::Editor::EntityDisplay::DrawEntityList(registry);
     OnImGui();
 
-    ImGui::Render();
     m_Renderer->EndImGuiFrame();
     m_Renderer->Present();
     m_Renderer->EndFrame();

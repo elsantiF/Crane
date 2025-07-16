@@ -36,9 +36,14 @@ namespace Crane::Graphics::SDLRenderer {
   void SDLRenderer::BeginImGuiFrame() {
     ImGui_ImplSDLRenderer3_NewFrame();
     ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
   }
 
-  void SDLRenderer::EndImGuiFrame() { ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_Renderer); }
+  void SDLRenderer::EndImGuiFrame() {
+    ImGui::End();
+    ImGui::Render();
+    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_Renderer);
+  }
 
   void SDLRenderer::BeginFrame() {
     // Nothing needed
