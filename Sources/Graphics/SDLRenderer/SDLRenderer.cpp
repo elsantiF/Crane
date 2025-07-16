@@ -68,7 +68,12 @@ namespace Crane::Graphics::SDLRenderer {
 
   void SDLRenderer::DrawRect(const Rect &rect, const Color &color) {
     PROFILE_SCOPE();
-    SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
+
+    static Color currentColor{-1.0f, -1.0f, -1.0f, -1.0f};
+    if (currentColor != color) {
+      SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
+      currentColor = color;
+    }
 
     SDL_FRect sdlRect = static_cast<SDL_FRect>(rect);
     SDL_RenderFillRect(m_Renderer, &sdlRect);
