@@ -40,11 +40,15 @@ namespace Crane::Systems {
     void RemoveSystem() {
       if constexpr (std::is_base_of_v<IFixedUpdateSystem, T>) {
         m_FixedUpdateSystems.erase(std::remove_if(m_FixedUpdateSystems.begin(), m_FixedUpdateSystems.end(),
-                                                  [](const Scope<IFixedUpdateSystem> &system) { return dynamic_cast<T *>(system.get()) != nullptr; }),
+                                                  [](const Scope<IFixedUpdateSystem> &system) {
+                                                    return dynamic_cast<T *>(system.get()) != nullptr;
+                                                  }),
                                    m_FixedUpdateSystems.end());
       } else if constexpr (std::is_base_of_v<IUpdateSystem, T>) {
         m_UpdateSystems.erase(std::remove_if(m_UpdateSystems.begin(), m_UpdateSystems.end(),
-                                             [](const Scope<IUpdateSystem> &system) { return dynamic_cast<T *>(system.get()) != nullptr; }),
+                                             [](const Scope<IUpdateSystem> &system) {
+                                               return dynamic_cast<T *>(system.get()) != nullptr;
+                                             }),
                               m_UpdateSystems.end());
       }
     }

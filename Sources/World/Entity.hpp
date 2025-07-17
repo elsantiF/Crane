@@ -9,7 +9,9 @@ namespace Crane::World {
   public:
     Entity(World &world, entt::entity handle) : m_Entity(handle), m_World(world) {}
 
-    entt::entity GetHandle() const { return m_Entity; }
+    entt::entity GetHandle() const {
+      return m_Entity;
+    }
 
     template <typename T, typename... Args>
     T &AddComponent(Args &&...args);

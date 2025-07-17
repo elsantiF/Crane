@@ -23,11 +23,25 @@ namespace Crane::World {
 
     Entity CreateEntity();
 
-    Physics::PhysicsWorld &GetPhysicsWorld() { return m_PhysicsWorld; }
-    const Physics::PhysicsWorld &GetPhysicsWorld() const { return m_PhysicsWorld; }
-    entt::registry &GetRegistry() { return m_Registry; }
-    f32 GetPixelsPerMeter() const { return PIXELS_PER_METER; }
-    Systems::SystemManager &GetSystemManager() { return m_SystemManager; }
+    Physics::PhysicsWorld &GetPhysicsWorld() {
+      return m_PhysicsWorld;
+    }
+
+    const Physics::PhysicsWorld &GetPhysicsWorld() const {
+      return m_PhysicsWorld;
+    }
+
+    entt::registry &GetRegistry() {
+      return m_Registry;
+    }
+
+    f32 GetPixelsPerMeter() const {
+      return PIXELS_PER_METER;
+    }
+
+    Systems::SystemManager &GetSystemManager() {
+      return m_SystemManager;
+    }
 
   private:
     void WakeUpBodies();

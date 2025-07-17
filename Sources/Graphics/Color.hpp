@@ -10,10 +10,17 @@ namespace Crane::Graphics {
     Color(f32 r, f32 g, f32 b, f32 a = 1.0) : r(r), g(g), b(b), a(a) {}
     Color(const SDL_FColor &color) : r(color.r), g(color.g), b(color.b), a(color.a) {}
 
-    operator SDL_FColor() const { return SDL_FColor{r, g, b, a}; }
+    operator SDL_FColor() const {
+      return SDL_FColor{r, g, b, a};
+    }
 
-    bool operator==(const Color &other) const { return r == other.r && g == other.g && b == other.b && a == other.a; }
-    bool operator!=(const Color &other) const { return !(*this == other); }
+    bool operator==(const Color &other) const {
+      return r == other.r && g == other.g && b == other.b && a == other.a;
+    }
+
+    bool operator!=(const Color &other) const {
+      return !(*this == other);
+    }
 
   public:
     f32 r, g, b, a;

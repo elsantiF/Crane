@@ -12,12 +12,16 @@ namespace Crane::Core {
   class Application {
   public:
     Application() : m_Window(nullptr), m_Renderer(nullptr), m_Running(false) {}
-    ~Application() { Cleanup(); }
+    ~Application() {
+      Cleanup();
+    }
 
     bool Initialize();
     void Run();
 
-    World::World &GetWorld() { return *m_World; }
+    World::World &GetWorld() {
+      return *m_World;
+    }
 
   private:
     bool InitializeSDL();

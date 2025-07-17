@@ -9,17 +9,41 @@ namespace Crane::Graphics {
     Rect(f32 x = 0.0f, f32 y = 0.0f, f32 width = 0.0f, f32 height = 0.0f) : m_X(x), m_Y(y), m_Width(width), m_Height(height) {}
     Rect(const SDL_FRect &rect) : m_X(rect.x), m_Y(rect.y), m_Width(rect.w), m_Height(rect.h) {}
 
-    f32 GetX() const { return m_X; }
-    f32 GetY() const { return m_Y; }
-    f32 GetWidth() const { return m_Width; }
-    f32 GetHeight() const { return m_Height; }
+    f32 GetX() const {
+      return m_X;
+    }
 
-    void SetX(f32 x) { m_X = x; }
-    void SetY(f32 y) { m_Y = y; }
-    void SetWidth(f32 width) { m_Width = width; }
-    void SetHeight(f32 height) { m_Height = height; }
+    f32 GetY() const {
+      return m_Y;
+    }
 
-    operator SDL_FRect() const { return SDL_FRect{m_X, m_Y, m_Width, m_Height}; }
+    f32 GetWidth() const {
+      return m_Width;
+    }
+
+    f32 GetHeight() const {
+      return m_Height;
+    }
+
+    void SetX(f32 x) {
+      m_X = x;
+    }
+
+    void SetY(f32 y) {
+      m_Y = y;
+    }
+
+    void SetWidth(f32 width) {
+      m_Width = width;
+    }
+
+    void SetHeight(f32 height) {
+      m_Height = height;
+    }
+
+    operator SDL_FRect() const {
+      return SDL_FRect{m_X, m_Y, m_Width, m_Height};
+    }
 
   private:
     f32 m_X, m_Y;
