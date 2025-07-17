@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Config.hpp"
 #include "Core/Types.hpp"
 #include "Physics/PhysicsWorld.hpp"
 #include "Systems/SystemManager.hpp"
@@ -35,7 +36,5 @@ namespace Crane::World {
     Physics::PhysicsWorld m_PhysicsWorld;
     entt::registry m_Registry;
     Systems::SystemManager m_SystemManager;
-
-    const f32 PIXELS_PER_METER = 30.0f;
   };
 }

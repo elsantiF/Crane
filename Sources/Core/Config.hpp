@@ -17,4 +17,8 @@ namespace Crane {
   namespace Colors {
     const Graphics::Color CLEAR_COLOR = {0.05f, 0.05f, 0.05f, 1.0f};
   }
+
+  namespace World {
+    constexpr f32 PIXELS_PER_METER = 30.0f;
+  }
 }
