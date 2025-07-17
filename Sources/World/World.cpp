@@ -1,21 +1,16 @@
 #include "World.hpp"
 #include "Core/Profiler.hpp"
 #include "Entity.hpp"
-#include "Systems/RenderingSystem.hpp"
 
 namespace Crane::World {
   void World::FixedUpdate(f64 deltaTime) {
     PROFILE_SCOPE();
-    for (auto &system : m_FixedUpdateSystems) {
-      system->FixedUpdate(*this, deltaTime);
-    }
+    m_SystemManager.FixedUpdateSystems(deltaTime);
   }
 
   void World::Update(f64 deltaTime) {
     PROFILE_SCOPE();
-    for (auto &system : m_UpdateSystems) {
-      system->Update(*this, deltaTime);
-    }
+    m_SystemManager.UpdateSystems(deltaTime);
   }
 
   Entity World::CreateEntity() {

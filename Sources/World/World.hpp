@@ -2,8 +2,7 @@
 
 #include "Core/Types.hpp"
 #include "Physics/PhysicsWorld.hpp"
-#include "Systems/ISystem.hpp"
-#include "Systems/RenderingSystem.hpp"
+#include "Systems/SystemManager.hpp"
 #include <box2d/box2d.h>
 #include <entt/entt.hpp>
 
@@ -12,7 +11,7 @@ namespace Crane::World {
 
   class World {
   public:
-    World() : m_PhysicsWorld() {};
+    World() : m_PhysicsWorld(), m_SystemManager(*this) {};
     ~World() = default;
 
     World(const World &) = delete;
@@ -23,19 +22,11 @@ namespace Crane::World {
 
     Entity CreateEntity();
 
-    template <typename T, typename... Args>
-    void AddSystem(Args &&...args) {
-      if constexpr (std::is_base_of_v<Systems::IFixedUpdateSystem, T>) {
-        m_FixedUpdateSystems.emplace_back(MakeScope<T>(std::forward<Args>(args)...));
-      } else if constexpr (std::is_base_of_v<Systems::IUpdateSystem, T>) {
-        m_UpdateSystems.emplace_back(MakeScope<T>(std::forward<Args>(args)...));
-      }
-    }
-
     Physics::PhysicsWorld &GetPhysicsWorld() { return m_PhysicsWorld; }
     const Physics::PhysicsWorld &GetPhysicsWorld() const { return m_PhysicsWorld; }
     entt::registry &GetRegistry() { return m_Registry; }
     f32 GetPixelsPerMeter() const { return PIXELS_PER_METER; }
+    Systems::SystemManager &GetSystemManager() { return m_SystemManager; }
 
   private:
     void WakeUpBodies();
@@ -43,8 +34,7 @@ namespace Crane::World {
   private:
     Physics::PhysicsWorld m_PhysicsWorld;
     entt::registry m_Registry;
-    Vector<Scope<Systems::IFixedUpdateSystem>> m_FixedUpdateSystems;
-    Vector<Scope<Systems::IUpdateSystem>> m_UpdateSystems;
+    Systems::SystemManager m_SystemManager;
 
     const f32 PIXELS_PER_METER = 30.0f;
   };
