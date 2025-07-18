@@ -50,7 +50,24 @@ protected:
   void OnPostUpdate() override {}
   void OnPreRender() override {}
   void OnPostRender() override {}
-  void OnImGui() override {}
+  void OnImGui() override {
+    ImGui::Begin("Demo Controls");
+
+    if (ImGui::Button("Spawn Box")) {
+      auto &physicsWorld = GetWorld().GetPhysicsWorld();
+      auto ppm = GetWorld().GetPixelsPerMeter();
+      World::Entity box = GetWorld().CreateEntity();
+      float x = static_cast<float>(rand() % 800 + 100);
+      float y = static_cast<float>(rand() % 400 + 100);
+      box.AddComponent<Components::Transform>(Math::Vec2f{x, y});
+      box.AddComponent<Components::Renderable>(Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
+      auto [rb, boxcollider] = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {x, y, 40, 40, Physics::BodyType::Dynamic}, ppm);
+      box.AddComponent<Components::Rigidbody>(rb);
+      box.AddComponent<Components::BoxCollider>(boxcollider);
+    }
+
+    ImGui::End();
+  }
 };
 
 int main() {
