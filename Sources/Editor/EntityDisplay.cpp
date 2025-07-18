@@ -5,6 +5,7 @@
 #include "Core/Profiler.hpp"
 #include "Core/Types.hpp"
 #include <imgui.h>
+#include <numbers>
 
 namespace Crane::Editor {
   void EntityDisplay::DrawEntityList(entt::registry &registry) {
@@ -26,7 +27,7 @@ namespace Crane::Editor {
     if (auto *transform = registry.try_get<Components::Transform>(entity)) {
       if (ImGui::CollapsingHeader("Transform")) {
         bool positionChanged = ImGui::DragFloat2("Position", &transform->position.x, 0.1f);
-        bool rotationChanged = ImGui::DragFloat("Rotation", &transform->rotation, 0.1f);
+        bool rotationChanged = ImGui::DragFloat("Rotation", &transform->rotation, 0.05f, 0.0f, std::numbers::pi_v<float> * 2.0f);
 
         if (positionChanged || rotationChanged) {
           transform->dirty = true;

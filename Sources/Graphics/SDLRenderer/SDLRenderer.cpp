@@ -66,8 +66,29 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_RenderPresent(m_Renderer);
   }
 
-  void SDLRenderer::DrawRect(const Rect &rect, const Color &color) {
+  void SDLRenderer::DrawRect(const Rect &rect, const Color &color, f32 rotation) {
     PROFILE_SCOPE();
+
+    f32 centerX = rect.GetX() + rect.GetWidth() / 2.0f;
+    f32 centerY = rect.GetY() + rect.GetHeight() / 2.0f;
+
+    f32 cosAngle = cosf(rotation);
+    f32 sinAngle = sinf(rotation);
+
+    SDL_FPoint points[4];
+    f32 halfWidth = rect.GetWidth() / 2.0f;
+    f32 halfHeight = rect.GetHeight() / 2.0f;
+
+    points[0] = {-halfWidth, -halfHeight};
+    points[1] = {halfWidth, -halfHeight};
+    points[2] = {halfWidth, halfHeight};
+    points[3] = {-halfWidth, halfHeight};
+
+    for (i32 i = 0; i < 4; ++i) {
+      f32 x = points[i].x * cosAngle - points[i].y * sinAngle;
+      f32 y = points[i].x * sinAngle + points[i].y * cosAngle;
+      points[i] = {x + centerX, y + centerY};
+    }
 
     static Color currentColor{-1.0f, -1.0f, -1.0f, -1.0f};
     if (currentColor != color) {
@@ -75,7 +96,14 @@ namespace Crane::Graphics::SDLRenderer {
       currentColor = color;
     }
 
-    SDL_FRect sdlRect = static_cast<SDL_FRect>(rect);
-    SDL_RenderFillRect(m_Renderer, &sdlRect);
+    SDL_Vertex vertices[4];
+    for (i32 i = 0; i < 4; ++i) {
+      vertices[i].position = points[i];
+      vertices[i].color = color;
+    }
+
+    i32 indices[6] = {0, 1, 2, 2, 3, 0};
+
+    SDL_RenderGeometry(m_Renderer, nullptr, vertices, 4, indices, 6);
   }
 }

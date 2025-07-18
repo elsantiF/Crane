@@ -22,7 +22,12 @@ namespace Crane::Graphics {
     virtual void Clear(const Color &color) = 0;
     virtual void Present() = 0;
 
-    virtual void DrawRect(const Rect &rect, const Color &color) = 0;
+    /*
+     * Draw a rectangle with the given parameters.
+     * The rectangle is defined by the Rect object, and the color is applied to it.
+     * The rotation is in radians
+     */
+    virtual void DrawRect(const Rect &rect, const Color &color, f32 rotation) = 0;
 
     virtual String GetName() const = 0;
   };
