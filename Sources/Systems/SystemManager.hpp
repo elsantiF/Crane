@@ -11,10 +11,13 @@ namespace Crane::Systems {
 
     template <typename T, typename... Args>
     void AddSystem(Args &&...args) {
+      auto system = MakeScope<T>(std::forward<Args>(args)...);
+      system->Initialize(m_World);
+
       if constexpr (std::is_base_of_v<IFixedUpdateSystem, T>) {
-        m_FixedUpdateSystems.emplace_back(MakeScope<T>(std::forward<Args>(args)...));
+        m_FixedUpdateSystems.emplace_back(std::move(system));
       } else if constexpr (std::is_base_of_v<IUpdateSystem, T>) {
-        m_UpdateSystems.emplace_back(MakeScope<T>(std::forward<Args>(args)...));
+        m_UpdateSystems.emplace_back(std::move(system));
       }
     }
 
@@ -39,17 +42,25 @@ namespace Crane::Systems {
     template <typename T>
     void RemoveSystem() {
       if constexpr (std::is_base_of_v<IFixedUpdateSystem, T>) {
-        m_FixedUpdateSystems.erase(std::remove_if(m_FixedUpdateSystems.begin(), m_FixedUpdateSystems.end(),
-                                                  [](const Scope<IFixedUpdateSystem> &system) {
-                                                    return dynamic_cast<T *>(system.get()) != nullptr;
-                                                  }),
-                                   m_FixedUpdateSystems.end());
+        auto it = m_FixedUpdateSystems.begin();
+        while (it != m_FixedUpdateSystems.end()) {
+          if (auto ptr = dynamic_cast<T *>(it->get())) {
+            ptr->Shutdown(m_World);
+            it = m_FixedUpdateSystems.erase(it);
+          } else {
+            ++it;
+          }
+        }
       } else if constexpr (std::is_base_of_v<IUpdateSystem, T>) {
-        m_UpdateSystems.erase(std::remove_if(m_UpdateSystems.begin(), m_UpdateSystems.end(),
-                                             [](const Scope<IUpdateSystem> &system) {
-                                               return dynamic_cast<T *>(system.get()) != nullptr;
-                                             }),
-                              m_UpdateSystems.end());
+        auto it = m_UpdateSystems.begin();
+        while (it != m_UpdateSystems.end()) {
+          if (auto ptr = dynamic_cast<T *>(it->get())) {
+            ptr->Shutdown(m_World);
+            it = m_UpdateSystems.erase(it);
+          } else {
+            ++it;
+          }
+        }
       }
     }
 

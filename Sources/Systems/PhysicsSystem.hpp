@@ -8,6 +8,14 @@ namespace Crane::Systems {
   public:
     PhysicsSystem() = default;
 
+    void Initialize(World::World &world) override {
+      (void)world;
+    };
+
+    void Shutdown(World::World &world) override {
+      (void)world;
+    };
+
     void FixedUpdate(World::World &world, f64 deltaTime) override;
   };
 }
