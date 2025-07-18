@@ -1,8 +1,8 @@
+#include "Application/Application.hpp"
 #include "Components/BoxCollider.hpp"
 #include "Components/Renderable.hpp"
 #include "Components/RigidBody.hpp"
 #include "Components/Transform.hpp"
-#include "Core/Application.hpp"
 #include "Physics/PhysicsFactory.hpp"
 #include "World/Entity.hpp"
 #include <imgui.h>

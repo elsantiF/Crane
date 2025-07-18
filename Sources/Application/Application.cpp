@@ -1,8 +1,8 @@
 #include "Application.hpp"
-#include "Config.hpp"
+#include "Core/Config.hpp"
+#include "Core/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
-#include "Profiler.hpp"
 #include "Systems/PhysicsSystem.hpp"
 #include "World/Entity.hpp"
 #include <imgui.h>
