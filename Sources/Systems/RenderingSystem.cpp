@@ -14,10 +14,10 @@ namespace Crane::Systems {
     for (auto entity : group) {
       const auto &[transform, renderable] = group.get<Components::Transform, Components::Renderable>(entity);
 
-      Graphics::Rect rect{transform.position.x - renderable.width / 2.0f, transform.position.y - renderable.height / 2.0f, renderable.width,
-                          renderable.height};
+      Graphics::Rect rect{transform.transform.position.x - renderable.width / 2.0f, transform.transform.position.y - renderable.height / 2.0f,
+                          renderable.width, renderable.height};
 
-      renderer.DrawRect(rect, renderable.color, transform.rotation);
+      renderer.DrawRect(rect, renderable.color, transform.transform.rotation);
     }
   }
 }

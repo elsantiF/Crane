@@ -19,8 +19,8 @@ namespace Crane::Systems {
       }
 
       if (transform.dirty) {
-        b2Vec2 position = {transform.position.x / ppm, transform.position.y / ppm};
-        b2Rot angle = b2MakeRot(transform.rotation);
+        b2Vec2 position = {transform.transform.position.x / ppm, transform.transform.position.y / ppm};
+        b2Rot angle = b2MakeRot(transform.transform.rotation);
         b2Body_SetTransform(rigidBody.bodyId, position, angle);
         transform.dirty = false;
       }
@@ -64,9 +64,9 @@ namespace Crane::Systems {
       b2Rot angle = b2Body_GetRotation(rigidBody.bodyId);
       f32 angleDegrees = b2Rot_GetAngle(angle);
 
-      transform.position.x = position.x * ppm;
-      transform.position.y = position.y * ppm;
-      transform.rotation = angleDegrees;
+      transform.transform.position.x = position.x * ppm;
+      transform.transform.position.y = position.y * ppm;
+      transform.transform.rotation = angleDegrees;
     }
   }
 }

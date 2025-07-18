@@ -26,8 +26,8 @@ namespace Crane::Editor {
 
     if (auto *transform = registry.try_get<Components::Transform>(entity)) {
       if (ImGui::CollapsingHeader("Transform")) {
-        bool positionChanged = ImGui::DragFloat2("Position", &transform->position.x, 0.1f);
-        bool rotationChanged = ImGui::DragFloat("Rotation", &transform->rotation, 0.05f, 0.0f, std::numbers::pi_v<float> * 2.0f);
+        bool positionChanged = ImGui::DragFloat2("Position", &transform->transform.position.x, 0.1f);
+        bool rotationChanged = ImGui::DragFloat("Rotation", &transform->transform.rotation, 0.05f, 0.0f, std::numbers::pi_v<float> * 2.0f);
 
         if (positionChanged || rotationChanged) {
           transform->dirty = true;
