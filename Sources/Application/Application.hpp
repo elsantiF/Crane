@@ -2,7 +2,6 @@
 
 #include "Core/Types.hpp"
 #include "Graphics/IRenderer.hpp"
-#include "Systems/RenderingSystem.hpp"
 #include "World/World.hpp"
 #include <entt/entt.hpp>
 #include <SDL3/SDL.h>
@@ -45,7 +44,7 @@ namespace Crane::Core {
     SDL_Window *m_Window;
     Scope<Graphics::IRenderer> m_Renderer;
     Scope<World::World> m_World;
-    Scope<Systems::RenderingSystem> m_RenderingSystem;
+    Scope<Systems::IRenderSystem> m_RenderingSystem;
     bool m_Running;
 
     f64 m_DeltaTime = 0.0;

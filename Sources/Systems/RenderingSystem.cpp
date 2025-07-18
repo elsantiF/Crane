@@ -6,9 +6,9 @@
 #include "World/World.hpp"
 
 namespace Crane::Systems {
-  void RenderingSystem::Render() {
+  void RenderingSystem::Render(World::World &world, Graphics::IRenderer &renderer) {
     PROFILE_SCOPE();
-    auto &registry = m_World.GetRegistry();
+    auto &registry = world.GetRegistry();
     auto group = registry.group<Components::Transform, Components::Renderable>();
 
     for (auto entity : group) {
@@ -17,7 +17,7 @@ namespace Crane::Systems {
       Graphics::Rect rect{transform.position.x - renderable.width / 2.0f, transform.position.y - renderable.height / 2.0f, renderable.width,
                           renderable.height};
 
-      m_Renderer.DrawRect(rect, renderable.color);
+      renderer.DrawRect(rect, renderable.color);
     }
   }
 }

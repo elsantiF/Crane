@@ -32,4 +32,11 @@ namespace Crane::Systems {
 
     virtual void Update(World::World &world, f64 deltaTime) = 0;
   };
+
+  class IRenderSystem : public ISystem {
+  public:
+    virtual ~IRenderSystem() = default;
+
+    virtual void Render(World::World &world, Graphics::IRenderer &renderer) = 0;
+  };
 }

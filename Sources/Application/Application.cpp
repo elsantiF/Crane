@@ -4,6 +4,7 @@
 #include "Editor/EntityDisplay.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Systems/PhysicsSystem.hpp"
+#include "Systems/RenderingSystem.hpp"
 #include "World/Entity.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -17,7 +18,7 @@ namespace Crane::Core {
     }
     m_World = MakeScope<World::World>();
     m_World->GetSystemManager().AddSystem<Systems::PhysicsSystem>();
-    m_RenderingSystem = MakeScope<Systems::RenderingSystem>(*m_Renderer, *m_World);
+    m_RenderingSystem = MakeScope<Systems::RenderingSystem>();
     InitializeImGui();
     m_Running = true;
     OnInitialize();
@@ -88,7 +89,7 @@ namespace Crane::Core {
     m_Renderer->BeginFrame();
     m_Renderer->Clear(Colors::CLEAR_COLOR);
     OnPreRender();
-    m_RenderingSystem->Render();
+    m_RenderingSystem->Render(*m_World, *m_Renderer);
     OnPostRender();
     m_Renderer->BeginImGuiFrame();
 
