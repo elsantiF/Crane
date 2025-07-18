@@ -1,5 +1,6 @@
 #pragma once
 
+#include <expected>
 #include <filesystem>
 #include <map>
 #include <memory>
@@ -50,6 +51,10 @@ Pair<T, U> MakePair(T &&first, U &&second) {
 // -- Optional Type --
 template <typename T>
 using Optional = std::optional<T>;
+
+// -- Expected Type --
+template <typename T, typename E>
+using Expected = std::expected<T, E>;
 
 // -- File System Types --
 namespace fs = std::filesystem;
