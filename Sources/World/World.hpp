@@ -4,7 +4,6 @@
 #include "Core/Types.hpp"
 #include "Physics/PhysicsWorld.hpp"
 #include "Systems/SystemManager.hpp"
-#include <box2d/box2d.h>
 #include <entt/entt.hpp>
 
 namespace Crane::World {

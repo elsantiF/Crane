@@ -4,7 +4,6 @@
 #include "Graphics/IRenderer.hpp"
 #include "Systems/RenderingSystem.hpp"
 #include "World/World.hpp"
-#include <box2d/box2d.h>
 #include <entt/entt.hpp>
 #include <SDL3/SDL.h>
 
