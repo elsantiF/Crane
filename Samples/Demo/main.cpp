@@ -19,7 +19,7 @@ protected:
     // Create ground body
     World::Entity ground = GetWorld().CreateEntity();
     {
-      ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f});
+      ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f}, 0.1f);
       ground.AddComponent<Components::Renderable>(Graphics::Color{0, 255, 0, 255}, 1000.0f, 50.0f);
 
       auto [rb, boxcollider] = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {512, 700, 1000, 50, Physics::BodyType::Static}, ppm);

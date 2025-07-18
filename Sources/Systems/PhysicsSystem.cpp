@@ -22,6 +22,7 @@ namespace Crane::Systems {
         b2Vec2 position = {transform.position.x / ppm, transform.position.y / ppm};
         b2Rot angle = b2MakeRot(transform.rotation);
         b2Body_SetTransform(rigidBody.bodyId, position, angle);
+        transform.dirty = false;
       }
 
       if (boxCollider.dirty) {
@@ -30,6 +31,7 @@ namespace Crane::Systems {
           b2Polygon boxShape = b2MakeBox(boxCollider.dimensions.x / 2 / ppm, boxCollider.dimensions.y / 2 / ppm);
           b2Shape_SetPolygon(shapeId, &boxShape);
         }
+        boxCollider.dirty = false;
       }
 
       // TODO: This is a temporary fix to the energy accumulation issue.
@@ -38,8 +40,6 @@ namespace Crane::Systems {
       b2Body_SetAngularVelocity(rigidBody.bodyId, 0.0f);
 
       b2Body_SetAwake(rigidBody.bodyId, true);
-      transform.dirty = false;
-      boxCollider.dirty = false;
       anyTransformDirty = true;
     }
 
