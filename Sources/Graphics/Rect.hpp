@@ -4,49 +4,17 @@
 #include <SDL3/SDL_rect.h>
 
 namespace Crane::Graphics {
-  class Rect {
+  struct Rect {
   public:
-    Rect(f32 x = 0.0f, f32 y = 0.0f, f32 width = 0.0f, f32 height = 0.0f) : m_X(x), m_Y(y), m_Width(width), m_Height(height) {}
-    Rect(const SDL_FRect &rect) : m_X(rect.x), m_Y(rect.y), m_Width(rect.w), m_Height(rect.h) {}
-
-    f32 GetX() const {
-      return m_X;
-    }
-
-    f32 GetY() const {
-      return m_Y;
-    }
-
-    f32 GetWidth() const {
-      return m_Width;
-    }
-
-    f32 GetHeight() const {
-      return m_Height;
-    }
-
-    void SetX(f32 x) {
-      m_X = x;
-    }
-
-    void SetY(f32 y) {
-      m_Y = y;
-    }
-
-    void SetWidth(f32 width) {
-      m_Width = width;
-    }
-
-    void SetHeight(f32 height) {
-      m_Height = height;
-    }
+    Rect(f32 x = 0.0f, f32 y = 0.0f, f32 width = 0.0f, f32 height = 0.0f) : x(x), y(y), width(width), height(height) {}
+    Rect(const SDL_FRect &rect) : x(rect.x), y(rect.y), width(rect.w), height(rect.h) {}
 
     operator SDL_FRect() const {
-      return SDL_FRect{m_X, m_Y, m_Width, m_Height};
+      return SDL_FRect{x, y, width, height};
     }
 
-  private:
-    f32 m_X, m_Y;
-    f32 m_Width, m_Height;
+  public:
+    f32 x, y;
+    f32 width, height;
   };
 }

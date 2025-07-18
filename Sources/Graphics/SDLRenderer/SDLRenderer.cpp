@@ -69,15 +69,15 @@ namespace Crane::Graphics::SDLRenderer {
   void SDLRenderer::DrawRect(const Rect &rect, const Color &color, f32 rotation) {
     PROFILE_SCOPE();
 
-    f32 centerX = rect.GetX() + rect.GetWidth() / 2.0f;
-    f32 centerY = rect.GetY() + rect.GetHeight() / 2.0f;
+    f32 centerX = rect.x + rect.width / 2.0f;
+    f32 centerY = rect.y + rect.height / 2.0f;
 
     f32 cosAngle = cosf(rotation);
     f32 sinAngle = sinf(rotation);
 
     SDL_FPoint points[4];
-    f32 halfWidth = rect.GetWidth() / 2.0f;
-    f32 halfHeight = rect.GetHeight() / 2.0f;
+    f32 halfWidth = rect.width / 2.0f;
+    f32 halfHeight = rect.height / 2.0f;
 
     points[0] = {-halfWidth, -halfHeight};
     points[1] = {halfWidth, -halfHeight};
