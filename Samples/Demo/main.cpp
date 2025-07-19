@@ -27,7 +27,7 @@ protected:
       ground.AddComponent<Components::Renderable>(Graphics::Color{0, 255, 0, 255}, 1000.0f, 50.0f);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({512, 700, 1000, 50, Physics::BodyType::Static}, ppm);
-      ground.AddComponent<Components::Rigidbody>(rb);
+      ground.AddComponent<Components::RigidBody>(rb);
       ground.AddComponent<Components::BoxCollider>(boxcollider);
     }
 
@@ -38,7 +38,7 @@ protected:
       box.AddComponent<Components::Renderable>(Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({400, 100, 40, 40, Physics::BodyType::Dynamic}, ppm);
-      box.AddComponent<Components::Rigidbody>(rb);
+      box.AddComponent<Components::RigidBody>(rb);
       box.AddComponent<Components::BoxCollider>(boxcollider);
     }
 
@@ -47,7 +47,7 @@ protected:
       m_Player.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
       m_Player.AddComponent<Components::Renderable>(Graphics::Color{0, 0, 255, 255}, 40.0f, 40.0f);
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({600, 100, 40, 40, Physics::BodyType::Dynamic}, ppm);
-      m_Player.AddComponent<Components::Rigidbody>(rb);
+      m_Player.AddComponent<Components::RigidBody>(rb);
       m_Player.AddComponent<Components::BoxCollider>(boxcollider);
       m_Player.AddComponent<PlayerComponent>();
     }
@@ -72,7 +72,7 @@ protected:
       box.AddComponent<Components::Transform>(Math::Vec2f{x, y});
       box.AddComponent<Components::Renderable>(Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({x, y, 40, 40, Physics::BodyType::Dynamic}, ppm);
-      box.AddComponent<Components::Rigidbody>(rb);
+      box.AddComponent<Components::RigidBody>(rb);
       box.AddComponent<Components::BoxCollider>(boxcollider);
     }
 

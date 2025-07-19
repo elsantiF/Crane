@@ -12,7 +12,7 @@ void PlayerSystem::Initialize(Crane::World::World &world) {
 }
 
 void PlayerSystem::Update([[maybe_unused]] Crane::World::World &world, [[maybe_unused]] f64 deltaTime) {
-  auto &rb = m_PlayerEntity->GetComponent<Crane::Components::Rigidbody>();
+  auto &rb = m_PlayerEntity->GetComponent<Crane::Components::RigidBody>();
   b2Vec2 position = b2Body_GetPosition(rb.bodyId);
   if (m_PlayerComponent->isMovingLeft) {
     b2Body_ApplyForce(rb.bodyId, b2Vec2(-SPEED, 0), position, true);

@@ -9,7 +9,7 @@ namespace Crane::Systems {
   void PhysicsSystem::FixedUpdate(World::World &world, f64 deltaTime) {
     PROFILE_SCOPE();
     auto &registry = world.GetRegistry();
-    auto view = registry.view<Components::Rigidbody, Components::BoxCollider, Components::Transform>();
+    auto view = registry.view<Components::RigidBody, Components::BoxCollider, Components::Transform>();
     auto ppm = world.GetPixelsPerMeter();
     bool anyTransformDirty = false;
 
@@ -45,7 +45,7 @@ namespace Crane::Systems {
 
     if (anyTransformDirty) {
       // Wake up all bodies if any transform was dirty
-      auto view = registry.view<Components::Rigidbody>();
+      auto view = registry.view<Components::RigidBody>();
       for (auto [entity, rigidBody] : view.each()) {
         if (b2Body_IsValid(rigidBody.bodyId)) {
           b2Body_SetAwake(rigidBody.bodyId, true);

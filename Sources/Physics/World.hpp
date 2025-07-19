@@ -14,7 +14,7 @@ namespace Crane::Physics {
 
     void Update(f64 deltaTime);
 
-    Pair<Components::Rigidbody, Components::BoxCollider> CreateBoxBody(BodyConfig config, f32 ppm);
+    Pair<Components::RigidBody, Components::BoxCollider> CreateBoxBody(BodyConfig config, f32 ppm);
 
   private:
     b2WorldId m_WorldId;
