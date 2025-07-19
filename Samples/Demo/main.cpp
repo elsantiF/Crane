@@ -4,6 +4,8 @@
 #include "Components/RigidBody.hpp"
 #include "Components/Transform.hpp"
 #include "Physics/PhysicsFactory.hpp"
+#include "PlayerComponent.hpp"
+#include "PlayerSystem.hpp"
 #include "World/Entity.hpp"
 #include <imgui.h>
 #include <iostream>
@@ -11,6 +13,9 @@
 using namespace Crane;
 
 class Demo : public Core::Application {
+public:
+  Demo() = default;
+
 protected:
   void OnInitialize() override {
     auto &physicsWorld = GetWorld().GetPhysicsWorld();
@@ -38,11 +43,17 @@ protected:
       box.AddComponent<Components::BoxCollider>(boxcollider);
     }
 
-    World::Entity blueBox = GetWorld().CreateEntity();
+    m_Player = GetWorld().CreateEntity();
     {
-      blueBox.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
-      blueBox.AddComponent<Components::Renderable>(Graphics::Color{0, 0, 255, 255}, 40.0f, 40.0f);
+      m_Player.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
+      m_Player.AddComponent<Components::Renderable>(Graphics::Color{0, 0, 255, 255}, 40.0f, 40.0f);
+      auto [rb, boxcollider] = Physics::PhysicsFactory::CreateBoxBody(physicsWorld, {600, 100, 40, 40, Physics::BodyType::Dynamic}, ppm);
+      m_Player.AddComponent<Components::Rigidbody>(rb);
+      m_Player.AddComponent<Components::BoxCollider>(boxcollider);
+      m_Player.AddComponent<PlayerComponent>();
     }
+
+    GetWorld().GetSystemManager().AddSystem<PlayerSystem>(*this, m_Player);
   }
   void OnPreFixedUpdate() override {}
   void OnPostFixedUpdate() override {}
@@ -68,6 +79,9 @@ protected:
 
     ImGui::End();
   }
+
+private:
+  World::Entity m_Player;
 };
 
 int main() {
