@@ -9,7 +9,7 @@ namespace Crane::Systems {
   void PhysicsSystem::FixedUpdate(World::World &world, f64 deltaTime) {
     PROFILE_SCOPE();
     auto &registry = world.GetRegistry();
-    auto group = registry.group<Components::Rigidbody, Components::BoxCollider, Components::Transform>();
+    auto group = registry.view<Components::Rigidbody, Components::BoxCollider, Components::Transform>();
     auto ppm = world.GetPixelsPerMeter();
     bool anyTransformDirty = false;
 
