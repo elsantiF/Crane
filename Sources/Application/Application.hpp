@@ -21,6 +21,10 @@ namespace Crane::Core {
       return *m_World;
     }
 
+    entt::dispatcher &GetDispatcher() {
+      return m_Dispatcher;
+    }
+
   private:
     bool InitializeSDL();
     void InitializeImGui();
@@ -45,6 +49,7 @@ namespace Crane::Core {
     Scope<Graphics::IRenderer> m_Renderer;
     Scope<World::World> m_World;
     Scope<Systems::IRenderSystem> m_RenderingSystem;
+    entt::dispatcher m_Dispatcher;
     bool m_Running;
 
     f64 m_DeltaTime = 0.0;

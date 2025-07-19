@@ -2,6 +2,7 @@
 #include "Core/Config.hpp"
 #include "Core/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
+#include "Events/KeyPress.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Systems/PhysicsSystem.hpp"
 #include "Systems/RenderingSystem.hpp"
@@ -57,17 +58,22 @@ namespace Crane::Core {
 
   void Application::HandleEvents() {
     SDL_Event event;
+
     while (SDL_PollEvent(&event)) {
       ImGui_ImplSDL3_ProcessEvent(&event);
+
       switch (event.type) {
       case SDL_EVENT_QUIT: m_Running = false; break;
       case SDL_EVENT_KEY_DOWN:
         if (event.key.key == SDLK_ESCAPE) {
           m_Running = false;
         }
+        m_Dispatcher.trigger(Events::KeyPressEvent{event.key.key});
         break;
       }
     }
+
+    m_Dispatcher.update();
   }
 
   void Application::FixedUpdate() {
