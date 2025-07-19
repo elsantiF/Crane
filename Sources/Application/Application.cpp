@@ -2,7 +2,7 @@
 #include "Core/Config.hpp"
 #include "Core/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
-#include "Events/KeyPress.hpp"
+#include "Events/KeyDown.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Systems/PhysicsSystem.hpp"
 #include "Systems/RenderingSystem.hpp"
@@ -68,7 +68,7 @@ namespace Crane::Core {
         if (event.key.key == SDLK_ESCAPE) {
           m_Running = false;
         }
-        m_Dispatcher.trigger(Events::KeyPressEvent{event.key.key});
+        m_Dispatcher.trigger(Events::KeyDownEvent{event.key.key});
         break;
       }
     }

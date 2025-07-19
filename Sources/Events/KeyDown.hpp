@@ -4,9 +4,9 @@
 #include "IEvent.hpp"
 
 namespace Crane::Events {
-  class KeyPressEvent : public IEvent {
+  class KeyDownEvent : public IEvent {
   public:
-    KeyPressEvent(u32 keyCode) : m_KeyCode(keyCode) {}
+    KeyDownEvent(u32 keyCode) : m_KeyCode(keyCode) {}
 
     u32 GetKeyCode() const {
       return m_KeyCode;
