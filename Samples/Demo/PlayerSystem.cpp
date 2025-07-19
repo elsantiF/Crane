@@ -1,5 +1,5 @@
 #include "PlayerSystem.hpp"
-#include "Components/Rigidbody.hpp"
+#include "Components/RigidBody.hpp"
 #include "PlayerComponent.hpp"
 #include <box2d/box2d.h>
 

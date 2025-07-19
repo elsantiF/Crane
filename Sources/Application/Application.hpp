@@ -6,7 +6,7 @@
 #include <entt/entt.hpp>
 #include <SDL3/SDL.h>
 
-namespace Crane::Core {
+namespace Crane::Application {
   class Application {
   public:
     Application() : m_Window(nullptr), m_Renderer(nullptr), m_Running(false) {}

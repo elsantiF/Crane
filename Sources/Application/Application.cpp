@@ -12,7 +12,7 @@
 #include <imgui_impl_sdl3.h>
 #include <iostream>
 
-namespace Crane::Core {
+namespace Crane::Application {
   bool Application::Initialize() {
     PROFILE_SCOPE();
     if (!InitializeSDL()) {
@@ -34,7 +34,7 @@ namespace Crane::Core {
       return false;
     }
 
-    m_Window = SDL_CreateWindow("Crane", WINDOW_WIDTH, WINDOW_HEIGHT, NULL);
+    m_Window = SDL_CreateWindow("Crane", Core::WINDOW_WIDTH, Core::WINDOW_HEIGHT, NULL);
     if (!m_Window) {
       std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
       return false;
@@ -88,7 +88,7 @@ namespace Crane::Core {
   void Application::FixedUpdate() {
     PROFILE_SCOPE();
     OnPreFixedUpdate();
-    m_World->FixedUpdate(PHYSICS_TIMESTEP);
+    m_World->FixedUpdate(Core::PHYSICS_TIMESTEP);
     OnPostFixedUpdate();
   }
 
@@ -131,9 +131,9 @@ namespace Crane::Core {
 
       HandleEvents();
 
-      while (m_Accumulator >= PHYSICS_TIMESTEP) {
+      while (m_Accumulator >= Core::PHYSICS_TIMESTEP) {
         FixedUpdate();
-        m_Accumulator -= PHYSICS_TIMESTEP;
+        m_Accumulator -= Core::PHYSICS_TIMESTEP;
       }
 
       Update(m_DeltaTime);

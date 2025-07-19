@@ -9,7 +9,7 @@
 
 class PlayerSystem : public Crane::Systems::IUpdateSystem {
 public:
-  PlayerSystem(Crane::Core::Application &app, Crane::World::Entity &playerEntity) : m_PlayerEntity(&playerEntity), m_App(&app) {}
+  PlayerSystem(Crane::Application::Application &app, Crane::World::Entity &playerEntity) : m_PlayerEntity(&playerEntity), m_App(&app) {}
 
   void Initialize(Crane::World::World &world) override;
 
@@ -23,7 +23,7 @@ private:
 private:
   Crane::World::World *m_World = nullptr;
   Crane::World::Entity *m_PlayerEntity = nullptr;
-  Crane::Core::Application *m_App = nullptr;
+  Crane::Application::Application *m_App = nullptr;
   PlayerComponent *m_PlayerComponent = nullptr;
 
   const f32 SPEED = 10.0;

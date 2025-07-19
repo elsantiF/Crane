@@ -11,7 +11,7 @@
 
 using namespace Crane;
 
-class Demo : public Core::Application {
+class Demo : public Application::Application {
 public:
   Demo() = default;
 
