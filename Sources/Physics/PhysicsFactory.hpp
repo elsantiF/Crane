@@ -6,10 +6,10 @@
 #include "Core/Types.hpp"
 
 namespace Crane::Physics {
-  class PhysicsWorld;
+  class World;
 
   class PhysicsFactory {
   public:
-    static Pair<Components::Rigidbody, Components::BoxCollider> CreateBoxBody(PhysicsWorld &world, BodyConfig config, f32 ppm);
+    static Pair<Components::Rigidbody, Components::BoxCollider> CreateBoxBody(World &world, BodyConfig config, f32 ppm);
   };
 }

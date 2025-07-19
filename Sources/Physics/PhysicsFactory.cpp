@@ -1,9 +1,9 @@
 #include "PhysicsFactory.hpp"
 #include "Core/Profiler.hpp"
-#include "PhysicsWorld.hpp"
+#include "World.hpp"
 
 namespace Crane::Physics {
-  Pair<Components::Rigidbody, Components::BoxCollider> PhysicsFactory::CreateBoxBody(PhysicsWorld &world, BodyConfig config, f32 ppm) {
+  Pair<Components::Rigidbody, Components::BoxCollider> PhysicsFactory::CreateBoxBody(World &world, BodyConfig config, f32 ppm) {
     PROFILE_SCOPE();
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = static_cast<b2BodyType>(config.type);

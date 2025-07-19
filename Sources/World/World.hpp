@@ -2,7 +2,7 @@
 
 #include "Core/Config.hpp"
 #include "Core/Types.hpp"
-#include "Physics/PhysicsWorld.hpp"
+#include "Physics/World.hpp"
 #include "Systems/SystemManager.hpp"
 #include <entt/entt.hpp>
 
@@ -22,11 +22,11 @@ namespace Crane::World {
 
     Entity CreateEntity();
 
-    Physics::PhysicsWorld &GetPhysicsWorld() {
+    Physics::World &GetPhysicsWorld() {
       return m_PhysicsWorld;
     }
 
-    const Physics::PhysicsWorld &GetPhysicsWorld() const {
+    const Physics::World &GetPhysicsWorld() const {
       return m_PhysicsWorld;
     }
 
@@ -46,7 +46,7 @@ namespace Crane::World {
     void WakeUpBodies();
 
   private:
-    Physics::PhysicsWorld m_PhysicsWorld;
+    Physics::World m_PhysicsWorld;
     entt::registry m_Registry;
     Systems::SystemManager m_SystemManager;
   };

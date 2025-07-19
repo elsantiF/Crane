@@ -4,10 +4,10 @@
 #include <box2d/box2d.h>
 
 namespace Crane::Physics {
-  class PhysicsWorld {
+  class World {
   public:
-    PhysicsWorld();
-    ~PhysicsWorld();
+    World();
+    ~World();
 
     void Update(f64 deltaTime);
 
