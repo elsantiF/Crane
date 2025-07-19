@@ -9,10 +9,10 @@ namespace Crane::Systems {
   void RenderingSystem::Render(World::World &world, Graphics::IRenderer &renderer) {
     PROFILE_SCOPE();
     auto &registry = world.GetRegistry();
-    auto group = registry.group<Components::Transform, Components::Renderable>();
+    auto view = registry.view<Components::Transform, Components::Renderable>();
 
-    for (auto entity : group) {
-      const auto &[transform, renderable] = group.get<Components::Transform, Components::Renderable>(entity);
+    for (auto entity : view) {
+      const auto &[transform, renderable] = view.get<Components::Transform, Components::Renderable>(entity);
 
       Graphics::Rect rect{transform.transform.position.x - renderable.width / 2.0f, transform.transform.position.y - renderable.height / 2.0f,
                           renderable.width, renderable.height};
