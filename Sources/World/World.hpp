@@ -43,9 +43,6 @@ namespace Crane::World {
     }
 
   private:
-    void WakeUpBodies();
-
-  private:
     Physics::World m_PhysicsWorld;
     entt::registry m_Registry;
     Systems::SystemManager m_SystemManager;
