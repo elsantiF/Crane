@@ -16,6 +16,6 @@ namespace Crane::World {
   Entity World::CreateEntity() {
     PROFILE_SCOPE();
     auto entity = m_Registry.create();
-    return Entity(*this, entity);
+    return Entity(this, entity);
   }
 }
