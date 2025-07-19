@@ -3,6 +3,7 @@
 #include "Core/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
 #include "Events/KeyDown.hpp"
+#include "Events/KeyUp.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Systems/PhysicsSystem.hpp"
 #include "Systems/RenderingSystem.hpp"
@@ -68,7 +69,15 @@ namespace Crane::Core {
         if (event.key.key == SDLK_ESCAPE) {
           m_Running = false;
         }
-        m_Dispatcher.trigger(Events::KeyDownEvent{event.key.key});
+
+        if (!event.key.repeat) {
+          m_Dispatcher.trigger(Events::KeyDownEvent{event.key.key});
+        }
+        break;
+      case SDL_EVENT_KEY_UP:
+        if (!event.key.repeat) {
+          m_Dispatcher.trigger(Events::KeyUpEvent{event.key.key});
+        }
         break;
       }
     }

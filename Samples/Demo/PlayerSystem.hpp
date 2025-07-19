@@ -2,6 +2,8 @@
 
 #include "Application/Application.hpp"
 #include "Events/KeyDown.hpp"
+#include "Events/KeyUp.hpp"
+#include "PlayerComponent.hpp"
 #include "Systems/ISystem.hpp"
 #include "World/Entity.hpp"
 
@@ -12,13 +14,17 @@ public:
   void Initialize(Crane::World::World &world) override;
 
   void Shutdown([[maybe_unused]] Crane::World::World &world) override {};
-  void Update([[maybe_unused]] Crane::World::World &world, [[maybe_unused]] f64 deltaTime) override {};
+  void Update(Crane::World::World &world, f64 deltaTime) override;
 
 private:
-  void HandleKeyPress(Crane::Events::KeyDownEvent &event);
+  void HandleKeyDown(Crane::Events::KeyDownEvent &event);
+  void HandleKeyUp(Crane::Events::KeyUpEvent &event);
 
 private:
   Crane::World::World *m_World = nullptr;
   Crane::World::Entity *m_PlayerEntity = nullptr;
   Crane::Core::Application *m_App = nullptr;
+  PlayerComponent *m_PlayerComponent = nullptr;
+
+  const f64 SPEED = 100.0;
 };
