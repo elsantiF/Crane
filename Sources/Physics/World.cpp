@@ -20,8 +20,20 @@ namespace Crane::Physics {
     b2World_Step(m_WorldId, static_cast<float>(deltaTime), PHYSICS_STEPS);
   }
 
-  b2BodyId World::CreateBody(const b2BodyDef &bodyDef) {
+  Pair<Components::Rigidbody, Components::BoxCollider> World::CreateBoxBody(BodyConfig config, f32 ppm) {
+    PROFILE_SCOPE();
+    b2BodyDef bodyDef = b2DefaultBodyDef();
+    bodyDef.type = static_cast<b2BodyType>(config.type);
+    bodyDef.position = {config.x / ppm, config.y / ppm};
     b2BodyId bodyId = b2CreateBody(m_WorldId, &bodyDef);
-    return bodyId;
+
+    f32 width = config.width / ppm;
+    f32 height = config.height / ppm;
+    b2Polygon boxShape = b2MakeBox(width / 2, height / 2);
+    b2ShapeDef shapeDef = b2DefaultShapeDef();
+    shapeDef.density = 1.0f;
+    b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &boxShape);
+
+    return MakePair(Components::Rigidbody(bodyId), Components::BoxCollider(Math::Vec2f{width, height}, shapeId));
   }
 }
