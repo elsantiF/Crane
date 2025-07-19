@@ -5,4 +5,5 @@ struct PlayerComponent {
 
   bool isMovingLeft = false;
   bool isMovingRight = false;
+  bool isJumping = false;
 };

@@ -26,5 +26,5 @@ private:
   Crane::Core::Application *m_App = nullptr;
   PlayerComponent *m_PlayerComponent = nullptr;
 
-  const f64 SPEED = 100.0;
+  const f32 SPEED = 10.0;
 };

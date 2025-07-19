@@ -1,6 +1,7 @@
 #include "PlayerSystem.hpp"
-#include "Components/Transform.hpp"
+#include "Components/Rigidbody.hpp"
 #include "PlayerComponent.hpp"
+#include <box2d/box2d.h>
 
 void PlayerSystem::Initialize(Crane::World::World &world) {
   m_World = &world;
@@ -10,15 +11,18 @@ void PlayerSystem::Initialize(Crane::World::World &world) {
   m_PlayerComponent = &m_PlayerEntity->GetComponent<PlayerComponent>();
 }
 
-void PlayerSystem::Update([[maybe_unused]] Crane::World::World &world, f64 deltaTime) {
-  auto &transform = m_PlayerEntity->GetComponent<Crane::Components::Transform>();
+void PlayerSystem::Update([[maybe_unused]] Crane::World::World &world, [[maybe_unused]] f64 deltaTime) {
+  auto &rb = m_PlayerEntity->GetComponent<Crane::Components::Rigidbody>();
+  b2Vec2 position = b2Body_GetPosition(rb.bodyId);
   if (m_PlayerComponent->isMovingLeft) {
-    transform.transform.position.x -= SPEED * deltaTime;
-    transform.dirty = true;
+    b2Body_ApplyForce(rb.bodyId, b2Vec2(-SPEED, 0), position, true);
   }
   if (m_PlayerComponent->isMovingRight) {
-    transform.transform.position.x += SPEED * deltaTime;
-    transform.dirty = true;
+    b2Body_ApplyForce(rb.bodyId, b2Vec2(SPEED, 0), position, true);
+  }
+  if (m_PlayerComponent->isJumping) {
+    b2Body_ApplyForce(rb.bodyId, b2Vec2(0, -SPEED * 75), position, true);
+    m_PlayerComponent->isJumping = false;
   }
 }
 
@@ -27,6 +31,8 @@ void PlayerSystem::HandleKeyDown(Crane::Events::KeyDownEvent &event) {
     m_PlayerComponent->isMovingLeft = true;
   } else if (event.GetKeyCode() == SDLK_D) {
     m_PlayerComponent->isMovingRight = true;
+  } else if (event.GetKeyCode() == SDLK_SPACE) {
+    m_PlayerComponent->isJumping = true;
   }
 }
 
@@ -35,5 +41,7 @@ void PlayerSystem::HandleKeyUp(Crane::Events::KeyUpEvent &event) {
     m_PlayerComponent->isMovingLeft = false;
   } else if (event.GetKeyCode() == SDLK_D) {
     m_PlayerComponent->isMovingRight = false;
+  } else if (event.GetKeyCode() == SDLK_SPACE) {
+    m_PlayerComponent->isJumping = false;
   }
 }
