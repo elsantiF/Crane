@@ -107,4 +107,19 @@ namespace Crane::Graphics::SDLRenderer {
 
     SDL_RenderGeometry(m_Renderer, nullptr, vertices, 4, indices, 6);
   }
+
+  void SDLRenderer::DrawLine(const Math::Vec2f &start, const Math::Vec2f &end, const Color &color) {
+    PROFILE_SCOPE();
+    static Color currentColor{-1.0f, -1.0f, -1.0f, -1.0f};
+
+    if (currentColor != color) {
+      SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
+      currentColor = color;
+    }
+
+    SDL_FPoint points[2];
+    points[0] = {start.x, start.y};
+    points[1] = {end.x, end.y};
+    SDL_RenderLines(m_Renderer, points, 2);
+  }
 }

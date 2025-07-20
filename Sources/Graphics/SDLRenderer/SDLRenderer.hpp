@@ -24,6 +24,7 @@ namespace Crane::Graphics::SDLRenderer {
     void Present() override;
 
     void DrawRect(const Rect &rect, const Color &color, f32 rotation) override;
+    void DrawLine(const Math::Vec2f &start, const Math::Vec2f &end, const Color &color) override;
 
     String GetName() const override {
       return "SDLRenderer";

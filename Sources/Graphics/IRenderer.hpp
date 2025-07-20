@@ -2,6 +2,7 @@
 
 #include "Color.hpp"
 #include "Core/Types.hpp"
+#include "Math/Vector.hpp"
 #include "Rect.hpp"
 
 namespace Crane::Graphics {
@@ -28,6 +29,8 @@ namespace Crane::Graphics {
      * The rotation is in radians
      */
     virtual void DrawRect(const Rect &rect, const Color &color, f32 rotation) = 0;
+
+    virtual void DrawLine(const Math::Vec2f &start, const Math::Vec2f &end, const Color &color) = 0;
 
     virtual String GetName() const = 0;
   };
