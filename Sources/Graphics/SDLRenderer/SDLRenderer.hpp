@@ -23,8 +23,10 @@ namespace Crane::Graphics::SDLRenderer {
     void Clear(const Color &color) override;
     void Present() override;
 
-    void DrawRect(const Rect &rect, const Color &color, f32 rotation) override;
+    void DrawPoint(const Math::Vec2f &point, const Color &color) override;
     void DrawLine(const Math::Vec2f &start, const Math::Vec2f &end, const Color &color) override;
+    void DrawRect(const Rect &rect, const Color &color, f32 rotation) override;
+    void DrawCircle(const Math::Vec2f &center, f32 radius, const Color &color) override;
 
     String GetName() const override {
       return "SDLRenderer";

@@ -23,6 +23,9 @@ namespace Crane::Graphics {
     virtual void Clear(const Color &color) = 0;
     virtual void Present() = 0;
 
+    virtual void DrawPoint(const Math::Vec2f &point, const Color &color) = 0;
+    virtual void DrawLine(const Math::Vec2f &start, const Math::Vec2f &end, const Color &color) = 0;
+
     /*
      * Draw a rectangle with the given parameters.
      * The rectangle is defined by the Rect object, and the color is applied to it.
@@ -30,7 +33,11 @@ namespace Crane::Graphics {
      */
     virtual void DrawRect(const Rect &rect, const Color &color, f32 rotation) = 0;
 
-    virtual void DrawLine(const Math::Vec2f &start, const Math::Vec2f &end, const Color &color) = 0;
+    /*
+     * Draw a circle with the given center, radius, and color.
+     * The circle is filled with the specified color.
+     */
+    virtual void DrawCircle(const Math::Vec2f &center, f32 radius, const Color &color) = 0;
 
     virtual String GetName() const = 0;
   };
