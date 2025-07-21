@@ -38,7 +38,8 @@ namespace Crane::Editor {
     if (auto *renderable = registry.try_get<Components::Renderable>(entity)) {
       if (ImGui::CollapsingHeader("Renderable")) {
         ImGui::ColorEdit4("Color", &renderable->color.r);
-        ImGui::DragFloat2("Size", &renderable->size.x, 0.1f);
+        ImGui::Text("Vertices: %d", renderable->vertexCount);
+        ImGui::Text("Indices: %d", renderable->indexCount);
       }
     }
 

@@ -3,7 +3,6 @@
 #include <cmath>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
-#include <numbers>
 
 namespace Crane::Graphics::SDLRenderer {
   bool SDLRenderer::Initialize() {
@@ -105,63 +104,32 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_RenderLines(m_Renderer, points, 2);
   }
 
-  void SDLRenderer::DrawRect(const Rect &rect, f32 rotation) {
+  // TODO: extract renderable to its own class, somthing like a VertexBuffer
+  void SDLRenderer::DrawRenderable(const Components::Renderable &renderable, const Math::Transform &transform) {
     PROFILE_SCOPE();
 
-    f32 centerX = rect.x + rect.width / 2.0f;
-    f32 centerY = rect.y + rect.height / 2.0f;
-
-    f32 cosAngle = cosf(rotation);
-    f32 sinAngle = sinf(rotation);
-
-    SDL_FPoint points[4];
-    f32 halfWidth = rect.width / 2.0f;
-    f32 halfHeight = rect.height / 2.0f;
-
-    points[0] = {-halfWidth, -halfHeight};
-    points[1] = {halfWidth, -halfHeight};
-    points[2] = {halfWidth, halfHeight};
-    points[3] = {-halfWidth, halfHeight};
-
-    for (i32 i = 0; i < 4; ++i) {
-      f32 x = points[i].x * cosAngle - points[i].y * sinAngle;
-      f32 y = points[i].x * sinAngle + points[i].y * cosAngle;
-      points[i] = {x + centerX, y + centerY};
+    if (renderable.vertexCount == 0 || renderable.indexCount == 0) {
+      return;
     }
 
-    SDL_Vertex vertices[4];
-    for (i32 i = 0; i < 4; ++i) {
-      vertices[i].position = points[i];
-      vertices[i].color = m_FillColor;
+    Vector<SDL_Vertex> vertices(renderable.vertexCount);
+    f32 angle = transform.rotation;
+    f32 cosAngle = std::cos(angle);
+    f32 sinAngle = std::sin(angle);
+    for (i32 i = 0; i < renderable.vertexCount; ++i) {
+      f32 rotatedX = renderable.vertices[i].x * cosAngle - renderable.vertices[i].y * sinAngle;
+      f32 rotatedY = renderable.vertices[i].x * sinAngle + renderable.vertices[i].y * cosAngle;
+      f32 vertX = rotatedX + transform.position.x;
+      f32 vertY = rotatedY + transform.position.y;
+      vertices[i].position = {vertX, vertY};
+      vertices[i].color = renderable.color;
     }
 
-    i32 indices[6] = {0, 1, 2, 2, 3, 0};
-
-    SDL_RenderGeometry(m_Renderer, nullptr, vertices, 4, indices, 6);
-  }
-
-  void SDLRenderer::DrawCircle(const Math::Vec2f &center, f32 radius) {
-    PROFILE_SCOPE();
-
-    const i32 segments = 32;
-    SDL_Vertex vertices[segments + 1];
-    i32 indices[segments * 3];
-
-    vertices[0].position = {center.x, center.y};
-    vertices[0].color = m_FillColor;
-
-    for (i32 i = 0; i < segments; ++i) {
-      f32 angle = 2.0f * std::numbers::pi_v<f32> * i / segments;
-      vertices[i + 1].position = {center.x + radius * cosf(angle), center.y + radius * sinf(angle)};
-      vertices[i + 1].color = m_FillColor;
+    Vector<i32> indices(renderable.indexCount);
+    for (i32 i = 0; i < renderable.indexCount; ++i) {
+      indices[i] = renderable.indices[i];
     }
 
-    for (i32 i = 0; i < segments; ++i) {
-      indices[i * 3] = 0;
-      indices[i * 3 + 1] = i + 1;
-      indices[i * 3 + 2] = (i + 1) % segments + 1;
-    }
-
-    SDL_RenderGeometry(m_Renderer, nullptr, vertices, segments + 1, indices, segments * 3);
+    SDL_RenderGeometry(m_Renderer, nullptr, vertices.data(), renderable.vertexCount, indices.data(), renderable.indexCount);
   }
 }

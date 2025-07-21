@@ -7,8 +7,13 @@
 namespace Crane::Components {
   struct Renderable {
     Graphics::Color color;
-    Math::Vec2f size;
+    Vector<Math::Vec2f> vertices;
+    Vector<i32> indices;
+    i32 vertexCount = 0;
+    i32 indexCount = 0;
 
-    Renderable(Graphics::Color color = Graphics::Colors::White, f32 width = 32.0f, f32 height = 32.0f) : color(color), size(width, height) {}
+    Renderable(Graphics::Color color = Graphics::Colors::White, Vector<Math::Vec2f> vertices = {}, Vector<i32> indices = {})
+        : color(color), vertices(vertices), indices(indices), vertexCount(static_cast<i32>(vertices.size())),
+          indexCount(static_cast<i32>(indices.size())) {}
   };
 }
