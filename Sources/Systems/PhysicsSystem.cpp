@@ -28,7 +28,18 @@ namespace Crane::Systems {
       if (boxCollider.dirty) {
         b2ShapeId shapeId = boxCollider.shapeId;
         if (b2Shape_IsValid(shapeId)) {
-          b2Polygon boxShape = b2MakeBox(boxCollider.dimensions.x / 2 / ppm, boxCollider.dimensions.y / 2 / ppm);
+          f32 halfWidth = boxCollider.dimensions.x / 2;
+          f32 halfHeight = boxCollider.dimensions.y / 2;
+
+          if (halfWidth <= 0.0f) {
+            halfWidth = 0.01f;
+          }
+
+          if (halfHeight <= 0.0f) {
+            halfHeight = 0.01f;
+          }
+
+          b2Polygon boxShape = b2MakeBox(halfWidth, halfHeight);
           b2Shape_SetPolygon(shapeId, &boxShape);
         }
         boxCollider.dirty = false;
@@ -45,8 +56,8 @@ namespace Crane::Systems {
 
     if (anyTransformDirty) {
       // Wake up all bodies if any transform was dirty
-      auto view = registry.view<Components::RigidBody>();
-      for (auto [entity, rigidBody] : view.each()) {
+      auto wakeView = registry.view<Components::RigidBody>();
+      for (auto [entity, rigidBody] : wakeView.each()) {
         if (b2Body_IsValid(rigidBody.bodyId)) {
           b2Body_SetAwake(rigidBody.bodyId, true);
         }
