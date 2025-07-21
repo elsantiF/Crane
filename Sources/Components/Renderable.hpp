@@ -2,12 +2,13 @@
 
 #include "Core/Types.hpp"
 #include "Graphics/Color.hpp"
+#include "Math/Vector.hpp"
 
 namespace Crane::Components {
   struct Renderable {
     Graphics::Color color;
-    f32 width, height;
+    Math::Vec2f size;
 
-    Renderable(Graphics::Color color = {255, 255, 255, 255}, f32 width = 32.0f, f32 height = 32.0f) : color(color), width(width), height(height) {}
+    Renderable(Graphics::Color color = {255, 255, 255, 255}, f32 width = 32.0f, f32 height = 32.0f) : color(color), size(width, height) {}
   };
 }

@@ -14,8 +14,8 @@ namespace Crane::Systems {
     for (auto entity : view) {
       const auto &[transform, renderable] = view.get<Components::Transform, Components::Renderable>(entity);
 
-      Graphics::Rect rect{transform.transform.position.x - renderable.width / 2.0f, transform.transform.position.y - renderable.height / 2.0f,
-                          renderable.width, renderable.height};
+      Graphics::Rect rect{transform.transform.position.x - renderable.size.x / 2.0f, transform.transform.position.y - renderable.size.y / 2.0f,
+                          renderable.size.x, renderable.size.y};
 
       renderer.SetFillColor(renderable.color);
       renderer.DrawRect(rect, transform.transform.rotation);
