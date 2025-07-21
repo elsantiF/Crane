@@ -23,10 +23,12 @@ namespace Crane::Graphics::SDLRenderer {
     void Clear(const Color &color) override;
     void Present() override;
 
-    void DrawPoint(const Math::Vec2f &point, const Color &color) override;
-    void DrawLine(const Math::Vec2f &start, const Math::Vec2f &end, const Color &color) override;
-    void DrawRect(const Rect &rect, const Color &color, f32 rotation) override;
-    void DrawCircle(const Math::Vec2f &center, f32 radius, const Color &color) override;
+    void SetFillColor(const Color &color) override;
+
+    void DrawPoint(const Math::Vec2f &point) override;
+    void DrawLine(const Math::Vec2f &start, const Math::Vec2f &end) override;
+    void DrawRect(const Rect &rect, f32 rotation) override;
+    void DrawCircle(const Math::Vec2f &center, f32 radius) override;
 
     String GetName() const override {
       return "SDLRenderer";
@@ -35,5 +37,6 @@ namespace Crane::Graphics::SDLRenderer {
   private:
     SDL_Renderer *m_Renderer;
     SDL_Window *m_Window; // Perhaps we should not store this here
+    Color m_FillColor = {-1.0f, -1.0f, -1.0f, -1.0f};
   };
 }

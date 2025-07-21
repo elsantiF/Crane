@@ -17,7 +17,8 @@ namespace Crane::Systems {
       Graphics::Rect rect{transform.transform.position.x - renderable.width / 2.0f, transform.transform.position.y - renderable.height / 2.0f,
                           renderable.width, renderable.height};
 
-      renderer.DrawRect(rect, renderable.color, transform.transform.rotation);
+      renderer.SetFillColor(renderable.color);
+      renderer.DrawRect(rect, transform.transform.rotation);
     }
   }
 }

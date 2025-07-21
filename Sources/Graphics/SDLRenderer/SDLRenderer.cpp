@@ -68,14 +68,16 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_RenderPresent(m_Renderer);
   }
 
-  void SDLRenderer::DrawPoint(const Math::Vec2f &point, const Color &color) {
+  void SDLRenderer::SetFillColor(const Color &color) {
     PROFILE_SCOPE();
-    static Color currentColor{-1.0f, -1.0f, -1.0f, -1.0f};
-
-    if (currentColor != color) {
+    if (m_FillColor != color) {
       SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
-      currentColor = color;
+      m_FillColor = color;
     }
+  }
+
+  void SDLRenderer::DrawPoint(const Math::Vec2f &point) {
+    PROFILE_SCOPE();
 
     SDL_FPoint points[4];
     points[0] = {point.x - 3.f, point.y - 3.f};
@@ -86,7 +88,7 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_Vertex vertices[4];
     for (i32 i = 0; i < 4; ++i) {
       vertices[i].position = points[i];
-      vertices[i].color = color;
+      vertices[i].color = m_FillColor;
     }
 
     i32 indices[6] = {0, 1, 2, 2, 3, 0};
@@ -94,14 +96,8 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_RenderGeometry(m_Renderer, nullptr, vertices, 4, indices, 6);
   }
 
-  void SDLRenderer::DrawLine(const Math::Vec2f &start, const Math::Vec2f &end, const Color &color) {
+  void SDLRenderer::DrawLine(const Math::Vec2f &start, const Math::Vec2f &end) {
     PROFILE_SCOPE();
-    static Color currentColor{-1.0f, -1.0f, -1.0f, -1.0f};
-
-    if (currentColor != color) {
-      SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
-      currentColor = color;
-    }
 
     SDL_FPoint points[2];
     points[0] = {start.x, start.y};
@@ -109,7 +105,7 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_RenderLines(m_Renderer, points, 2);
   }
 
-  void SDLRenderer::DrawRect(const Rect &rect, const Color &color, f32 rotation) {
+  void SDLRenderer::DrawRect(const Rect &rect, f32 rotation) {
     PROFILE_SCOPE();
 
     f32 centerX = rect.x + rect.width / 2.0f;
@@ -133,16 +129,10 @@ namespace Crane::Graphics::SDLRenderer {
       points[i] = {x + centerX, y + centerY};
     }
 
-    static Color currentColor{-1.0f, -1.0f, -1.0f, -1.0f};
-    if (currentColor != color) {
-      SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
-      currentColor = color;
-    }
-
     SDL_Vertex vertices[4];
     for (i32 i = 0; i < 4; ++i) {
       vertices[i].position = points[i];
-      vertices[i].color = color;
+      vertices[i].color = m_FillColor;
     }
 
     i32 indices[6] = {0, 1, 2, 2, 3, 0};
@@ -150,33 +140,24 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_RenderGeometry(m_Renderer, nullptr, vertices, 4, indices, 6);
   }
 
-  void SDLRenderer::DrawCircle(const Math::Vec2f &center, f32 radius, const Color &color) {
+  void SDLRenderer::DrawCircle(const Math::Vec2f &center, f32 radius) {
     PROFILE_SCOPE();
-    static Color currentColor{-1.0f, -1.0f, -1.0f, -1.0f};
-
-    if (currentColor != color) {
-      SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
-      currentColor = color;
-    }
 
     const i32 segments = 32;
     SDL_Vertex vertices[segments + 1];
     i32 indices[segments * 3];
 
-    // Center vertex
     vertices[0].position = {center.x, center.y};
-    vertices[0].color = color;
+    vertices[0].color = m_FillColor;
 
-    // Circle vertices
     for (i32 i = 0; i < segments; ++i) {
       f32 angle = 2.0f * std::numbers::pi_v<f32> * i / segments;
       vertices[i + 1].position = {center.x + radius * cosf(angle), center.y + radius * sinf(angle)};
-      vertices[i + 1].color = color;
+      vertices[i + 1].color = m_FillColor;
     }
 
-    // Triangle indices
     for (i32 i = 0; i < segments; ++i) {
-      indices[i * 3] = 0; // center
+      indices[i * 3] = 0;
       indices[i * 3 + 1] = i + 1;
       indices[i * 3 + 2] = (i + 1) % segments + 1;
     }
