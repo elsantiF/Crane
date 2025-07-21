@@ -24,7 +24,7 @@ protected:
     World::Entity ground = GetWorld().CreateEntity();
     {
       ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f}, 0.1f);
-      ground.AddComponent<Components::Renderable>(Graphics::Color{0, 255, 0, 255}, 1000.0f, 50.0f);
+      ground.AddComponent<Components::Renderable>(Graphics::Colors::Green, 1000.0f, 50.0f);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({512, 700, 1000, 50, Physics::BodyType::Static}, ppm);
       ground.AddComponent<Components::RigidBody>(rb);
@@ -35,7 +35,7 @@ protected:
     World::Entity box = GetWorld().CreateEntity();
     {
       box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
-      box.AddComponent<Components::Renderable>(Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
+      box.AddComponent<Components::Renderable>(Graphics::Colors::Red, 40.0f, 40.0f);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({400, 100, 40, 40, Physics::BodyType::Dynamic}, ppm);
       box.AddComponent<Components::RigidBody>(rb);
@@ -45,7 +45,7 @@ protected:
     m_Player = GetWorld().CreateEntity();
     {
       m_Player.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
-      m_Player.AddComponent<Components::Renderable>(Graphics::Color{0, 0, 255, 255}, 40.0f, 40.0f);
+      m_Player.AddComponent<Components::Renderable>(Graphics::Colors::Blue, 40.0f, 40.0f);
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({600, 100, 40, 40, Physics::BodyType::Dynamic}, ppm);
       m_Player.AddComponent<Components::RigidBody>(rb);
       m_Player.AddComponent<Components::BoxCollider>(boxcollider);
@@ -70,7 +70,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       box.AddComponent<Components::Transform>(Math::Vec2f{x, y});
-      box.AddComponent<Components::Renderable>(Graphics::Color{255, 0, 0, 255}, 40.0f, 40.0f);
+      box.AddComponent<Components::Renderable>(Graphics::Colors::Yellow, 40.0f, 40.0f);
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({x, y, 40, 40, Physics::BodyType::Dynamic}, ppm);
       box.AddComponent<Components::RigidBody>(rb);
       box.AddComponent<Components::BoxCollider>(boxcollider);

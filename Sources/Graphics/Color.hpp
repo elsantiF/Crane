@@ -6,7 +6,7 @@
 namespace Crane::Graphics {
   class Color {
   public:
-    Color() : r(0), g(0), b(0), a(255) {}
+    Color() : r(0.f), g(0.f), b(0.f), a(1.f) {}
     Color(f32 r, f32 g, f32 b, f32 a = 1.0) : r(r), g(g), b(b), a(a) {}
     Color(const SDL_FColor &color) : r(color.r), g(color.g), b(color.b), a(color.a) {}
 
@@ -25,4 +25,13 @@ namespace Crane::Graphics {
   public:
     f32 r, g, b, a;
   };
+
+  namespace Colors {
+    inline static Color White = Color{1.f, 1.f, 1.f, 1.f};
+    inline static Color Black = Color{0.f, 0.f, 0.f, 1.f};
+    inline static Color Red = Color{1.f, 0.f, 0.f, 1.f};
+    inline static Color Green = Color{0.f, 1.f, 0.f, 1.f};
+    inline static Color Blue = Color{0.f, 0.f, 1.f, 1.f};
+    inline static Color Yellow = Color{1.f, 1.f, 0.f, 1.f};
+  }
 }
