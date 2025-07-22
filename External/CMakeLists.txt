@@ -1,6 +1,8 @@
 add_subdirectory("box2d")
 add_subdirectory("entt")
 add_subdirectory("glm")
+option(SDL_STATIC "" ON)
+option(SDL_SHARED "" OFF)
 add_subdirectory("SDL")
 add_subdirectory("tracy")
 
