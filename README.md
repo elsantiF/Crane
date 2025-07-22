@@ -24,4 +24,4 @@ cmake --build .
 
 ## License
 
-Crane is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+Crane is licensed under the MIT License. See the [LICENSE](LICENSE.txt) file for more details.
