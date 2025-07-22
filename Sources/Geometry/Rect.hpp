@@ -3,7 +3,7 @@
 #include "Core/Types.hpp"
 #include <SDL3/SDL_rect.h>
 
-namespace Crane::Graphics {
+namespace Crane::Geometry {
   struct Rect {
   public:
     Rect(f32 x = 0.0f, f32 y = 0.0f, f32 width = 0.0f, f32 height = 0.0f) : x(x), y(y), width(width), height(height) {}
