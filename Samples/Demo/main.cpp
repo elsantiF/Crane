@@ -119,9 +119,9 @@ protected:
       float y = static_cast<float>(rand() % 400 + 100);
       circle.AddComponent<Components::Transform>(Math::Vec2f{x, y});
       circle.AddComponent<Components::Renderable>(Graphics::Colors::White, CreateCircleVertices(20.0f, 16), CreateCircleIndices(16));
-      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({x, y, 40, 40, Physics::BodyType::Dynamic}, ppm);
+      auto [rb, circlecollider] = physicsWorld.CreateCircleBody({x, y, 20, Physics::BodyType::Dynamic}, ppm);
       circle.AddComponent<Components::RigidBody>(rb);
-      circle.AddComponent<Components::BoxCollider>(boxcollider);
+      circle.AddComponent<Components::CircleCollider>(circlecollider);
     }
 
     ImGui::End();

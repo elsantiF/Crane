@@ -2,6 +2,7 @@
 
 #include "BodyStructs.hpp"
 #include "Components/BoxCollider.hpp"
+#include "Components/CircleCollider.hpp"
 #include "Components/RigidBody.hpp"
 #include "Core/Types.hpp"
 #include <box2d/box2d.h>
@@ -14,7 +15,8 @@ namespace Crane::Physics {
 
     void Update(f64 deltaTime);
 
-    Pair<Components::RigidBody, Components::BoxCollider> CreateBoxBody(BodyConfig config, f32 ppm);
+    Pair<Components::RigidBody, Components::BoxCollider> CreateBoxBody(BoxBodyConfig config, f32 ppm);
+    Pair<Components::RigidBody, Components::CircleCollider> CreateCircleBody(CircleBodyConfig config, f32 ppm);
 
   private:
     b2WorldId m_WorldId;

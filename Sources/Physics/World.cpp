@@ -20,7 +20,7 @@ namespace Crane::Physics {
     b2World_Step(m_WorldId, static_cast<float>(deltaTime), PHYSICS_STEPS);
   }
 
-  Pair<Components::RigidBody, Components::BoxCollider> World::CreateBoxBody(BodyConfig config, f32 ppm) {
+  Pair<Components::RigidBody, Components::BoxCollider> World::CreateBoxBody(BoxBodyConfig config, f32 ppm) {
     PROFILE_SCOPE();
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = static_cast<b2BodyType>(config.type);
@@ -35,5 +35,24 @@ namespace Crane::Physics {
     b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &boxShape);
 
     return MakePair(Components::RigidBody(bodyId), Components::BoxCollider(Math::Vec2f{width, height}, shapeId));
+  }
+
+  Pair<Components::RigidBody, Components::CircleCollider> World::CreateCircleBody(CircleBodyConfig config, f32 ppm) {
+    PROFILE_SCOPE();
+    b2BodyDef bodyDef = b2DefaultBodyDef();
+    bodyDef.type = static_cast<b2BodyType>(config.type);
+    bodyDef.position = {config.x / ppm, config.y / ppm};
+    b2BodyId bodyId = b2CreateBody(m_WorldId, &bodyDef);
+
+    f32 radius = config.radius / ppm;
+    b2Circle circleShape = b2Circle{
+        {0, 0},
+        radius
+    };
+    b2ShapeDef shapeDef = b2DefaultShapeDef();
+    shapeDef.density = 1.0f;
+    b2ShapeId shapeId = b2CreateCircleShape(bodyId, &shapeDef, &circleShape);
+
+    return MakePair(Components::RigidBody(bodyId), Components::CircleCollider(radius, shapeId));
   }
 }
