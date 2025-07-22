@@ -20,15 +20,16 @@ namespace Crane::Physics {
     b2World_Step(m_WorldId, static_cast<float>(deltaTime), PHYSICS_STEPS);
   }
 
-  Pair<Components::RigidBody, Components::BoxCollider> World::CreateBoxBody(BoxBodyConfig config, f32 ppm) {
+  Pair<Components::RigidBody, Components::BoxCollider> World::CreateBoxBody(BoxBodyConfig config) {
     PROFILE_SCOPE();
+    f32 ppm = Crane::World::PIXELS_PER_METER;
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = static_cast<b2BodyType>(config.type);
-    bodyDef.position = {config.x / ppm, config.y / ppm};
+    bodyDef.position = {config.center.x / ppm, config.center.y / ppm};
     b2BodyId bodyId = b2CreateBody(m_WorldId, &bodyDef);
 
-    f32 width = config.width / ppm;
-    f32 height = config.height / ppm;
+    f32 width = config.dimensions.x / ppm;
+    f32 height = config.dimensions.y / ppm;
     b2Polygon boxShape = b2MakeBox(width / 2, height / 2);
     b2ShapeDef shapeDef = b2DefaultShapeDef();
     shapeDef.density = 1.0f;
@@ -37,11 +38,12 @@ namespace Crane::Physics {
     return MakePair(Components::RigidBody(bodyId), Components::BoxCollider(Math::Vec2f{width, height}, shapeId));
   }
 
-  Pair<Components::RigidBody, Components::CircleCollider> World::CreateCircleBody(CircleBodyConfig config, f32 ppm) {
+  Pair<Components::RigidBody, Components::CircleCollider> World::CreateCircleBody(CircleBodyConfig config) {
     PROFILE_SCOPE();
+    f32 ppm = Crane::World::PIXELS_PER_METER;
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = static_cast<b2BodyType>(config.type);
-    bodyDef.position = {config.x / ppm, config.y / ppm};
+    bodyDef.position = {config.center.x / ppm, config.center.y / ppm};
     b2BodyId bodyId = b2CreateBody(m_WorldId, &bodyDef);
 
     f32 radius = config.radius / ppm;

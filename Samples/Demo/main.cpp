@@ -53,7 +53,6 @@ public:
 protected:
   void OnInitialize() override {
     auto &physicsWorld = GetWorld().GetPhysicsWorld();
-    auto ppm = GetWorld().GetPixelsPerMeter();
 
     // Create ground body
     World::Entity ground = GetWorld().CreateEntity();
@@ -61,7 +60,11 @@ protected:
       ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f}, 0.1f);
       ground.AddComponent<Components::Renderable>(Graphics::Colors::Green, CreateSquareVertices(1000.0f, 50.0f), CreateSquareIndices());
 
-      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({512, 700, 1000, 50, Physics::BodyType::Static}, ppm);
+      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
+          {512,  700},
+          {1000, 50 },
+          Physics::BodyType::Static
+      });
       ground.AddComponent<Components::RigidBody>(rb);
       ground.AddComponent<Components::BoxCollider>(boxcollider);
     }
@@ -72,7 +75,11 @@ protected:
       box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
       box.AddComponent<Components::Renderable>(Graphics::Colors::Red, CreateSquareVertices(40.0f, 40.0f), CreateSquareIndices());
 
-      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({400, 100, 40, 40, Physics::BodyType::Dynamic}, ppm);
+      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
+          {400, 100},
+          {40,  40 },
+          Physics::BodyType::Dynamic
+      });
       box.AddComponent<Components::RigidBody>(rb);
       box.AddComponent<Components::BoxCollider>(boxcollider);
     }
@@ -81,7 +88,11 @@ protected:
     {
       m_Player.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
       m_Player.AddComponent<Components::Renderable>(Graphics::Colors::Blue, CreateSquareVertices(40.0f, 40.0f), CreateSquareIndices());
-      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({600, 100, 40, 40, Physics::BodyType::Dynamic}, ppm);
+      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
+          {600, 100},
+          {40,  40 },
+          Physics::BodyType::Dynamic
+      });
       m_Player.AddComponent<Components::RigidBody>(rb);
       m_Player.AddComponent<Components::BoxCollider>(boxcollider);
       m_Player.AddComponent<PlayerComponent>();
@@ -100,26 +111,31 @@ protected:
 
     if (ImGui::Button("Spawn Box")) {
       auto &physicsWorld = GetWorld().GetPhysicsWorld();
-      auto ppm = GetWorld().GetPixelsPerMeter();
       World::Entity box = GetWorld().CreateEntity();
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       box.AddComponent<Components::Transform>(Math::Vec2f{x, y});
       box.AddComponent<Components::Renderable>(Graphics::Colors::Yellow, CreateSquareVertices(40.0f, 40.0f), CreateSquareIndices());
-      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({x, y, 40, 40, Physics::BodyType::Dynamic}, ppm);
+      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
+          {x,  y },
+          {40, 40},
+          Physics::BodyType::Dynamic
+      });
       box.AddComponent<Components::RigidBody>(rb);
       box.AddComponent<Components::BoxCollider>(boxcollider);
     }
 
     if (ImGui::Button("Spawn Circle")) {
       auto &physicsWorld = GetWorld().GetPhysicsWorld();
-      auto ppm = GetWorld().GetPixelsPerMeter();
       World::Entity circle = GetWorld().CreateEntity();
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       circle.AddComponent<Components::Transform>(Math::Vec2f{x, y});
       circle.AddComponent<Components::Renderable>(Graphics::Colors::White, CreateCircleVertices(20.0f, 16), CreateCircleIndices(16));
-      auto [rb, circlecollider] = physicsWorld.CreateCircleBody({x, y, 20, Physics::BodyType::Dynamic}, ppm);
+      auto [rb, circlecollider] = physicsWorld.CreateCircleBody({
+          {x, y},
+          20, Physics::BodyType::Dynamic
+      });
       circle.AddComponent<Components::RigidBody>(rb);
       circle.AddComponent<Components::CircleCollider>(circlecollider);
     }
