@@ -8,6 +8,7 @@
 #include "World/Entity.hpp"
 #include <imgui.h>
 #include <iostream>
+#include <numbers>
 
 using namespace Crane;
 
@@ -22,6 +23,27 @@ Vector<Math::Vec2f> CreateSquareVertices(f32 xdim, f32 ydim) {
 
 Vector<i32> CreateSquareIndices() {
   return {0, 1, 2, 2, 3, 0};
+}
+
+Vector<Math::Vec2f> CreateCircleVertices(f32 radius, i32 segments) {
+  Vector<Math::Vec2f> vertices;
+  for (i32 i = 0; i < segments; ++i) {
+    f32 angle = (2.0f * std::numbers::pi_v<f32> * i) / segments;
+    vertices.push_back({radius * cos(angle), radius * sin(angle)});
+  }
+
+  vertices.push_back({0.0f, 0.0f});
+  return vertices;
+}
+
+Vector<i32> CreateCircleIndices(i32 segments) {
+  Vector<i32> indices;
+  for (i32 i = 0; i < segments; ++i) {
+    indices.push_back(i);
+    indices.push_back((i + 1) % segments);
+    indices.push_back(segments);
+  }
+  return indices;
 }
 
 class Demo : public Application::Application {
@@ -87,6 +109,19 @@ protected:
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({x, y, 40, 40, Physics::BodyType::Dynamic}, ppm);
       box.AddComponent<Components::RigidBody>(rb);
       box.AddComponent<Components::BoxCollider>(boxcollider);
+    }
+
+    if (ImGui::Button("Spawn Circle")) {
+      auto &physicsWorld = GetWorld().GetPhysicsWorld();
+      auto ppm = GetWorld().GetPixelsPerMeter();
+      World::Entity circle = GetWorld().CreateEntity();
+      float x = static_cast<float>(rand() % 800 + 100);
+      float y = static_cast<float>(rand() % 400 + 100);
+      circle.AddComponent<Components::Transform>(Math::Vec2f{x, y});
+      circle.AddComponent<Components::Renderable>(Graphics::Colors::White, CreateCircleVertices(20.0f, 16), CreateCircleIndices(16));
+      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({x, y, 40, 40, Physics::BodyType::Dynamic}, ppm);
+      circle.AddComponent<Components::RigidBody>(rb);
+      circle.AddComponent<Components::BoxCollider>(boxcollider);
     }
 
     ImGui::End();
