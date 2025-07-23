@@ -4,6 +4,7 @@ add_subdirectory("glm")
 option(SDL_STATIC "" ON)
 option(SDL_SHARED "" OFF)
 add_subdirectory("SDL")
+add_subdirectory("spdlog")
 add_subdirectory("tracy")
 
 file(GLOB IMGUI_SOURCES

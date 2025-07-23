@@ -16,3 +16,6 @@
 [submodule "External/tracy"]
 	path = External/tracy
 	url = https://github.com/wolfpld/tracy.git
+[submodule "External/spdlog"]
+	path = External/spdlog
+	url = https://github.com/gabime/spdlog.git

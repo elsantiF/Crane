@@ -1,5 +1,6 @@
 #include "Application.hpp"
 #include "Core/Config.hpp"
+#include "Core/Logger.hpp"
 #include "Core/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
 #include "Events/KeyDown.hpp"
@@ -16,6 +17,7 @@
 namespace Crane::Application {
   bool Application::Initialize() {
     PROFILE_SCOPE();
+    Logger::Initialize();
     if (!InitializeSDL()) {
       return false;
     }
@@ -31,21 +33,23 @@ namespace Crane::Application {
   bool Application::InitializeSDL() {
     PROFILE_SCOPE();
     if (!SDL_Init(SDL_INIT_VIDEO)) {
-      std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+      Logger::Error(std::format("SDL Initialization Error: {}", SDL_GetError()));
       return false;
     }
 
     m_Window = SDL_CreateWindow("Crane", Core::WINDOW_WIDTH, Core::WINDOW_HEIGHT, NULL);
     if (!m_Window) {
-      std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+      Logger::Error(std::format("SDL_CreateWindow Error: {}", SDL_GetError()));
       return false;
     }
 
     m_Renderer = MakeScope<Graphics::SDLRenderer::SDLRenderer>(m_Window);
     if (!m_Renderer->Initialize()) {
-      std::cerr << "SDLRenderer Initialization Error: " << SDL_GetError() << std::endl;
+      Logger::Error(std::format("SDLRenderer Initialization Error: {}", SDL_GetError()));
       return false;
     }
+
+    Logger::Info("SDL Initialized successfully");
 
     return true;
   }
@@ -165,5 +169,7 @@ namespace Crane::Application {
     }
 
     SDL_Quit();
+    Logger::Info("Application cleaned up");
+    Logger::Shutdown();
   }
 }
