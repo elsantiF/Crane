@@ -12,7 +12,6 @@
 #include "World/Entity.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
-#include <iostream>
 
 namespace Crane::Application {
   bool Application::Initialize() {
