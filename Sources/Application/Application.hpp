@@ -44,7 +44,7 @@ namespace Crane::Application {
     virtual void OnPostRender() = 0;
     virtual void OnImGui() = 0;
 
-  private:
+  protected: // TODO: Protected is not ideal, but necessary for now
     SDL_Window *m_Window;
     Scope<Graphics::IRenderer> m_Renderer;
     Scope<World::World> m_World;

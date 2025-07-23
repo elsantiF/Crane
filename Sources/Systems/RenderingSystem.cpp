@@ -15,7 +15,9 @@ namespace Crane::Systems {
       const auto &[transform, renderable] = view.get<Components::Transform, Components::Renderable>(entity);
 
       // renderer.SetFillColor(renderable.color);
-      renderer.DrawRenderable(renderable, transform.transform);
+      renderer.SetVertexData(renderable.vertexDataId);
+      renderer.SetIndexData(renderable.indexDataId);
+      renderer.DrawRenderable(transform.transform);
     }
   }
 }

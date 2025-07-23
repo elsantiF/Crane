@@ -12,12 +12,12 @@
 
 using namespace Crane;
 
-Vector<Math::Vec2f> CreateSquareVertices(f32 xdim, f32 ydim) {
+Graphics::SVertex2List CreateSquareVertices(f32 xdim, f32 ydim, Graphics::Color color) {
   return {
-      {-xdim / 2, -ydim / 2},
-      {xdim / 2,  -ydim / 2},
-      {xdim / 2,  ydim / 2 },
-      {-xdim / 2, ydim / 2 }
+      {{-xdim / 2, -ydim / 2}, color},
+      {{xdim / 2, -ydim / 2},  color},
+      {{xdim / 2, ydim / 2},   color},
+      {{-xdim / 2, ydim / 2},  color}
   };
 }
 
@@ -25,14 +25,20 @@ Vector<i32> CreateSquareIndices() {
   return {0, 1, 2, 2, 3, 0};
 }
 
-Vector<Math::Vec2f> CreateCircleVertices(f32 radius, i32 segments) {
-  Vector<Math::Vec2f> vertices;
+Graphics::SVertex2List CreateCircleVertices(f32 radius, i32 segments, Graphics::Color color) {
+  Graphics::SVertex2List vertices;
   for (i32 i = 0; i < segments; ++i) {
     f32 angle = (2.0f * std::numbers::pi_v<f32> * i) / segments;
-    vertices.push_back({radius * cos(angle), radius * sin(angle)});
+    vertices.push_back({
+        {radius * cos(angle), radius * sin(angle)},
+        color
+    });
   }
 
-  vertices.push_back({0.0f, 0.0f});
+  vertices.push_back({
+      {0.0f, 0.0f},
+      color
+  });
   return vertices;
 }
 
@@ -55,10 +61,12 @@ protected:
     auto &physicsWorld = GetWorld().GetPhysicsWorld();
 
     // Create ground body
+    u32 groundVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));
+    u32 groundIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
     World::Entity ground = GetWorld().CreateEntity();
     {
       ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f}, 0.1f);
-      ground.AddComponent<Components::Renderable>(Graphics::Colors::Green, CreateSquareVertices(1000.0f, 50.0f), CreateSquareIndices());
+      ground.AddComponent<Components::Renderable>(Graphics::Colors::Green, groundVertexDataId, groundIndexDataId);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {512,  700},
@@ -70,10 +78,12 @@ protected:
     }
 
     // Create a dynamic box body
+    u32 redBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Red));
+    u32 redBoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
     World::Entity box = GetWorld().CreateEntity();
     {
       box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
-      box.AddComponent<Components::Renderable>(Graphics::Colors::Red, CreateSquareVertices(40.0f, 40.0f), CreateSquareIndices());
+      box.AddComponent<Components::Renderable>(Graphics::Colors::Red, redBoxVertexDataId, redBoxIndexDataId);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {400, 100},
@@ -84,10 +94,12 @@ protected:
       box.AddComponent<Components::BoxCollider>(boxcollider);
     }
 
+    u32 blueBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Blue));
+    u32 blueBoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
     m_Player = GetWorld().CreateEntity();
     {
       m_Player.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
-      m_Player.AddComponent<Components::Renderable>(Graphics::Colors::Blue, CreateSquareVertices(40.0f, 40.0f), CreateSquareIndices());
+      m_Player.AddComponent<Components::Renderable>(Graphics::Colors::Blue, blueBoxVertexDataId, blueBoxIndexDataId);
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {600, 100},
           {40,  40 },
@@ -99,6 +111,10 @@ protected:
     }
 
     GetWorld().GetSystemManager().AddSystem<PlayerSystem>(*this, m_Player);
+    m_BoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Yellow));
+    m_BoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
+    m_CircleVertexDataId = m_Renderer->LoadVertexData(CreateCircleVertices(20.0f, 16, Graphics::Colors::White));
+    m_CircleIndexDataId = m_Renderer->LoadIndexData(CreateCircleIndices(16));
   }
   void OnPreFixedUpdate() override {}
   void OnPostFixedUpdate() override {}
@@ -115,7 +131,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       box.AddComponent<Components::Transform>(Math::Vec2f{x, y});
-      box.AddComponent<Components::Renderable>(Graphics::Colors::Yellow, CreateSquareVertices(40.0f, 40.0f), CreateSquareIndices());
+      box.AddComponent<Components::Renderable>(Graphics::Colors::Yellow, m_BoxVertexDataId, m_BoxIndexDataId);
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {x,  y },
           {40, 40},
@@ -131,7 +147,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       circle.AddComponent<Components::Transform>(Math::Vec2f{x, y});
-      circle.AddComponent<Components::Renderable>(Graphics::Colors::White, CreateCircleVertices(20.0f, 16), CreateCircleIndices(16));
+      circle.AddComponent<Components::Renderable>(Graphics::Colors::White, m_CircleVertexDataId, m_CircleIndexDataId);
       auto [rb, circlecollider] = physicsWorld.CreateCircleBody({
           {x, y},
           20, Physics::BodyType::Dynamic
@@ -145,6 +161,10 @@ protected:
 
 private:
   World::Entity m_Player;
+  u32 m_BoxVertexDataId = 0;
+  u32 m_BoxIndexDataId = 0;
+  u32 m_CircleVertexDataId = 0;
+  u32 m_CircleIndexDataId = 0;
 };
 
 int main() {

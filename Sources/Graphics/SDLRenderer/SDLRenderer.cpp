@@ -67,11 +67,84 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_RenderPresent(m_Renderer);
   }
 
+  u32 SDLRenderer::LoadVertexData(const SVertex2List &vertices) {
+    PROFILE_SCOPE();
+    u32 vertexDataId = static_cast<u32>(m_Context.vertexData.size()) + 1;
+    Vector<SDL_Vertex> sdlVertices(vertices.size());
+
+    for (size_t i = 0; i < vertices.size(); ++i) {
+      sdlVertices[i].position = {vertices[i].position.x, vertices[i].position.y};
+      sdlVertices[i].color = {vertices[i].color.r, vertices[i].color.g, vertices[i].color.b, vertices[i].color.a};
+    }
+
+    m_Context.vertexData[vertexDataId] = sdlVertices;
+    return vertexDataId;
+  }
+
+  void SDLRenderer::UnloadVertexData(u32 vertexDataId) {
+    PROFILE_SCOPE();
+    if (m_Context.activeVertexDataId == vertexDataId) {
+      m_Context.activeVertexDataId = 0;
+      m_Context.activeVertexData = nullptr;
+    }
+
+    auto it = m_Context.vertexData.find(vertexDataId);
+    if (it != m_Context.vertexData.end()) {
+      m_Context.vertexData.erase(it);
+    }
+  }
+
+  u32 SDLRenderer::LoadIndexData(const IndexList &indices) {
+    PROFILE_SCOPE();
+    u32 indexDataId = static_cast<u32>(m_Context.indexData.size()) + 1;
+    m_Context.indexData[indexDataId] = indices;
+    return indexDataId;
+  }
+
+  void SDLRenderer::UnloadIndexData(u32 indexDataId) {
+    PROFILE_SCOPE();
+    if (m_Context.activeIndexDataId == indexDataId) {
+      m_Context.activeIndexDataId = 0;
+      m_Context.activeIndexData = nullptr;
+    }
+
+    auto it = m_Context.indexData.find(indexDataId);
+    if (it != m_Context.indexData.end()) {
+      m_Context.indexData.erase(it);
+    }
+  }
+
   void SDLRenderer::SetFillColor(const Color &color) {
     PROFILE_SCOPE();
-    if (m_FillColor != color) {
+    if (m_Context.fillColor != color) {
       SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
-      m_FillColor = color;
+      m_Context.fillColor = color;
+    }
+  }
+
+  void SDLRenderer::SetVertexData(u32 vertexDataId) {
+    PROFILE_SCOPE();
+    if (m_Context.activeVertexDataId == vertexDataId) {
+      return;
+    }
+
+    auto it = m_Context.vertexData.find(vertexDataId);
+    if (it != m_Context.vertexData.end()) {
+      m_Context.activeVertexDataId = vertexDataId;
+      m_Context.activeVertexData = &it->second;
+    }
+  }
+
+  void SDLRenderer::SetIndexData(u32 indexDataId) {
+    PROFILE_SCOPE();
+    if (m_Context.activeIndexDataId == indexDataId) {
+      return;
+    }
+
+    auto it = m_Context.indexData.find(indexDataId);
+    if (it != m_Context.indexData.end()) {
+      m_Context.activeIndexDataId = indexDataId;
+      m_Context.activeIndexData = &it->second;
     }
   }
 
@@ -87,7 +160,7 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_Vertex vertices[4];
     for (i32 i = 0; i < 4; ++i) {
       vertices[i].position = points[i];
-      vertices[i].color = m_FillColor;
+      vertices[i].color = m_Context.fillColor;
     }
 
     i32 indices[6] = {0, 1, 2, 2, 3, 0};
@@ -105,31 +178,31 @@ namespace Crane::Graphics::SDLRenderer {
   }
 
   // TODO: extract renderable to its own class, somthing like a VertexBuffer
-  void SDLRenderer::DrawRenderable(const Components::Renderable &renderable, const Math::Transform &transform) {
+  void SDLRenderer::DrawRenderable(const Math::Transform &transform) {
     PROFILE_SCOPE();
 
-    if (renderable.vertexCount == 0 || renderable.indexCount == 0) {
+    if (m_Context.activeIndexDataId == 0 || m_Context.activeVertexDataId == 0 || m_Context.activeVertexData == nullptr ||
+        m_Context.activeIndexData == nullptr) {
       return;
     }
 
-    Vector<SDL_Vertex> vertices(renderable.vertexCount);
+    Vector<SDL_Vertex> &vertices = *m_Context.activeVertexData;
+    IndexList &indices = *m_Context.activeIndexData;
+
+    Vector<SDL_Vertex> transformedVertices = vertices;
+
     f32 angle = transform.rotation;
     f32 cosAngle = std::cos(angle);
     f32 sinAngle = std::sin(angle);
-    for (i32 i = 0; i < renderable.vertexCount; ++i) {
-      f32 rotatedX = renderable.vertices[i].x * cosAngle - renderable.vertices[i].y * sinAngle;
-      f32 rotatedY = renderable.vertices[i].x * sinAngle + renderable.vertices[i].y * cosAngle;
+    for (u32 i = 0; i < transformedVertices.size(); ++i) {
+      f32 rotatedX = transformedVertices[i].position.x * cosAngle - transformedVertices[i].position.y * sinAngle;
+      f32 rotatedY = transformedVertices[i].position.x * sinAngle + transformedVertices[i].position.y * cosAngle;
       f32 vertX = rotatedX + transform.position.x;
       f32 vertY = rotatedY + transform.position.y;
-      vertices[i].position = {vertX, vertY};
-      vertices[i].color = renderable.color;
+      transformedVertices[i].position = {vertX, vertY};
     }
 
-    Vector<i32> indices(renderable.indexCount);
-    for (i32 i = 0; i < renderable.indexCount; ++i) {
-      indices[i] = renderable.indices[i];
-    }
-
-    SDL_RenderGeometry(m_Renderer, nullptr, vertices.data(), renderable.vertexCount, indices.data(), renderable.indexCount);
+    SDL_RenderGeometry(m_Renderer, nullptr, transformedVertices.data(), static_cast<u32>(transformedVertices.size()), indices.data(),
+                       static_cast<u32>(indices.size()));
   }
 }
