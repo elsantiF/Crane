@@ -4,6 +4,7 @@
 #include "Editor/EntityDisplay.hpp"
 #include "Events/KeyDown.hpp"
 #include "Events/KeyUp.hpp"
+#include "Events/MouseClick.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Systems/PhysicsSystem.hpp"
 #include "Systems/RenderingSystem.hpp"
@@ -79,6 +80,18 @@ namespace Crane::Application {
           m_Dispatcher.trigger(Events::KeyUpEvent{event.key.key});
         }
         break;
+      case SDL_EVENT_MOUSE_BUTTON_DOWN: {
+        auto position = Math::Vec2f(event.button.x, event.button.y);
+        switch (event.button.button) {
+        case SDL_BUTTON_LEFT:   m_Dispatcher.trigger(Events::MouseClickEvent{position, Events::MouseButton::Left}); break;
+        case SDL_BUTTON_RIGHT:  m_Dispatcher.trigger(Events::MouseClickEvent{position, Events::MouseButton::Right}); break;
+        case SDL_BUTTON_MIDDLE: m_Dispatcher.trigger(Events::MouseClickEvent{position, Events::MouseButton::Middle}); break;
+        default:
+          // TODO: Handle other mouse buttons if needed
+          break;
+        }
+        break;
+      }
       }
     }
 
