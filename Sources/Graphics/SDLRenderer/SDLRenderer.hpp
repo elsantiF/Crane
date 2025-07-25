@@ -29,9 +29,13 @@ namespace Crane::Graphics::SDLRenderer {
     u32 LoadIndexData(const IndexList &indices) override;
     void UnloadIndexData(u32 indexDataId) override;
 
+    u32 LoadTexture(const Texture &texture) override;
+    void UnloadTexture(u32 textureId) override;
+
     void SetFillColor(const Color &color) override;
     void SetVertexData(u32 vertexDataId) override;
     void SetIndexData(u32 indexDataId) override;
+    void SetTexture(u32 textureId) override;
 
     void DrawPoint(const Math::Vec2f &point) override;
     void DrawLine(const Math::Vec2f &start, const Math::Vec2f &end) override;
@@ -50,11 +54,14 @@ namespace Crane::Graphics::SDLRenderer {
 
       Map<u32, Vector<SDL_Vertex>> vertexData;
       Map<u32, IndexList> indexData;
+      Map<u32, SDL_Texture *> textures;
 
       u32 activeVertexDataId = 0;
       Vector<SDL_Vertex> *activeVertexData = nullptr;
       u32 activeIndexDataId = 0;
       IndexList *activeIndexData = nullptr;
+      u32 activeTextureId = 0;
+      SDL_Texture *activeTexture = nullptr;
     } m_Context;
   };
 }

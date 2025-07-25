@@ -14,10 +14,10 @@ using namespace Crane;
 
 Graphics::SVertex2List CreateSquareVertices(f32 xdim, f32 ydim, Graphics::Color color) {
   return {
-      {{-xdim / 2, -ydim / 2}, color},
-      {{xdim / 2, -ydim / 2},  color},
-      {{xdim / 2, ydim / 2},   color},
-      {{-xdim / 2, ydim / 2},  color}
+      {{-xdim / 2, -ydim / 2}, color, {0.f, 0.f}},
+      {{xdim / 2, -ydim / 2},  color, {1.f, 0.f}},
+      {{xdim / 2, ydim / 2},   color, {1.f, 1.f}},
+      {{-xdim / 2, ydim / 2},  color, {0.f, 1.f}}
   };
 }
 
@@ -29,15 +29,17 @@ Graphics::SVertex2List CreateCircleVertices(f32 radius, i32 segments, Graphics::
   Graphics::SVertex2List vertices;
   for (i32 i = 0; i < segments; ++i) {
     f32 angle = (2.0f * std::numbers::pi_v<f32> * i) / segments;
+    f32 u = (cos(angle) + 1.0f) * 0.5f;
+    f32 v = (sin(angle) + 1.0f) * 0.5f;
     vertices.push_back({
         {radius * cos(angle), radius * sin(angle)},
-        color
+        color, {u,                   v                  }
     });
   }
 
   vertices.push_back({
       {0.0f, 0.0f},
-      color
+      color, {0.5f, 0.5f}
   });
   return vertices;
 }
@@ -52,6 +54,22 @@ Vector<i32> CreateCircleIndices(i32 segments) {
   return indices;
 }
 
+Graphics::Texture CreateSimpleTexture() {
+  // Representation in a box:
+  // 1 2
+  // 3 4
+  return {
+      2,
+      2,
+      {
+        0xFF0000FF, // First pixel
+          0xFF00FF00, // Second pixel
+          0xFFFF0000, // Third pixel
+          0xFFFFFFFF  // Fourth pixel
+      }
+  };
+}
+
 class Demo : public Application::Application {
 public:
   Demo() = default;
@@ -60,13 +78,15 @@ protected:
   void OnInitialize() override {
     auto &physicsWorld = GetWorld().GetPhysicsWorld();
 
+    m_SimpleTextureId = m_Renderer->LoadTexture(CreateSimpleTexture());
+
     // Create ground body
     u32 groundVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));
     u32 groundIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
     World::Entity ground = GetWorld().CreateEntity();
     {
       ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f}, 0.1f);
-      ground.AddComponent<Components::Renderable>(Graphics::Colors::Green, groundVertexDataId, groundIndexDataId);
+      ground.AddComponent<Components::Renderable>(Graphics::Colors::Green, groundVertexDataId, groundIndexDataId, 0);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {512,  700},
@@ -83,7 +103,7 @@ protected:
     World::Entity box = GetWorld().CreateEntity();
     {
       box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
-      box.AddComponent<Components::Renderable>(Graphics::Colors::Red, redBoxVertexDataId, redBoxIndexDataId);
+      box.AddComponent<Components::Renderable>(Graphics::Colors::Red, redBoxVertexDataId, redBoxIndexDataId, 0);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {400, 100},
@@ -99,7 +119,7 @@ protected:
     m_Player = GetWorld().CreateEntity();
     {
       m_Player.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
-      m_Player.AddComponent<Components::Renderable>(Graphics::Colors::Blue, blueBoxVertexDataId, blueBoxIndexDataId);
+      m_Player.AddComponent<Components::Renderable>(Graphics::Colors::Blue, blueBoxVertexDataId, blueBoxIndexDataId, 0);
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {600, 100},
           {40,  40 },
@@ -111,7 +131,7 @@ protected:
     }
 
     GetWorld().GetSystemManager().AddSystem<PlayerSystem>(*this, m_Player);
-    m_BoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Yellow));
+    m_BoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::White));
     m_BoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
     m_CircleVertexDataId = m_Renderer->LoadVertexData(CreateCircleVertices(20.0f, 16, Graphics::Colors::White));
     m_CircleIndexDataId = m_Renderer->LoadIndexData(CreateCircleIndices(16));
@@ -131,7 +151,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       box.AddComponent<Components::Transform>(Math::Vec2f{x, y});
-      box.AddComponent<Components::Renderable>(Graphics::Colors::Yellow, m_BoxVertexDataId, m_BoxIndexDataId);
+      box.AddComponent<Components::Renderable>(Graphics::Colors::White, m_BoxVertexDataId, m_BoxIndexDataId, m_SimpleTextureId);
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {x,  y },
           {40, 40},
@@ -147,7 +167,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       circle.AddComponent<Components::Transform>(Math::Vec2f{x, y});
-      circle.AddComponent<Components::Renderable>(Graphics::Colors::White, m_CircleVertexDataId, m_CircleIndexDataId);
+      circle.AddComponent<Components::Renderable>(Graphics::Colors::White, m_CircleVertexDataId, m_CircleIndexDataId, m_SimpleTextureId);
       auto [rb, circlecollider] = physicsWorld.CreateCircleBody({
           {x, y},
           20, Physics::BodyType::Dynamic
@@ -165,6 +185,7 @@ private:
   u32 m_BoxIndexDataId = 0;
   u32 m_CircleVertexDataId = 0;
   u32 m_CircleIndexDataId = 0;
+  u32 m_SimpleTextureId = 0;
 };
 
 int main() {

@@ -75,6 +75,7 @@ namespace Crane::Graphics::SDLRenderer {
     for (size_t i = 0; i < vertices.size(); ++i) {
       sdlVertices[i].position = {vertices[i].position.x, vertices[i].position.y};
       sdlVertices[i].color = {vertices[i].color.r, vertices[i].color.g, vertices[i].color.b, vertices[i].color.a};
+      sdlVertices[i].tex_coord = {vertices[i].uv.x, vertices[i].uv.y};
     }
 
     m_Context.vertexData[vertexDataId] = sdlVertices;
@@ -114,6 +115,35 @@ namespace Crane::Graphics::SDLRenderer {
     }
   }
 
+  u32 SDLRenderer::LoadTexture(const Texture &texture) {
+    PROFILE_SCOPE();
+    u32 textureId = static_cast<u32>(m_Context.textures.size()) + 1;
+    SDL_Texture *sdlTexture = SDL_CreateTexture(m_Renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, texture.width, texture.height);
+
+    if (!sdlTexture) {
+      return 0;
+    }
+
+    SDL_UpdateTexture(sdlTexture, NULL, texture.data.data(), texture.width * 4);
+
+    m_Context.textures[textureId] = sdlTexture;
+    return textureId;
+  }
+
+  void SDLRenderer::UnloadTexture(u32 textureId) {
+    PROFILE_SCOPE();
+    if (m_Context.activeTextureId == textureId) {
+      m_Context.activeTextureId = 0;
+      m_Context.activeTexture = nullptr;
+    }
+
+    auto it = m_Context.textures.find(textureId);
+    if (it != m_Context.textures.end()) {
+      SDL_DestroyTexture(it->second);
+      m_Context.textures.erase(it);
+    }
+  }
+
   void SDLRenderer::SetFillColor(const Color &color) {
     PROFILE_SCOPE();
     if (m_Context.fillColor != color) {
@@ -145,6 +175,25 @@ namespace Crane::Graphics::SDLRenderer {
     if (it != m_Context.indexData.end()) {
       m_Context.activeIndexDataId = indexDataId;
       m_Context.activeIndexData = &it->second;
+    }
+  }
+
+  void SDLRenderer::SetTexture(u32 textureId) {
+    PROFILE_SCOPE();
+    if (m_Context.activeTextureId == textureId) {
+      return;
+    }
+
+    if (textureId == 0) {
+      m_Context.activeTextureId = 0;
+      m_Context.activeTexture = nullptr;
+      return;
+    }
+
+    auto it = m_Context.textures.find(textureId);
+    if (it != m_Context.textures.end()) {
+      m_Context.activeTextureId = textureId;
+      m_Context.activeTexture = it->second;
     }
   }
 
@@ -202,7 +251,7 @@ namespace Crane::Graphics::SDLRenderer {
       transformedVertices[i].position = {vertX, vertY};
     }
 
-    SDL_RenderGeometry(m_Renderer, nullptr, transformedVertices.data(), static_cast<u32>(transformedVertices.size()), indices.data(),
+    SDL_RenderGeometry(m_Renderer, m_Context.activeTexture, transformedVertices.data(), static_cast<u32>(transformedVertices.size()), indices.data(),
                        static_cast<u32>(indices.size()));
   }
 }
