@@ -1,0 +1,8 @@
+PROJECT_NAME           = "Crane"
+OUTPUT_DIRECTORY       = docs
+INPUT                  = Sources
+RECURSIVE              = YES
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+EXTRACT_ALL            = YES
+QUIET                  = YES
