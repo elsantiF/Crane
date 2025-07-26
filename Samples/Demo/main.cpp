@@ -78,15 +78,18 @@ protected:
   void OnInitialize() override {
     auto &physicsWorld = GetWorld().GetPhysicsWorld();
 
+    m_BoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::White));
+    m_BoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
+    m_CircleVertexDataId = m_Renderer->LoadVertexData(CreateCircleVertices(20.0f, 16, Graphics::Colors::White));
+    m_CircleIndexDataId = m_Renderer->LoadIndexData(CreateCircleIndices(16));
     m_SimpleTextureId = m_Renderer->LoadTexture(CreateSimpleTexture());
 
     // Create ground body
     u32 groundVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));
-    u32 groundIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
     World::Entity ground = GetWorld().CreateEntity();
     {
       ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f}, 0.1f);
-      ground.AddComponent<Components::Renderable>(Graphics::Colors::Green, groundVertexDataId, groundIndexDataId, 0);
+      ground.AddComponent<Components::Renderable>(Graphics::Colors::Green, groundVertexDataId, m_BoxVertexDataId, 0);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {512,  700},
@@ -99,11 +102,10 @@ protected:
 
     // Create a dynamic box body
     u32 redBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Red));
-    u32 redBoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
     World::Entity box = GetWorld().CreateEntity();
     {
       box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
-      box.AddComponent<Components::Renderable>(Graphics::Colors::Red, redBoxVertexDataId, redBoxIndexDataId, 0);
+      box.AddComponent<Components::Renderable>(Graphics::Colors::Red, redBoxVertexDataId, m_BoxVertexDataId, 0);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {400, 100},
@@ -115,11 +117,10 @@ protected:
     }
 
     u32 blueBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Blue));
-    u32 blueBoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
     m_Player = GetWorld().CreateEntity();
     {
       m_Player.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
-      m_Player.AddComponent<Components::Renderable>(Graphics::Colors::Blue, blueBoxVertexDataId, blueBoxIndexDataId, 0);
+      m_Player.AddComponent<Components::Renderable>(Graphics::Colors::Blue, blueBoxVertexDataId, m_BoxIndexDataId, 0);
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {600, 100},
           {40,  40 },
@@ -131,10 +132,6 @@ protected:
     }
 
     GetWorld().GetSystemManager().AddSystem<PlayerSystem>(*this, m_Player);
-    m_BoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::White));
-    m_BoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
-    m_CircleVertexDataId = m_Renderer->LoadVertexData(CreateCircleVertices(20.0f, 16, Graphics::Colors::White));
-    m_CircleIndexDataId = m_Renderer->LoadIndexData(CreateCircleIndices(16));
   }
   void OnPreFixedUpdate() override {}
   void OnPostFixedUpdate() override {}
