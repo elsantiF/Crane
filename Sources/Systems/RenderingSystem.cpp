@@ -14,7 +14,6 @@ namespace Crane::Systems {
     for (auto entity : view) {
       const auto &[transform, renderable] = view.get<Components::Transform, Components::Renderable>(entity);
 
-      // renderer.SetFillColor(renderable.color);
       renderer.SetTexture(renderable.textureDataId);
       renderer.SetVertexData(renderable.vertexDataId);
       renderer.SetIndexData(renderable.indexDataId);

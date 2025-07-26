@@ -89,7 +89,7 @@ protected:
     World::Entity ground = GetWorld().CreateEntity();
     {
       ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f}, 0.1f);
-      ground.AddComponent<Components::Renderable>(Graphics::Colors::Green, groundVertexDataId, m_BoxVertexDataId, 0);
+      ground.AddComponent<Components::Renderable>(groundVertexDataId, m_BoxVertexDataId, 0);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {512,  700},
@@ -105,7 +105,7 @@ protected:
     World::Entity box = GetWorld().CreateEntity();
     {
       box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
-      box.AddComponent<Components::Renderable>(Graphics::Colors::Red, redBoxVertexDataId, m_BoxVertexDataId, 0);
+      box.AddComponent<Components::Renderable>(redBoxVertexDataId, m_BoxVertexDataId, 0);
 
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {400, 100},
@@ -120,7 +120,7 @@ protected:
     m_Player = GetWorld().CreateEntity();
     {
       m_Player.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
-      m_Player.AddComponent<Components::Renderable>(Graphics::Colors::Blue, blueBoxVertexDataId, m_BoxIndexDataId, 0);
+      m_Player.AddComponent<Components::Renderable>(blueBoxVertexDataId, m_BoxIndexDataId, 0);
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {600, 100},
           {40,  40 },
@@ -148,7 +148,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       box.AddComponent<Components::Transform>(Math::Vec2f{x, y});
-      box.AddComponent<Components::Renderable>(Graphics::Colors::White, m_BoxVertexDataId, m_BoxIndexDataId, m_SimpleTextureId);
+      box.AddComponent<Components::Renderable>(m_BoxVertexDataId, m_BoxIndexDataId, m_SimpleTextureId);
       auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
           {x,  y },
           {40, 40},
@@ -164,7 +164,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       circle.AddComponent<Components::Transform>(Math::Vec2f{x, y});
-      circle.AddComponent<Components::Renderable>(Graphics::Colors::White, m_CircleVertexDataId, m_CircleIndexDataId, m_SimpleTextureId);
+      circle.AddComponent<Components::Renderable>(m_CircleVertexDataId, m_CircleIndexDataId, m_SimpleTextureId);
       auto [rb, circlecollider] = physicsWorld.CreateCircleBody({
           {x, y},
           20, Physics::BodyType::Dynamic
