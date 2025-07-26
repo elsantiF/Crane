@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Graphics/Color.hpp"
+#include "Math/Vector.hpp"
 #include "Types.hpp"
 
 namespace Crane {
@@ -20,5 +21,6 @@ namespace Crane {
 
   namespace World {
     constexpr f32 PIXELS_PER_METER = 30.0f;
+    constexpr Math::Vec2f GRAVITY = {0.0f, 9.81f};
   }
 }
