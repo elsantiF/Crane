@@ -23,19 +23,19 @@ namespace Crane::Graphics::SDLRenderer {
     void Clear(const Color &color) override;
     void Present() override;
 
-    u32 LoadVertexData(const SVertex2List &vertices) override;
-    void UnloadVertexData(u32 vertexDataId) override;
+    Id LoadVertexData(const SVertex2List &vertices) override;
+    void UnloadVertexData(Id vertexDataId) override;
 
-    u32 LoadIndexData(const IndexList &indices) override;
-    void UnloadIndexData(u32 indexDataId) override;
+    Id LoadIndexData(const IndexList &indices) override;
+    void UnloadIndexData(Id indexDataId) override;
 
-    u32 LoadTexture(const Texture &texture) override;
-    void UnloadTexture(u32 textureId) override;
+    Id LoadTexture(const Texture &texture) override;
+    void UnloadTexture(Id textureId) override;
 
     void SetFillColor(const Color &color) override;
-    void SetVertexData(u32 vertexDataId) override;
-    void SetIndexData(u32 indexDataId) override;
-    void SetTexture(u32 textureId) override;
+    void SetVertexData(Id vertexDataId) override;
+    void SetIndexData(Id indexDataId) override;
+    void SetTexture(Id textureId) override;
 
     void DrawPoint(const Math::Vec2f &point) override;
     void DrawLine(const Math::Vec2f &start, const Math::Vec2f &end) override;
@@ -52,15 +52,15 @@ namespace Crane::Graphics::SDLRenderer {
     struct SDLRendererContext {
       Color fillColor = {-1.0f, -1.0f, -1.0f, -1.0f};
 
-      Map<u32, Vector<SDL_Vertex>> vertexData;
-      Map<u32, IndexList> indexData;
-      Map<u32, SDL_Texture *> textures;
+      Map<Id, Vector<SDL_Vertex>> vertexData;
+      Map<Id, IndexList> indexData;
+      Map<Id, SDL_Texture *> textures;
 
-      u32 activeVertexDataId = 0;
+      Id activeVertexDataId = 0;
       Vector<SDL_Vertex> *activeVertexData = nullptr;
-      u32 activeIndexDataId = 0;
+      Id activeIndexDataId = 0;
       IndexList *activeIndexData = nullptr;
-      u32 activeTextureId = 0;
+      Id activeTextureId = 0;
       SDL_Texture *activeTexture = nullptr;
     } m_Context;
   };

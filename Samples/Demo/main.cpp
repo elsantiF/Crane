@@ -85,7 +85,7 @@ protected:
     m_SimpleTextureId = m_Renderer->LoadTexture(CreateSimpleTexture());
 
     // Create ground body
-    u32 groundVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));
+    Id groundVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));
     World::Entity ground = GetWorld().CreateEntity();
     {
       ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f}, 0.1f);
@@ -101,7 +101,7 @@ protected:
     }
 
     // Create a dynamic box body
-    u32 redBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Red));
+    Id redBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Red));
     World::Entity box = GetWorld().CreateEntity();
     {
       box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
@@ -116,7 +116,7 @@ protected:
       box.AddComponent<Components::BoxCollider>(boxcollider);
     }
 
-    u32 blueBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Blue));
+    Id blueBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Blue));
     m_Player = GetWorld().CreateEntity();
     {
       m_Player.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
@@ -178,11 +178,11 @@ protected:
 
 private:
   World::Entity m_Player;
-  u32 m_BoxVertexDataId = 0;
-  u32 m_BoxIndexDataId = 0;
-  u32 m_CircleVertexDataId = 0;
-  u32 m_CircleIndexDataId = 0;
-  u32 m_SimpleTextureId = 0;
+  Id m_BoxVertexDataId = 0;
+  Id m_BoxIndexDataId = 0;
+  Id m_CircleVertexDataId = 0;
+  Id m_CircleIndexDataId = 0;
+  Id m_SimpleTextureId = 0;
 };
 
 int main() {

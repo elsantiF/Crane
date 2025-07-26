@@ -67,9 +67,9 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_RenderPresent(m_Renderer);
   }
 
-  u32 SDLRenderer::LoadVertexData(const SVertex2List &vertices) {
+  Id SDLRenderer::LoadVertexData(const SVertex2List &vertices) {
     PROFILE_SCOPE();
-    u32 vertexDataId = static_cast<u32>(m_Context.vertexData.size()) + 1;
+    Id vertexDataId = static_cast<Id>(m_Context.vertexData.size()) + 1;
     Vector<SDL_Vertex> sdlVertices(vertices.size());
 
     for (size_t i = 0; i < vertices.size(); ++i) {
@@ -82,7 +82,7 @@ namespace Crane::Graphics::SDLRenderer {
     return vertexDataId;
   }
 
-  void SDLRenderer::UnloadVertexData(u32 vertexDataId) {
+  void SDLRenderer::UnloadVertexData(Id vertexDataId) {
     PROFILE_SCOPE();
     if (m_Context.activeVertexDataId == vertexDataId) {
       m_Context.activeVertexDataId = 0;
@@ -95,14 +95,14 @@ namespace Crane::Graphics::SDLRenderer {
     }
   }
 
-  u32 SDLRenderer::LoadIndexData(const IndexList &indices) {
+  Id SDLRenderer::LoadIndexData(const IndexList &indices) {
     PROFILE_SCOPE();
-    u32 indexDataId = static_cast<u32>(m_Context.indexData.size()) + 1;
+    Id indexDataId = static_cast<Id>(m_Context.indexData.size()) + 1;
     m_Context.indexData[indexDataId] = indices;
     return indexDataId;
   }
 
-  void SDLRenderer::UnloadIndexData(u32 indexDataId) {
+  void SDLRenderer::UnloadIndexData(Id indexDataId) {
     PROFILE_SCOPE();
     if (m_Context.activeIndexDataId == indexDataId) {
       m_Context.activeIndexDataId = 0;
@@ -115,9 +115,9 @@ namespace Crane::Graphics::SDLRenderer {
     }
   }
 
-  u32 SDLRenderer::LoadTexture(const Texture &texture) {
+  Id SDLRenderer::LoadTexture(const Texture &texture) {
     PROFILE_SCOPE();
-    u32 textureId = static_cast<u32>(m_Context.textures.size()) + 1;
+    Id textureId = static_cast<Id>(m_Context.textures.size()) + 1;
     SDL_Texture *sdlTexture = SDL_CreateTexture(m_Renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, texture.width, texture.height);
 
     if (!sdlTexture) {
@@ -130,7 +130,7 @@ namespace Crane::Graphics::SDLRenderer {
     return textureId;
   }
 
-  void SDLRenderer::UnloadTexture(u32 textureId) {
+  void SDLRenderer::UnloadTexture(Id textureId) {
     PROFILE_SCOPE();
     if (m_Context.activeTextureId == textureId) {
       m_Context.activeTextureId = 0;
@@ -152,7 +152,7 @@ namespace Crane::Graphics::SDLRenderer {
     }
   }
 
-  void SDLRenderer::SetVertexData(u32 vertexDataId) {
+  void SDLRenderer::SetVertexData(Id vertexDataId) {
     PROFILE_SCOPE();
     if (m_Context.activeVertexDataId == vertexDataId) {
       return;
@@ -165,7 +165,7 @@ namespace Crane::Graphics::SDLRenderer {
     }
   }
 
-  void SDLRenderer::SetIndexData(u32 indexDataId) {
+  void SDLRenderer::SetIndexData(Id indexDataId) {
     PROFILE_SCOPE();
     if (m_Context.activeIndexDataId == indexDataId) {
       return;
@@ -178,7 +178,7 @@ namespace Crane::Graphics::SDLRenderer {
     }
   }
 
-  void SDLRenderer::SetTexture(u32 textureId) {
+  void SDLRenderer::SetTexture(Id textureId) {
     PROFILE_SCOPE();
     if (m_Context.activeTextureId == textureId) {
       return;

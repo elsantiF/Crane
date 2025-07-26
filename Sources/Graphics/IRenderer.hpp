@@ -25,19 +25,19 @@ namespace Crane::Graphics {
     virtual void Clear(const Color &color) = 0;
     virtual void Present() = 0;
 
-    virtual u32 LoadVertexData(const SVertex2List &vertices) = 0;
-    virtual void UnloadVertexData(u32 vertexDataId) = 0;
+    virtual Id LoadVertexData(const SVertex2List &vertices) = 0;
+    virtual void UnloadVertexData(Id vertexDataId) = 0;
 
-    virtual u32 LoadIndexData(const IndexList &indices) = 0;
-    virtual void UnloadIndexData(u32 indexDataId) = 0;
+    virtual Id LoadIndexData(const IndexList &indices) = 0;
+    virtual void UnloadIndexData(Id indexDataId) = 0;
 
-    virtual u32 LoadTexture(const Texture &texture) = 0;
-    virtual void UnloadTexture(u32 textureId) = 0;
+    virtual Id LoadTexture(const Texture &texture) = 0;
+    virtual void UnloadTexture(Id textureId) = 0;
 
     virtual void SetFillColor(const Color &color) = 0;
-    virtual void SetVertexData(u32 vertexDataId) = 0;
-    virtual void SetIndexData(u32 indexDataId) = 0;
-    virtual void SetTexture(u32 textureId) = 0;
+    virtual void SetVertexData(Id vertexDataId) = 0;
+    virtual void SetIndexData(Id indexDataId) = 0;
+    virtual void SetTexture(Id textureId) = 0;
 
     virtual void DrawPoint(const Math::Vec2f &point) = 0;
     virtual void DrawLine(const Math::Vec2f &start, const Math::Vec2f &end) = 0;
