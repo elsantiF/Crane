@@ -15,10 +15,12 @@ namespace Crane::Physics {
 
     void Update(f64 deltaTime);
 
-    Pair<Components::RigidBody, Components::BoxCollider> CreateBoxBody(BoxBodyConfig config);
-    Pair<Components::RigidBody, Components::CircleCollider> CreateCircleBody(CircleBodyConfig config);
+    Pair<Components::RigidBody, Components::BoxCollider> CreateBoxBody(const BoxBodyConfig &config);
+    Pair<Components::RigidBody, Components::CircleCollider> CreateCircleBody(const CircleBodyConfig &config);
 
   private:
+    Components::RigidBody CreateRigidBody(const BaseBodyConfig &config);
+
     b2WorldId m_WorldId;
   };
 }
