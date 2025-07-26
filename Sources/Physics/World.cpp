@@ -6,6 +6,7 @@ namespace Crane::Physics {
   World::World() {
     b2WorldDef worldDef = b2DefaultWorldDef();
     worldDef.gravity = {0.0f, 9.81f};
+    worldDef.enableSleep = false;
     m_WorldId = b2CreateWorld(&worldDef);
   }
 
