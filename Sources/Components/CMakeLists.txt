@@ -1,0 +1,6 @@
+file(GLOB_RECURSE COMPONENTS_SOURCES "*.hpp")
+add_library(CraneComponents INTERFACE)
+target_sources(CraneComponents INTERFACE ${COMPONENTS_SOURCES})
+target_include_directories(CraneComponents INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(CraneComponents INTERFACE "${CMAKE_SOURCE_DIR}/Sources")
+target_include_directories(CraneComponents INTERFACE "${CMAKE_SOURCE_DIR}/External/entt/src")

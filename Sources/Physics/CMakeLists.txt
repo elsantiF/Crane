@@ -1,0 +1,6 @@
+file(GLOB_RECURSE PHYSICS_SOURCES "*.cpp" "*.hpp")
+add_library(CranePhysics STATIC ${PHYSICS_SOURCES})
+target_include_directories(CranePhysics PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(CranePhysics PUBLIC "${CMAKE_SOURCE_DIR}/Sources")
+target_include_directories(CranePhysics PUBLIC "${CMAKE_SOURCE_DIR}/External/entt/src")
+target_link_libraries(CranePhysics PUBLIC box2d CraneMath CraneGraphics)

@@ -1,0 +1,6 @@
+file(GLOB_RECURSE SYSTEMS_SOURCES "*.cpp" "*.hpp")
+add_library(CraneSystems STATIC ${SYSTEMS_SOURCES})
+target_include_directories(CraneSystems PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(CraneSystems PUBLIC "${CMAKE_SOURCE_DIR}/Sources")
+target_include_directories(CraneSystems PUBLIC "${CMAKE_SOURCE_DIR}/External/entt/src")
+target_link_libraries(CraneSystems PUBLIC CraneMath CraneGraphics CranePhysics)

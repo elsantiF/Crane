@@ -20,29 +20,42 @@ endif ()
 
 add_subdirectory("External")
 
-file(GLOB_RECURSE SOURCE_FILES "Sources/*.cpp")
+add_library(Crane INTERFACE)
+add_subdirectory("Sources")
 
-add_library(Crane ${SOURCE_FILES})
-target_include_directories(Crane PUBLIC "Sources")
-target_include_directories(Crane PUBLIC "External/entt/src")
-target_link_libraries(Crane PUBLIC imgui SDL3::SDL3 box2d glm::glm Tracy::TracyClient spdlog::spdlog)
+target_link_libraries(Crane INTERFACE 
+    CraneApplication
+    CraneComponents
+    CraneCore
+    CraneEditor
+    CraneEvents
+    CraneGeometry
+    CraneGraphics
+    CraneMath
+    CranePhysics
+    CraneSystems
+    CraneWorld
+)
+target_include_directories(Crane INTERFACE "Sources")
+target_include_directories(Crane INTERFACE "External/entt/src")
+target_link_libraries(Crane INTERFACE imgui SDL3::SDL3 box2d glm::glm Tracy::TracyClient spdlog::spdlog)
 
 if(NOT MSVC)
-    target_compile_options(Crane PUBLIC -Wall -Wextra -Wpedantic)
+    target_compile_options(Crane INTERFACE -Wall -Wextra -Wpedantic)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        target_compile_definitions(Crane PUBLIC DEBUG)
-        target_compile_options(Crane PUBLIC -O0 -g)
+        target_compile_definitions(Crane INTERFACE DEBUG)
+        target_compile_options(Crane INTERFACE -O0 -g)
     else()
-        target_compile_definitions(Crane PUBLIC NDEBUG)
-        target_compile_options(Crane PUBLIC -O3)
+        target_compile_definitions(Crane INTERFACE NDEBUG)
+        target_compile_options(Crane INTERFACE -O3)
     endif()
 else()
-    target_compile_options(Crane PUBLIC /W4 /MP)
+    target_compile_options(Crane INTERFACE /W4 /MP)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        target_compile_definitions(Crane PUBLIC DEBUG)
-        target_compile_options(Crane PUBLIC /Od /Zi /Zf /MDd)
+        target_compile_definitions(Crane INTERFACE DEBUG)
+        target_compile_options(Crane INTERFACE /Od /Zi /Zf /MDd)
     else()
-        target_compile_definitions(Crane PUBLIC NDEBUG)
+        target_compile_definitions(Crane INTERFACE NDEBUG)
     endif()
 endif()
 
