@@ -6,6 +6,21 @@
 #include "World/World.hpp"
 
 namespace Crane::Systems {
+  void PhysicsSystem::Initialize(World::World &world) {
+    PROFILE_SCOPE();
+    b2WorldDef worldDef = b2DefaultWorldDef();
+    auto gravity = Crane::World::GRAVITY;
+    worldDef.gravity = {gravity.x, gravity.y};
+    worldDef.enableSleep = false;
+    m_WorldId = b2CreateWorld(&worldDef);
+  }
+
+  void PhysicsSystem::Shutdown(World::World &world) {
+    if (b2World_IsValid(m_WorldId)) {
+      b2DestroyWorld(m_WorldId);
+    }
+  }
+
   void PhysicsSystem::FixedUpdate(World::World &world, f64 deltaTime) {
     PROFILE_SCOPE();
     auto &registry = world.GetRegistry();
@@ -69,7 +84,7 @@ namespace Crane::Systems {
       circleCollider.dirty = false;
     }
 
-    world.GetPhysicsWorld().Update(deltaTime);
+    b2World_Step(m_WorldId, static_cast<float>(deltaTime), Physics::PHYSICS_STEPS);
 
     for (auto [entity, rigidBody, transform] : rbTransformView.each()) {
       if (!b2Body_IsValid(rigidBody.bodyId)) {
@@ -84,5 +99,46 @@ namespace Crane::Systems {
       transform.transform.position.y = position.y * ppm;
       transform.transform.rotation = angleDegrees;
     }
+  }
+
+  Pair<Components::RigidBody, Components::BoxCollider> PhysicsSystem::CreateBoxBody(const Physics::BoxBodyConfig &config) {
+    PROFILE_SCOPE();
+    Components::RigidBody rigidBody = CreateRigidBody(config);
+    f32 ppm = Crane::World::PIXELS_PER_METER;
+    f32 width = config.dimensions.x / ppm;
+    f32 height = config.dimensions.y / ppm;
+    b2Polygon boxShape = b2MakeBox(width / 2, height / 2);
+    b2ShapeDef shapeDef = b2DefaultShapeDef();
+    shapeDef.density = 1.0f;
+    b2ShapeId shapeId = b2CreatePolygonShape(rigidBody.bodyId, &shapeDef, &boxShape);
+
+    return {rigidBody, Components::BoxCollider(Math::Vec2f{width, height}, shapeId)};
+  }
+
+  Pair<Components::RigidBody, Components::CircleCollider> PhysicsSystem::CreateCircleBody(const Physics::CircleBodyConfig &config) {
+    PROFILE_SCOPE();
+    Components::RigidBody rigidBody = CreateRigidBody(config);
+    f32 ppm = Crane::World::PIXELS_PER_METER;
+    f32 radius = config.radius / ppm;
+    b2Circle circleShape = b2Circle{
+        {0, 0},
+        radius
+    };
+    b2ShapeDef shapeDef = b2DefaultShapeDef();
+    shapeDef.density = 1.0f;
+    b2ShapeId shapeId = b2CreateCircleShape(rigidBody.bodyId, &shapeDef, &circleShape);
+
+    return {rigidBody, Components::CircleCollider(radius, shapeId)};
+  }
+
+  Components::RigidBody PhysicsSystem::CreateRigidBody(const Physics::BaseBodyConfig &config) {
+    PROFILE_SCOPE();
+    f32 ppm = Crane::World::PIXELS_PER_METER;
+    b2BodyDef bodyDef = b2DefaultBodyDef();
+    bodyDef.type = static_cast<b2BodyType>(config.type);
+    bodyDef.position = {config.center.x / ppm, config.center.y / ppm};
+    b2BodyId bodyId = b2CreateBody(m_WorldId, &bodyDef);
+
+    return Components::RigidBody(bodyId);
   }
 }

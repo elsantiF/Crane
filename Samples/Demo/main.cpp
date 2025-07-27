@@ -5,6 +5,7 @@
 #include "Components/Transform.hpp"
 #include "PlayerComponent.hpp"
 #include "PlayerSystem.hpp"
+#include "Systems/PhysicsSystem.hpp"
 #include "World/Entity.hpp"
 #include <imgui.h>
 #include <iostream>
@@ -76,7 +77,7 @@ public:
 
 protected:
   void OnInitialize() override {
-    auto &physicsWorld = GetWorld().GetPhysicsWorld();
+    m_PhysicsSystem = GetWorld().GetSystemManager().GetSystem<Systems::PhysicsSystem>();
 
     m_BoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::White));
     m_BoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
@@ -91,7 +92,7 @@ protected:
       ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f}, 0.1f);
       ground.AddComponent<Components::Renderable>(groundVertexDataId, m_BoxVertexDataId, 0);
 
-      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
+      auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {512,  700},
           {1000, 50 },
           Physics::BodyType::Static
@@ -107,7 +108,7 @@ protected:
       box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
       box.AddComponent<Components::Renderable>(redBoxVertexDataId, m_BoxVertexDataId, 0);
 
-      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
+      auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {400, 100},
           {40,  40 },
           Physics::BodyType::Dynamic
@@ -121,7 +122,7 @@ protected:
     {
       m_Player.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
       m_Player.AddComponent<Components::Renderable>(blueBoxVertexDataId, m_BoxIndexDataId, 0);
-      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
+      auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {600, 100},
           {40,  40 },
           Physics::BodyType::Dynamic
@@ -143,13 +144,12 @@ protected:
     ImGui::Begin("Demo Controls");
 
     if (ImGui::Button("Spawn Box")) {
-      auto &physicsWorld = GetWorld().GetPhysicsWorld();
       World::Entity box = GetWorld().CreateEntity();
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       box.AddComponent<Components::Transform>(Math::Vec2f{x, y});
       box.AddComponent<Components::Renderable>(m_BoxVertexDataId, m_BoxIndexDataId, m_SimpleTextureId);
-      auto [rb, boxcollider] = physicsWorld.CreateBoxBody({
+      auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {x,  y },
           {40, 40},
           Physics::BodyType::Dynamic
@@ -159,13 +159,12 @@ protected:
     }
 
     if (ImGui::Button("Spawn Circle")) {
-      auto &physicsWorld = GetWorld().GetPhysicsWorld();
       World::Entity circle = GetWorld().CreateEntity();
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       circle.AddComponent<Components::Transform>(Math::Vec2f{x, y});
       circle.AddComponent<Components::Renderable>(m_CircleVertexDataId, m_CircleIndexDataId, m_SimpleTextureId);
-      auto [rb, circlecollider] = physicsWorld.CreateCircleBody({
+      auto [rb, circlecollider] = m_PhysicsSystem->CreateCircleBody({
           {x, y},
           20, Physics::BodyType::Dynamic
       });
@@ -183,6 +182,7 @@ private:
   Id m_CircleVertexDataId = 0;
   Id m_CircleIndexDataId = 0;
   Id m_SimpleTextureId = 0;
+  Systems::PhysicsSystem *m_PhysicsSystem;
 };
 
 int main() {
