@@ -1,7 +1,9 @@
-file(GLOB_RECURSE APPLICATION_SOURCES "*.cpp" "*.hpp")
+set(APPLICATION_SOURCES 
+    "Application.cpp" 
+    "Application.hpp"
+)
+
 add_library(CraneApplication STATIC ${APPLICATION_SOURCES})
 target_include_directories(CraneApplication PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(CraneApplication PUBLIC "${CMAKE_SOURCE_DIR}/Sources")
 target_link_libraries(CraneApplication PUBLIC CraneMath CraneGraphics CraneWorld)
-target_include_directories(CraneApplication PUBLIC "${CMAKE_SOURCE_DIR}/External/entt/src")
-target_link_libraries(CraneApplication PUBLIC SDL3::SDL3)
+target_link_libraries(CraneApplication PUBLIC SDL3::SDL3 EnTT::EnTT)

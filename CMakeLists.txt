@@ -21,6 +21,7 @@ endif ()
 add_subdirectory("External")
 
 add_library(Crane INTERFACE)
+target_include_directories(Crane INTERFACE "Sources")
 add_subdirectory("Sources")
 
 target_link_libraries(Crane INTERFACE 
@@ -36,9 +37,6 @@ target_link_libraries(Crane INTERFACE
     CraneSystems
     CraneWorld
 )
-target_include_directories(Crane INTERFACE "Sources")
-target_include_directories(Crane INTERFACE "External/entt/src")
-target_link_libraries(Crane INTERFACE imgui SDL3::SDL3 box2d glm::glm Tracy::TracyClient spdlog::spdlog)
 
 if(NOT MSVC)
     target_compile_options(Crane INTERFACE -Wall -Wextra -Wpedantic)

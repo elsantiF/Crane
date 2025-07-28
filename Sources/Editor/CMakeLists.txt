@@ -1,6 +1,10 @@
-file(GLOB_RECURSE EDITOR_SOURCES "*.cpp" "*.hpp")
+set(EDITOR_SOURCES 
+    "EntityDisplay.cpp"
+    "EntityDisplay.hpp"
+)
+
 add_library(CraneEditor STATIC ${EDITOR_SOURCES})
 target_include_directories(CraneEditor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(CraneEditor PUBLIC "${CMAKE_SOURCE_DIR}/Sources")
-target_include_directories(CraneEditor PUBLIC "${CMAKE_SOURCE_DIR}/External/entt/src")
-target_link_libraries(CraneEditor PUBLIC imgui CraneMath CraneComponents CranePhysics)
+target_link_libraries(CraneEditor PUBLIC CraneMath CraneComponents CranePhysics)
+target_link_libraries(CraneEditor PUBLIC imgui EnTT::EnTT)
