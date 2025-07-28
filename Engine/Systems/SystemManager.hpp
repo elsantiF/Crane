@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Logger.hpp"
 #include "Core/Types.hpp"
 #include "Systems/ISystem.hpp"
 
@@ -18,6 +19,9 @@ namespace Crane::Systems {
         m_FixedUpdateSystems.emplace_back(std::move(system));
       } else if constexpr (std::is_base_of_v<IUpdateSystem, T>) {
         m_UpdateSystems.emplace_back(std::move(system));
+      } else {
+        Logger::Error("System type must derive from IFixedUpdateSystem or IUpdateSystem");
+        return;
       }
     }
 
@@ -36,6 +40,8 @@ namespace Crane::Systems {
           }
         }
       }
+
+      Logger::Error("System not found");
       return nullptr;
     }
 
@@ -61,6 +67,8 @@ namespace Crane::Systems {
             ++it;
           }
         }
+      } else {
+        Logger::Error("System type must derive from IFixedUpdateSystem or IUpdateSystem");
       }
     }
 

@@ -2,6 +2,7 @@
 #include "Components/BoxCollider.hpp"
 #include "Components/RigidBody.hpp"
 #include "Components/Transform.hpp"
+#include "Core/Logger.hpp"
 #include "Core/Profiler.hpp"
 #include "World/World.hpp"
 
@@ -13,11 +14,15 @@ namespace Crane::Systems {
     worldDef.gravity = {gravity.x, gravity.y};
     worldDef.enableSleep = false;
     m_WorldId = b2CreateWorld(&worldDef);
+    Logger::Info("PhysicsSystem created");
   }
 
   void PhysicsSystem::Shutdown(World::World &world) {
     if (b2World_IsValid(m_WorldId)) {
       b2DestroyWorld(m_WorldId);
+      Logger::Info("PhysicsSystem destroyed");
+    } else {
+      Logger::Error("PhysicsSystem shutdown called on an invalid world ID");
     }
   }
 
