@@ -1,6 +1,9 @@
 add_subdirectory("box2d")
 add_subdirectory("entt")
-add_subdirectory("glm")
+
+add_library(glm INTERFACE)
+target_include_directories(glm INTERFACE "glm")
+
 option(SDL_STATIC "" ON)
 option(SDL_SHARED "" OFF)
 add_subdirectory("SDL")
