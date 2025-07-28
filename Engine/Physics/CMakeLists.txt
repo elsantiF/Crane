@@ -4,6 +4,6 @@ set(PHYSICS_SOURCES
 
 add_library(CranePhysics STATIC ${PHYSICS_SOURCES})
 target_include_directories(CranePhysics PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(CranePhysics PUBLIC "${CMAKE_SOURCE_DIR}/Sources")
+target_include_directories(CranePhysics PUBLIC "${CMAKE_SOURCE_DIR}/Engine")
 target_link_libraries(CranePhysics PUBLIC CraneMath CraneGraphics)
 target_link_libraries(CranePhysics PUBLIC box2d)

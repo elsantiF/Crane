@@ -21,8 +21,8 @@ endif ()
 add_subdirectory("External")
 
 add_library(Crane INTERFACE)
-target_include_directories(Crane INTERFACE "Sources")
-add_subdirectory("Sources")
+target_include_directories(Crane INTERFACE "Engine")
+add_subdirectory("Engine")
 
 target_link_libraries(Crane INTERFACE 
     CraneApplication
@@ -57,4 +57,4 @@ else()
     endif()
 endif()
 
-add_subdirectory("Samples")
+add_subdirectory("Examples")
