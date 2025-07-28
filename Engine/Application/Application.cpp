@@ -36,7 +36,7 @@ namespace Crane::Application {
       return false;
     }
 
-    m_Window = SDL_CreateWindow("Crane", Core::WINDOW_WIDTH, Core::WINDOW_HEIGHT, NULL);
+    m_Window = SDL_CreateWindow("Crane", Core::WINDOW_WIDTH, Core::WINDOW_HEIGHT, 0);
     if (!m_Window) {
       Logger::Error(std::format("SDL_CreateWindow Error: {}", SDL_GetError()));
       return false;
