@@ -2,7 +2,6 @@
 
 #include "Base/Math/Vector.hpp"
 #include "Base/Types.hpp"
-#include "Graphics/Color.hpp"
 
 namespace Crane {
   namespace Core {
@@ -13,10 +12,6 @@ namespace Crane {
 
   namespace Physics {
     constexpr i32 PHYSICS_STEPS = 4;
-  }
-
-  namespace Colors {
-    const Graphics::Color CLEAR_COLOR = {0.05f, 0.05f, 0.05f, 1.0f};
   }
 
   namespace Scene {

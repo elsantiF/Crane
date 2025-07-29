@@ -4,6 +4,7 @@
 #include <SDL3/SDL_render.h>
 
 namespace Crane::Graphics {
+
   class Color {
   public:
     Color() : r(0.f), g(0.f), b(0.f), a(1.f) {}
@@ -27,11 +28,12 @@ namespace Crane::Graphics {
   };
 
   namespace Colors {
-    inline static Color White = Color{1.f, 1.f, 1.f, 1.f};
-    inline static Color Black = Color{0.f, 0.f, 0.f, 1.f};
-    inline static Color Red = Color{1.f, 0.f, 0.f, 1.f};
-    inline static Color Green = Color{0.f, 1.f, 0.f, 1.f};
-    inline static Color Blue = Color{0.f, 0.f, 1.f, 1.f};
-    inline static Color Yellow = Color{1.f, 1.f, 0.f, 1.f};
+    inline static const Color White = Color{1.f, 1.f, 1.f, 1.f};
+    inline static const Color Black = Color{0.f, 0.f, 0.f, 1.f};
+    inline static const Color Red = Color{1.f, 0.f, 0.f, 1.f};
+    inline static const Color Green = Color{0.f, 1.f, 0.f, 1.f};
+    inline static const Color Blue = Color{0.f, 0.f, 1.f, 1.f};
+    inline static const Color Yellow = Color{1.f, 1.f, 0.f, 1.f};
+    inline static const Color CLEAR_COLOR = {0.05f, 0.05f, 0.05f, 1.0f};
   }
 }
