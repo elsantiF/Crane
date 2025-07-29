@@ -6,7 +6,6 @@
 #include "Events/Events.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Scene/Entity/Entity.hpp"
-#include "Systems/PhysicsSystem.hpp"
 #include "Systems/RenderingSystem.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -19,7 +18,6 @@ namespace Crane::Core {
       return false;
     }
     m_World = MakeScope<Scene::World>();
-    m_World->GetSystemManager().AddSystem<Systems::PhysicsSystem>(Math::Vec2f{0.0f, 9.81f});
     m_RenderingSystem = MakeScope<Systems::RenderingSystem>();
     InitializeImGui();
     m_Running = true;

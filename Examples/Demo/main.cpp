@@ -77,6 +77,8 @@ public:
 
 protected:
   void OnInitialize() override {
+    // TODO: merge this two lines
+    GetWorld().GetSystemManager().AddSystem<Systems::PhysicsSystem>(Math::Vec2f{0.0f, 9.81f});
     m_PhysicsSystem = GetWorld().GetSystemManager().GetSystem<Systems::PhysicsSystem>();
 
     m_BoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::White));
