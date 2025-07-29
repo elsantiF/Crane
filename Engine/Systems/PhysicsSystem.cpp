@@ -10,8 +10,7 @@ namespace Crane::Systems {
   void PhysicsSystem::Initialize(Scene::World &world) {
     PROFILE_SCOPE();
     b2WorldDef worldDef = b2DefaultWorldDef();
-    auto gravity = Crane::Scene::GRAVITY;
-    worldDef.gravity = {gravity.x, gravity.y};
+    worldDef.gravity = {m_Gravity.x, m_Gravity.y};
     worldDef.enableSleep = false;
     m_WorldId = b2CreateWorld(&worldDef);
     Logger::Info("PhysicsSystem created");

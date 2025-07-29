@@ -19,7 +19,7 @@ namespace Crane::Core {
       return false;
     }
     m_World = MakeScope<Scene::World>();
-    m_World->GetSystemManager().AddSystem<Systems::PhysicsSystem>(Math::Vec2f{0.0f, -9.81f});
+    m_World->GetSystemManager().AddSystem<Systems::PhysicsSystem>(Math::Vec2f{0.0f, 9.81f});
     m_RenderingSystem = MakeScope<Systems::RenderingSystem>();
     InitializeImGui();
     m_Running = true;

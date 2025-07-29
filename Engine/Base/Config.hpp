@@ -16,6 +16,5 @@ namespace Crane {
 
   namespace Scene {
     constexpr f32 PIXELS_PER_METER = 30.0f;
-    constexpr Math::Vec2f GRAVITY = {0.0f, 9.81f};
   }
 }
