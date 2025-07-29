@@ -20,6 +20,12 @@ namespace Crane::Scene {
     template <typename T>
     T &GetComponent();
 
+    template <typename T>
+    const T &GetComponent() const;
+
+    template <typename T>
+    bool HasComponent() const;
+
   private:
     entt::entity m_Entity{entt::null};
     Scene::World *m_World = nullptr;

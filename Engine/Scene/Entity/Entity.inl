@@ -10,4 +10,14 @@ namespace Crane::Scene {
   T &Entity::GetComponent() {
     return m_World->GetRegistry().get<T>(m_Entity);
   }
+
+  template <typename T>
+  const T &Entity::GetComponent() const {
+    return m_World->GetRegistry().get<T>(m_Entity);
+  }
+
+  template <typename T>
+  bool Entity::HasComponent() const {
+    return m_World->GetRegistry().all_of<T>(m_Entity);
+  }
 }
