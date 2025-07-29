@@ -1,9 +1,9 @@
 #include "PlayerSystem.hpp"
-#include "Components/RigidBody.hpp"
 #include "PlayerComponent.hpp"
+#include "Scene/Components/RigidBody.hpp"
 #include <box2d/box2d.h>
 
-void PlayerSystem::Initialize(Crane::World::World &world) {
+void PlayerSystem::Initialize(Crane::Scene::World &world) {
   m_World = &world;
   m_App->GetDispatcher().sink<Crane::Events::KeyDownEvent>().connect<&PlayerSystem::HandleKeyDown>(this);
   m_App->GetDispatcher().sink<Crane::Events::KeyUpEvent>().connect<&PlayerSystem::HandleKeyUp>(this);
@@ -11,8 +11,8 @@ void PlayerSystem::Initialize(Crane::World::World &world) {
   m_PlayerComponent = &m_PlayerEntity->GetComponent<PlayerComponent>();
 }
 
-void PlayerSystem::Update([[maybe_unused]] Crane::World::World &world, [[maybe_unused]] f64 deltaTime) {
-  auto &rb = m_PlayerEntity->GetComponent<Crane::Components::RigidBody>();
+void PlayerSystem::Update([[maybe_unused]] Crane::Scene::World &world, [[maybe_unused]] f64 deltaTime) {
+  auto &rb = m_PlayerEntity->GetComponent<Crane::Scene::Components::RigidBody>();
   b2Vec2 position = b2Body_GetPosition(rb.bodyId);
   if (m_PlayerComponent->isMovingLeft) {
     b2Body_ApplyForce(rb.bodyId, b2Vec2(-SPEED, 0), position, true);

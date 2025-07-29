@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Base/Math/Transform.hpp"
+#include "Base/Math/Vector.hpp"
+#include "Base/Types.hpp"
 #include "Color.hpp"
-#include "Core/Types.hpp"
-#include "Math/Transform.hpp"
-#include "Math/Vector.hpp"
 #include "Texture.hpp"
 #include "Vertex.hpp"
 

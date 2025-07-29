@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Types.hpp"
+#include "Base/Types.hpp"
 #include <SDL3/SDL_rect.h>
 
 namespace Crane::Geometry {

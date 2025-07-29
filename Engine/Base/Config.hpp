@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Base/Math/Vector.hpp"
+#include "Base/Types.hpp"
 #include "Graphics/Color.hpp"
-#include "Math/Vector.hpp"
-#include "Types.hpp"
 
 namespace Crane {
   namespace Core {
@@ -19,7 +19,7 @@ namespace Crane {
     const Graphics::Color CLEAR_COLOR = {0.05f, 0.05f, 0.05f, 1.0f};
   }
 
-  namespace World {
+  namespace Scene {
     constexpr f32 PIXELS_PER_METER = 30.0f;
     constexpr Math::Vec2f GRAVITY = {0.0f, 9.81f};
   }

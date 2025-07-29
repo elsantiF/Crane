@@ -1,6 +1,6 @@
-#include "World.hpp"
+#include "Scene/World/World.hpp"
 
-namespace Crane::World {
+namespace Crane::Scene {
   template <typename T, typename... Args>
   void Entity::AddComponent(Args &&...args) {
     m_World->GetRegistry().emplace<T>(m_Entity, std::forward<Args>(args)...);

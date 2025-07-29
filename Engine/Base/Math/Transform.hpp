@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/Types.hpp"
-#include "Math/Vector.hpp"
+#include "Base/Math/Vector.hpp"
+#include "Base/Types.hpp"
 
 namespace Crane::Math {
   struct Transform {

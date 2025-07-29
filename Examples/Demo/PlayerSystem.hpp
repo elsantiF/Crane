@@ -4,26 +4,26 @@
 #include "Events/KeyDown.hpp"
 #include "Events/KeyUp.hpp"
 #include "PlayerComponent.hpp"
+#include "Scene/Entity/Entity.hpp"
 #include "Systems/ISystem.hpp"
-#include "World/Entity.hpp"
 
 class PlayerSystem : public Crane::Systems::IUpdateSystem {
 public:
-  PlayerSystem(Crane::Application::Application &app, Crane::World::Entity &playerEntity) : m_PlayerEntity(&playerEntity), m_App(&app) {}
+  PlayerSystem(Crane::Core::Application &app, Crane::Scene::Entity &playerEntity) : m_PlayerEntity(&playerEntity), m_App(&app) {}
 
-  void Initialize(Crane::World::World &world) override;
+  void Initialize(Crane::Scene::World &world) override;
 
-  void Shutdown([[maybe_unused]] Crane::World::World &world) override {};
-  void Update(Crane::World::World &world, f64 deltaTime) override;
+  void Shutdown([[maybe_unused]] Crane::Scene::World &world) override {};
+  void Update(Crane::Scene::World &world, f64 deltaTime) override;
 
 private:
   void HandleKeyDown(Crane::Events::KeyDownEvent &event);
   void HandleKeyUp(Crane::Events::KeyUpEvent &event);
 
 private:
-  Crane::World::World *m_World = nullptr;
-  Crane::World::Entity *m_PlayerEntity = nullptr;
-  Crane::Application::Application *m_App = nullptr;
+  Crane::Scene::World *m_World = nullptr;
+  Crane::Scene::Entity *m_PlayerEntity = nullptr;
+  Crane::Core::Application *m_App = nullptr;
   PlayerComponent *m_PlayerComponent = nullptr;
 
   const f32 SPEED = 10.0;

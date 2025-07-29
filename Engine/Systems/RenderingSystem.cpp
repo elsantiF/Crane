@@ -1,18 +1,18 @@
 #include "RenderingSystem.hpp"
-#include "Components/Renderable.hpp"
-#include "Components/Transform.hpp"
-#include "Core/Profiler.hpp"
+#include "Base/Profiler.hpp"
 #include "Graphics/IRenderer.hpp"
-#include "World/World.hpp"
+#include "Scene/Components/Renderable.hpp"
+#include "Scene/Components/Transform.hpp"
+#include "Scene/World/World.hpp"
 
 namespace Crane::Systems {
-  void RenderingSystem::Render(World::World &world, Graphics::IRenderer &renderer) {
+  void RenderingSystem::Render(Scene::World &world, Graphics::IRenderer &renderer) {
     PROFILE_SCOPE();
     auto &registry = world.GetRegistry();
-    auto view = registry.view<Components::Transform, Components::Renderable>();
+    auto view = registry.view<Scene::Components::Transform, Scene::Components::Renderable>();
 
     for (auto entity : view) {
-      const auto &[transform, renderable] = view.get<Components::Transform, Components::Renderable>(entity);
+      const auto &[transform, renderable] = view.get<Scene::Components::Transform, Scene::Components::Renderable>(entity);
 
       renderer.SetTexture(renderable.textureDataId);
       renderer.SetVertexData(renderable.vertexDataId);

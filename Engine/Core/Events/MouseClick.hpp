@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Base/Math/Vector.hpp"
 #include "IEvent.hpp"
-#include "Math/Vector.hpp"
 
 namespace Crane::Events {
   enum class MouseButton { Left, Right, Middle };

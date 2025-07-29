@@ -1,6 +1,6 @@
 #include "SDLRenderer.hpp"
-#include "Core/Logger.hpp"
-#include "Core/Profiler.hpp"
+#include "Base/Logger.hpp"
+#include "Base/Profiler.hpp"
 #include <cmath>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>

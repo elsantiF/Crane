@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Core/Logger.hpp"
-#include "Core/Types.hpp"
+#include "Base/Logger.hpp"
+#include "Base/Types.hpp"
 #include "Systems/ISystem.hpp"
 
 namespace Crane::Systems {
   class SystemManager {
   public:
-    SystemManager(World::World &world) : m_World(world) {}
+    SystemManager(Scene::World &world) : m_World(world) {}
     ~SystemManager() = default;
 
     template <typename T, typename... Args>
@@ -78,6 +78,6 @@ namespace Crane::Systems {
   private:
     Vector<Scope<IFixedUpdateSystem>> m_FixedUpdateSystems;
     Vector<Scope<IUpdateSystem>> m_UpdateSystems;
-    World::World &m_World;
+    Scene::World &m_World;
   };
 }

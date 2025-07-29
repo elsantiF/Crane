@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Math/Vector.hpp"
+#include "Base/Math/Vector.hpp"
 #include <box2d/box2d.h>
 
-namespace Crane::Components {
+namespace Crane::Scene::Components {
   struct BoxCollider {
     Math::Vec2f dimensions;
     b2ShapeId shapeId;

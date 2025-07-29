@@ -10,5 +10,5 @@ set(GRAPHICS_SOURCES
 add_library(CraneGraphics STATIC ${GRAPHICS_SOURCES})
 target_include_directories(CraneGraphics PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(CraneGraphics PUBLIC "${CMAKE_SOURCE_DIR}/Engine")
-target_link_libraries(CraneGraphics PUBLIC CraneMath CraneCore)
+target_link_libraries(CraneGraphics PUBLIC CraneBase)
 target_link_libraries(CraneGraphics PUBLIC imgui SDL3::SDL3)

@@ -1,9 +1,9 @@
 #include "EntityDisplay.hpp"
-#include "Components/BoxCollider.hpp"
-#include "Components/Renderable.hpp"
-#include "Components/Transform.hpp"
-#include "Core/Profiler.hpp"
-#include "Core/Types.hpp"
+#include "Base/Profiler.hpp"
+#include "Base/Types.hpp"
+#include "Scene/Components/BoxCollider.hpp"
+#include "Scene/Components/Renderable.hpp"
+#include "Scene/Components/Transform.hpp"
 #include <imgui.h>
 #include <numbers>
 
@@ -24,7 +24,7 @@ namespace Crane::Editor {
     ImGui::PushID(static_cast<i32>(entity));
     ImGui::Text("Entity ID: %d", static_cast<i32>(entity));
 
-    if (auto *transform = registry.try_get<Components::Transform>(entity)) {
+    if (auto *transform = registry.try_get<Scene::Components::Transform>(entity)) {
       if (ImGui::CollapsingHeader("Transform")) {
         bool positionChanged = ImGui::DragFloat2("Position", &transform->transform.position.x, 0.1f);
         bool rotationChanged = ImGui::DragFloat("Rotation", &transform->transform.rotation, 0.05f, 0.0f, std::numbers::pi_v<float> * 2.0f);
@@ -35,14 +35,14 @@ namespace Crane::Editor {
       }
     }
 
-    if (auto *renderable = registry.try_get<Components::Renderable>(entity)) {
+    if (auto *renderable = registry.try_get<Scene::Components::Renderable>(entity)) {
       if (ImGui::CollapsingHeader("Renderable")) {
         ImGui::Text("Vertex Data ID: %u", renderable->vertexDataId);
         ImGui::Text("Index Data ID: %u", renderable->indexDataId);
       }
     }
 
-    if (auto *boxCollider = registry.try_get<Components::BoxCollider>(entity)) {
+    if (auto *boxCollider = registry.try_get<Scene::Components::BoxCollider>(entity)) {
       if (ImGui::CollapsingHeader("Box Collider")) {
         bool changed = ImGui::DragFloat2("Dimensions", &boxCollider->dimensions.x, 0.1f);
         if (changed) {

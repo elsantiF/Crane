@@ -1,26 +1,26 @@
 #include "Application.hpp"
-#include "Core/Config.hpp"
-#include "Core/Logger.hpp"
-#include "Core/Profiler.hpp"
+#include "Base/Config.hpp"
+#include "Base/Logger.hpp"
+#include "Base/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
 #include "Events/KeyDown.hpp"
 #include "Events/KeyUp.hpp"
 #include "Events/MouseClick.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
+#include "Scene/Entity/Entity.hpp"
 #include "Systems/PhysicsSystem.hpp"
 #include "Systems/RenderingSystem.hpp"
-#include "World/Entity.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 
-namespace Crane::Application {
+namespace Crane::Core {
   bool Application::Initialize() {
     PROFILE_SCOPE();
     Logger::Initialize();
     if (!InitializeSDL()) {
       return false;
     }
-    m_World = MakeScope<World::World>();
+    m_World = MakeScope<Scene::World>();
     m_World->GetSystemManager().AddSystem<Systems::PhysicsSystem>(Math::Vec2f{0.0f, -9.81f});
     m_RenderingSystem = MakeScope<Systems::RenderingSystem>();
     InitializeImGui();

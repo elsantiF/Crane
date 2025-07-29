@@ -1,12 +1,12 @@
 #include "Application/Application.hpp"
-#include "Components/BoxCollider.hpp"
-#include "Components/Renderable.hpp"
-#include "Components/RigidBody.hpp"
-#include "Components/Transform.hpp"
 #include "PlayerComponent.hpp"
 #include "PlayerSystem.hpp"
+#include "Scene/Components/BoxCollider.hpp"
+#include "Scene/Components/Renderable.hpp"
+#include "Scene/Components/RigidBody.hpp"
+#include "Scene/Components/Transform.hpp"
+#include "Scene/Entity/Entity.hpp"
 #include "Systems/PhysicsSystem.hpp"
-#include "World/Entity.hpp"
 #include <imgui.h>
 #include <iostream>
 #include <numbers>
@@ -71,7 +71,7 @@ Graphics::Texture CreateSimpleTexture() {
   };
 }
 
-class Demo : public Application::Application {
+class Demo : public Core::Application {
 public:
   Demo() = default;
 
@@ -87,48 +87,48 @@ protected:
 
     // Create ground body
     Id groundVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));
-    World::Entity ground = GetWorld().CreateEntity();
+    Scene::Entity ground = GetWorld().CreateEntity();
     {
-      ground.AddComponent<Components::Transform>(Math::Vec2f{512.0f, 725.0f}, 0.1f);
-      ground.AddComponent<Components::Renderable>(groundVertexDataId, m_BoxVertexDataId, 0);
+      ground.AddComponent<Scene::Components::Transform>(Math::Vec2f{512.0f, 725.0f}, 0.1f);
+      ground.AddComponent<Scene::Components::Renderable>(groundVertexDataId, m_BoxVertexDataId, 0);
 
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {512,  700},
           {1000, 50 },
           Physics::BodyType::Static
       });
-      ground.AddComponent<Components::RigidBody>(rb);
-      ground.AddComponent<Components::BoxCollider>(boxcollider);
+      ground.AddComponent<Scene::Components::RigidBody>(rb);
+      ground.AddComponent<Scene::Components::BoxCollider>(boxcollider);
     }
 
     // Create a dynamic box body
     Id redBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Red));
-    World::Entity box = GetWorld().CreateEntity();
+    Scene::Entity box = GetWorld().CreateEntity();
     {
-      box.AddComponent<Components::Transform>(Math::Vec2f{400.0f, 100.0f});
-      box.AddComponent<Components::Renderable>(redBoxVertexDataId, m_BoxVertexDataId, 0);
+      box.AddComponent<Scene::Components::Transform>(Math::Vec2f{400.0f, 100.0f});
+      box.AddComponent<Scene::Components::Renderable>(redBoxVertexDataId, m_BoxVertexDataId, 0);
 
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {400, 100},
           {40,  40 },
           Physics::BodyType::Dynamic
       });
-      box.AddComponent<Components::RigidBody>(rb);
-      box.AddComponent<Components::BoxCollider>(boxcollider);
+      box.AddComponent<Scene::Components::RigidBody>(rb);
+      box.AddComponent<Scene::Components::BoxCollider>(boxcollider);
     }
 
     Id blueBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Blue));
     m_Player = GetWorld().CreateEntity();
     {
-      m_Player.AddComponent<Components::Transform>(Math::Vec2f{600.0f, 100.0f});
-      m_Player.AddComponent<Components::Renderable>(blueBoxVertexDataId, m_BoxIndexDataId, 0);
+      m_Player.AddComponent<Scene::Components::Transform>(Math::Vec2f{600.0f, 100.0f});
+      m_Player.AddComponent<Scene::Components::Renderable>(blueBoxVertexDataId, m_BoxIndexDataId, 0);
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {600, 100},
           {40,  40 },
           Physics::BodyType::Dynamic
       });
-      m_Player.AddComponent<Components::RigidBody>(rb);
-      m_Player.AddComponent<Components::BoxCollider>(boxcollider);
+      m_Player.AddComponent<Scene::Components::RigidBody>(rb);
+      m_Player.AddComponent<Scene::Components::BoxCollider>(boxcollider);
       m_Player.AddComponent<PlayerComponent>();
     }
 
@@ -144,39 +144,39 @@ protected:
     ImGui::Begin("Demo Controls");
 
     if (ImGui::Button("Spawn Box")) {
-      World::Entity box = GetWorld().CreateEntity();
+      Scene::Entity box = GetWorld().CreateEntity();
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
-      box.AddComponent<Components::Transform>(Math::Vec2f{x, y});
-      box.AddComponent<Components::Renderable>(m_BoxVertexDataId, m_BoxIndexDataId, m_SimpleTextureId);
+      box.AddComponent<Scene::Components::Transform>(Math::Vec2f{x, y});
+      box.AddComponent<Scene::Components::Renderable>(m_BoxVertexDataId, m_BoxIndexDataId, m_SimpleTextureId);
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {x,  y },
           {40, 40},
           Physics::BodyType::Dynamic
       });
-      box.AddComponent<Components::RigidBody>(rb);
-      box.AddComponent<Components::BoxCollider>(boxcollider);
+      box.AddComponent<Scene::Components::RigidBody>(rb);
+      box.AddComponent<Scene::Components::BoxCollider>(boxcollider);
     }
 
     if (ImGui::Button("Spawn Circle")) {
-      World::Entity circle = GetWorld().CreateEntity();
+      Scene::Entity circle = GetWorld().CreateEntity();
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
-      circle.AddComponent<Components::Transform>(Math::Vec2f{x, y});
-      circle.AddComponent<Components::Renderable>(m_CircleVertexDataId, m_CircleIndexDataId, m_SimpleTextureId);
+      circle.AddComponent<Scene::Components::Transform>(Math::Vec2f{x, y});
+      circle.AddComponent<Scene::Components::Renderable>(m_CircleVertexDataId, m_CircleIndexDataId, m_SimpleTextureId);
       auto [rb, circlecollider] = m_PhysicsSystem->CreateCircleBody({
           {x, y},
           20, Physics::BodyType::Dynamic
       });
-      circle.AddComponent<Components::RigidBody>(rb);
-      circle.AddComponent<Components::CircleCollider>(circlecollider);
+      circle.AddComponent<Scene::Components::RigidBody>(rb);
+      circle.AddComponent<Scene::Components::CircleCollider>(circlecollider);
     }
 
     ImGui::End();
   }
 
 private:
-  World::Entity m_Player;
+  Scene::Entity m_Player;
   Id m_BoxVertexDataId = 0;
   Id m_BoxIndexDataId = 0;
   Id m_CircleVertexDataId = 0;

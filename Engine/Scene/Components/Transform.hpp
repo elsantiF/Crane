@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Core/Types.hpp"
-#include "Math/Transform.hpp"
-#include "Math/Vector.hpp"
+#include "Base/Math/Transform.hpp"
+#include "Base/Math/Vector.hpp"
+#include "Base/Types.hpp"
 
-namespace Crane::Components {
+namespace Crane::Scene::Components {
   struct Transform {
     Math::Transform transform;
     bool dirty = true;

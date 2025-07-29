@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Core/Types.hpp"
+#include "Base/Types.hpp"
 #include <box2d/box2d.h>
 
-namespace Crane::Components {
+namespace Crane::Scene::Components {
   struct CircleCollider {
     f32 radius;
     b2ShapeId shapeId;

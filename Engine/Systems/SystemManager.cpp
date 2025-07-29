@@ -1,5 +1,5 @@
 #include "SystemManager.hpp"
-#include "Core/Profiler.hpp"
+#include "Base/Profiler.hpp"
 
 namespace Crane::Systems {
   void SystemManager::UpdateSystems(f64 deltaTime) {

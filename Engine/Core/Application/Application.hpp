@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Core/Types.hpp"
+#include "Base/Types.hpp"
 #include "Graphics/IRenderer.hpp"
-#include "World/World.hpp"
+#include "Scene/World/World.hpp"
 #include <entt/entt.hpp>
 #include <SDL3/SDL.h>
 
-namespace Crane::Application {
+namespace Crane::Core {
   class Application {
   public:
     Application() : m_Window(nullptr), m_Renderer(nullptr), m_Running(false) {}
@@ -17,7 +17,7 @@ namespace Crane::Application {
     bool Initialize();
     void Run();
 
-    World::World &GetWorld() {
+    Scene::World &GetWorld() {
       return *m_World;
     }
 
@@ -47,7 +47,7 @@ namespace Crane::Application {
   protected: // TODO: Protected is not ideal, but necessary for now
     SDL_Window *m_Window;
     Scope<Graphics::IRenderer> m_Renderer;
-    Scope<World::World> m_World;
+    Scope<Scene::World> m_World;
     Scope<Systems::IRenderSystem> m_RenderingSystem;
     entt::dispatcher m_Dispatcher;
     bool m_Running;

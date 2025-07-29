@@ -2,13 +2,13 @@
 
 #include <entt/entt.hpp>
 
-namespace Crane::World {
+namespace Crane::Scene {
   class World;
 
   class Entity {
   public:
     Entity() = default;
-    Entity(World *world, entt::entity handle) : m_Entity(handle), m_World(world) {}
+    Entity(Scene::World *world, entt::entity handle) : m_Entity(handle), m_World(world) {}
 
     entt::entity GetHandle() const {
       return m_Entity;
@@ -22,7 +22,7 @@ namespace Crane::World {
 
   private:
     entt::entity m_Entity{entt::null};
-    World *m_World = nullptr;
+    Scene::World *m_World = nullptr;
   };
 }
 

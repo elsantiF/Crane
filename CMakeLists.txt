@@ -22,20 +22,17 @@ add_subdirectory("External")
 
 add_library(Crane INTERFACE)
 target_include_directories(Crane INTERFACE "Engine")
+target_include_directories(Crane INTERFACE "Core")
 add_subdirectory("Engine")
 
 target_link_libraries(Crane INTERFACE 
-    CraneApplication
-    CraneComponents
+    CraneBase
     CraneCore
     CraneEditor
-    CraneEvents
-    CraneGeometry
     CraneGraphics
-    CraneMath
     CranePhysics
+    CraneScene
     CraneSystems
-    CraneWorld
 )
 
 if(NOT MSVC)

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/Types.hpp"
+#include "Base/Types.hpp"
 
-namespace Crane::World {
+namespace Crane::Scene {
   class World;
 }
 
@@ -15,28 +15,28 @@ namespace Crane::Systems {
   public:
     virtual ~ISystem() = default;
 
-    virtual void Initialize(World::World &world) = 0;
-    virtual void Shutdown(World::World &world) = 0;
+    virtual void Initialize(Scene::World &world) = 0;
+    virtual void Shutdown(Scene::World &world) = 0;
   };
 
   class IFixedUpdateSystem : public ISystem {
   public:
     virtual ~IFixedUpdateSystem() = default;
 
-    virtual void FixedUpdate(World::World &world, f64 deltaTime) = 0;
+    virtual void FixedUpdate(Scene::World &world, f64 deltaTime) = 0;
   };
 
   class IUpdateSystem : public ISystem {
   public:
     virtual ~IUpdateSystem() = default;
 
-    virtual void Update(World::World &world, f64 deltaTime) = 0;
+    virtual void Update(Scene::World &world, f64 deltaTime) = 0;
   };
 
   class IRenderSystem : public ISystem {
   public:
     virtual ~IRenderSystem() = default;
 
-    virtual void Render(World::World &world, Graphics::IRenderer &renderer) = 0;
+    virtual void Render(Scene::World &world, Graphics::IRenderer &renderer) = 0;
   };
 }

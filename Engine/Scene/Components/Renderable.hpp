@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/Types.hpp"
+#include "Base/Types.hpp"
 
-namespace Crane::Components {
+namespace Crane::Scene::Components {
   struct Renderable {
     Id vertexDataId = 0;
     Id indexDataId = 0;

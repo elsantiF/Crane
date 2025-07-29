@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Base/Math/Vector.hpp"
 #include "Color.hpp"
-#include "Math/Vector.hpp"
 
 namespace Crane::Graphics {
   /*

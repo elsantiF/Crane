@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Types.hpp"
+#include "Base/Types.hpp"
 #include "IEvent.hpp"
 
 namespace Crane::Events {

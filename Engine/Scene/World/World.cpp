@@ -1,8 +1,8 @@
 #include "World.hpp"
-#include "Core/Profiler.hpp"
-#include "Entity.hpp"
+#include "Base/Profiler.hpp"
+#include "Scene/Entity/Entity.hpp"
 
-namespace Crane::World {
+namespace Crane::Scene {
   void World::FixedUpdate(f64 deltaTime) {
     PROFILE_SCOPE();
     m_SystemManager.FixedUpdateSystems(deltaTime);
@@ -13,7 +13,7 @@ namespace Crane::World {
     m_SystemManager.UpdateSystems(deltaTime);
   }
 
-  Entity World::CreateEntity() {
+  Scene::Entity World::CreateEntity() {
     PROFILE_SCOPE();
     auto entity = m_Registry.create();
     return Entity(this, entity);
