@@ -3,9 +3,7 @@
 #include "Base/Logger.hpp"
 #include "Base/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
-#include "Events/KeyDown.hpp"
-#include "Events/KeyUp.hpp"
-#include "Events/MouseClick.hpp"
+#include "Events/Events.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Scene/Entity/Entity.hpp"
 #include "Systems/PhysicsSystem.hpp"
@@ -75,20 +73,20 @@ namespace Crane::Core {
         }
 
         if (!event.key.repeat) {
-          m_Dispatcher.trigger(Events::KeyDownEvent{event.key.key});
+          m_Dispatcher.trigger(Events::KeyDown{event.key.key});
         }
         break;
       case SDL_EVENT_KEY_UP:
         if (!event.key.repeat) {
-          m_Dispatcher.trigger(Events::KeyUpEvent{event.key.key});
+          m_Dispatcher.trigger(Events::KeyUp{event.key.key});
         }
         break;
       case SDL_EVENT_MOUSE_BUTTON_DOWN: {
         auto position = Math::Vec2f(event.button.x, event.button.y);
         switch (event.button.button) {
-        case SDL_BUTTON_LEFT:   m_Dispatcher.trigger(Events::MouseClickEvent{position, Events::MouseButton::Left}); break;
-        case SDL_BUTTON_RIGHT:  m_Dispatcher.trigger(Events::MouseClickEvent{position, Events::MouseButton::Right}); break;
-        case SDL_BUTTON_MIDDLE: m_Dispatcher.trigger(Events::MouseClickEvent{position, Events::MouseButton::Middle}); break;
+        case SDL_BUTTON_LEFT:   m_Dispatcher.trigger(Events::MouseClick{position, Events::MouseButton::Left}); break;
+        case SDL_BUTTON_RIGHT:  m_Dispatcher.trigger(Events::MouseClick{position, Events::MouseButton::Right}); break;
+        case SDL_BUTTON_MIDDLE: m_Dispatcher.trigger(Events::MouseClick{position, Events::MouseButton::Middle}); break;
         default:
           // TODO: Handle other mouse buttons if needed
           break;

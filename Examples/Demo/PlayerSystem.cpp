@@ -5,8 +5,8 @@
 
 void PlayerSystem::Initialize(Crane::Scene::World &world) {
   m_World = &world;
-  m_App->GetDispatcher().sink<Crane::Events::KeyDownEvent>().connect<&PlayerSystem::HandleKeyDown>(this);
-  m_App->GetDispatcher().sink<Crane::Events::KeyUpEvent>().connect<&PlayerSystem::HandleKeyUp>(this);
+  m_App->GetDispatcher().sink<Crane::Events::KeyDown>().connect<&PlayerSystem::HandleKeyDown>(this);
+  m_App->GetDispatcher().sink<Crane::Events::KeyUp>().connect<&PlayerSystem::HandleKeyUp>(this);
 
   m_PlayerComponent = &m_PlayerEntity->GetComponent<PlayerComponent>();
 }
@@ -26,7 +26,7 @@ void PlayerSystem::Update([[maybe_unused]] Crane::Scene::World &world, [[maybe_u
   }
 }
 
-void PlayerSystem::HandleKeyDown(Crane::Events::KeyDownEvent &event) {
+void PlayerSystem::HandleKeyDown(Crane::Events::KeyDown &event) {
   if (event.GetKeyCode() == SDLK_A) {
     m_PlayerComponent->isMovingLeft = true;
   } else if (event.GetKeyCode() == SDLK_D) {
@@ -36,7 +36,7 @@ void PlayerSystem::HandleKeyDown(Crane::Events::KeyDownEvent &event) {
   }
 }
 
-void PlayerSystem::HandleKeyUp(Crane::Events::KeyUpEvent &event) {
+void PlayerSystem::HandleKeyUp(Crane::Events::KeyUp &event) {
   if (event.GetKeyCode() == SDLK_A) {
     m_PlayerComponent->isMovingLeft = false;
   } else if (event.GetKeyCode() == SDLK_D) {

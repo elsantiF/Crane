@@ -4,9 +4,7 @@ set(CORE_SOURCES
     "Application/Application.hpp"
     # Events
     "Events/IEvent.hpp"
-    "Events/KeyDown.hpp"
-    "Events/KeyUp.hpp"
-    "Events/MouseClick.hpp"
+    "Events/Events.hpp"
 )
 
 add_library(CraneCore STATIC ${CORE_SOURCES})

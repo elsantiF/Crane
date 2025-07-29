@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Application/Application.hpp"
-#include "Events/KeyDown.hpp"
-#include "Events/KeyUp.hpp"
+#include "Events/Events.hpp"
 #include "PlayerComponent.hpp"
 #include "Scene/Entity/Entity.hpp"
 #include "Systems/ISystem.hpp"
@@ -17,8 +16,8 @@ public:
   void Update(Crane::Scene::World &world, f64 deltaTime) override;
 
 private:
-  void HandleKeyDown(Crane::Events::KeyDownEvent &event);
-  void HandleKeyUp(Crane::Events::KeyUpEvent &event);
+  void HandleKeyDown(Crane::Events::KeyDown &event);
+  void HandleKeyUp(Crane::Events::KeyUp &event);
 
 private:
   Crane::Scene::World *m_World = nullptr;
