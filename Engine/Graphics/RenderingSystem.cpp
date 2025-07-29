@@ -5,7 +5,7 @@
 #include "Scene/Components/Transform.hpp"
 #include "Scene/World/World.hpp"
 
-namespace Crane::Systems {
+namespace Crane::Graphics {
   void RenderingSystem::Render(Scene::World &world, Graphics::IRenderer &renderer) {
     PROFILE_SCOPE();
     auto &registry = world.GetRegistry();

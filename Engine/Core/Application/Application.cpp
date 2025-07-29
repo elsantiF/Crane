@@ -4,9 +4,9 @@
 #include "Base/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
 #include "Events/Events.hpp"
+#include "Graphics/RenderingSystem.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Scene/Entity/Entity.hpp"
-#include "Systems/RenderingSystem.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 
@@ -18,7 +18,7 @@ namespace Crane::Core {
       return false;
     }
     m_World = MakeScope<Scene::World>();
-    m_RenderingSystem = MakeScope<Systems::RenderingSystem>();
+    m_RenderingSystem = MakeScope<Graphics::RenderingSystem>();
     InitializeImGui();
     m_Running = true;
     OnInitialize();

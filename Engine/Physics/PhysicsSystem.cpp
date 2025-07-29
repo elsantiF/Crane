@@ -6,7 +6,7 @@
 #include "Scene/Components/Transform.hpp"
 #include "Scene/World/World.hpp"
 
-namespace Crane::Systems {
+namespace Crane::Physics {
   void PhysicsSystem::Initialize(Scene::World &world) {
     PROFILE_SCOPE();
     b2WorldDef worldDef = b2DefaultWorldDef();

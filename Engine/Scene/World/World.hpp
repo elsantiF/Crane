@@ -2,7 +2,7 @@
 
 #include "Base/Config.hpp"
 #include "Base/Types.hpp"
-#include "Systems/SystemManager.hpp"
+#include "Core/Systems/SystemManager.hpp"
 #include <entt/entt.hpp>
 
 namespace Crane::Scene {
@@ -29,12 +29,12 @@ namespace Crane::Scene {
       return PIXELS_PER_METER;
     }
 
-    Systems::SystemManager &GetSystemManager() {
+    Core::Systems::SystemManager &GetSystemManager() {
       return m_SystemManager;
     }
 
   private:
     entt::registry m_Registry;
-    Systems::SystemManager m_SystemManager;
+    Core::Systems::SystemManager m_SystemManager;
   };
 }

@@ -5,6 +5,10 @@ set(CORE_SOURCES
     # Events
     "Events/IEvent.hpp"
     "Events/Events.hpp"
+    # Systems
+    "Systems/ISystem.hpp"
+    "Systems/SystemManager.hpp"
+    "Systems/SystemManager.cpp"
 )
 
 add_library(CraneCore STATIC ${CORE_SOURCES})

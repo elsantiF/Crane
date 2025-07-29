@@ -1,4 +1,5 @@
 #include "Application/Application.hpp"
+#include "Physics/PhysicsSystem.hpp"
 #include "PlayerComponent.hpp"
 #include "PlayerSystem.hpp"
 #include "Scene/Components/BoxCollider.hpp"
@@ -6,7 +7,6 @@
 #include "Scene/Components/RigidBody.hpp"
 #include "Scene/Components/Transform.hpp"
 #include "Scene/Entity/Entity.hpp"
-#include "Systems/PhysicsSystem.hpp"
 #include <imgui.h>
 #include <iostream>
 #include <numbers>
@@ -78,8 +78,8 @@ public:
 protected:
   void OnInitialize() override {
     // TODO: merge this two lines
-    GetWorld().GetSystemManager().AddSystem<Systems::PhysicsSystem>(Math::Vec2f{0.0f, 9.81f});
-    m_PhysicsSystem = GetWorld().GetSystemManager().GetSystem<Systems::PhysicsSystem>();
+    GetWorld().GetSystemManager().AddSystem<Physics::PhysicsSystem>(Math::Vec2f{0.0f, 9.81f});
+    m_PhysicsSystem = GetWorld().GetSystemManager().GetSystem<Physics::PhysicsSystem>();
 
     m_BoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::White));
     m_BoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
@@ -184,7 +184,7 @@ private:
   Id m_CircleVertexDataId = 0;
   Id m_CircleIndexDataId = 0;
   Id m_SimpleTextureId = 0;
-  Systems::PhysicsSystem *m_PhysicsSystem;
+  Physics::PhysicsSystem *m_PhysicsSystem;
 };
 
 int main() {

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Application/Application.hpp"
+#include "Core/Systems/ISystem.hpp"
 #include "Events/Events.hpp"
 #include "PlayerComponent.hpp"
 #include "Scene/Entity/Entity.hpp"
-#include "Systems/ISystem.hpp"
 
-class PlayerSystem : public Crane::Systems::IUpdateSystem {
+class PlayerSystem : public Crane::Core::Systems::IUpdateSystem {
 public:
   PlayerSystem(Crane::Core::Application &app, Crane::Scene::Entity &playerEntity) : m_PlayerEntity(&playerEntity), m_App(&app) {}
 

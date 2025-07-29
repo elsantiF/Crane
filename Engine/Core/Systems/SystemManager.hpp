@@ -2,9 +2,9 @@
 
 #include "Base/Logger.hpp"
 #include "Base/Types.hpp"
-#include "Systems/ISystem.hpp"
+#include "ISystem.hpp"
 
-namespace Crane::Systems {
+namespace Crane::Core::Systems {
   class SystemManager {
   public:
     SystemManager(Scene::World &world) : m_World(world) {}

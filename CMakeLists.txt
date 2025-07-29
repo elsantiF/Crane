@@ -32,7 +32,6 @@ target_link_libraries(Crane INTERFACE
     CraneGraphics
     CranePhysics
     CraneScene
-    CraneSystems
 )
 
 if(NOT MSVC)

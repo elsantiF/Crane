@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ISystem.hpp"
+#include "Core/Systems/ISystem.hpp"
 
-namespace Crane::Systems {
-  class RenderingSystem : public IRenderSystem {
+namespace Crane::Graphics {
+  class RenderingSystem : public Core::Systems::IRenderSystem {
   public:
     RenderingSystem() = default;
     ~RenderingSystem() override = default;

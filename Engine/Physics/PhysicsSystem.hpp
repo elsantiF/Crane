@@ -1,15 +1,15 @@
 #pragma once
 
 #include "Base/Types.hpp"
-#include "ISystem.hpp"
+#include "Core/Systems/ISystem.hpp"
 #include "Physics/BodyStructs.hpp"
 #include "Scene/Components/BoxCollider.hpp"
 #include "Scene/Components/CircleCollider.hpp"
 #include "Scene/Components/RigidBody.hpp"
 #include <box2d/box2d.h>
 
-namespace Crane::Systems {
-  class PhysicsSystem : public IFixedUpdateSystem {
+namespace Crane::Physics {
+  class PhysicsSystem : public Core::Systems::IFixedUpdateSystem {
   public:
     PhysicsSystem(Math::Vec2f gravity) : m_Gravity(gravity) {}
 
