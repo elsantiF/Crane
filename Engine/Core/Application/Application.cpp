@@ -2,13 +2,9 @@
 #include "Base/Config.hpp"
 #include "Base/Logger.hpp"
 #include "Base/Profiler.hpp"
-#include "Editor/EntityDisplay.hpp"
 #include "Events/Events.hpp"
 #include "Graphics/RenderingSystem.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
-#include "Scene/Entity/Entity.hpp"
-#include <entt/entt.hpp>
-#include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <SDL3/SDL.h>
 
@@ -106,23 +102,17 @@ namespace Crane::Core {
 
   void Application::Render() {
     PROFILE_SCOPE();
+
     m_Renderer->BeginFrame();
     m_Renderer->Clear(Graphics::Colors::CLEAR_COLOR);
     OnPreRender();
     m_RenderingSystem->Render(*m_World, *m_Renderer);
     OnPostRender();
+
     m_Renderer->BeginImGuiFrame();
-
-    ImGui::Begin("Stats");
-    ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
-    ImGui::Text("Delta: %.3f ms", m_DeltaTime * 1000.0);
-    ImGui::Text("ESC to exit");
-
-    auto &registry = m_World->GetRegistry();
-    Crane::Editor::EntityDisplay::DrawEntityList(registry);
     OnImGui();
-
     m_Renderer->EndImGuiFrame();
+
     m_Renderer->Present();
     m_Renderer->EndFrame();
   }

@@ -1,4 +1,6 @@
 #include "Application/Application.hpp"
+#include "Base/Profiler.hpp"
+#include "Editor/EntityDisplay.hpp"
 #include "Physics/PhysicsSystem.hpp"
 #include "PlayerComponent.hpp"
 #include "PlayerSystem.hpp"
@@ -148,6 +150,15 @@ protected:
   void OnPreRender() override {}
   void OnPostRender() override {}
   void OnImGui() override {
+    PROFILE_SCOPE();
+    ImGui::Begin("Stats");
+    ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
+    ImGui::Text("Delta: %.3f ms", m_DeltaTime * 1000.0);
+    ImGui::Text("ESC to exit");
+
+    auto &registry = m_World->GetRegistry();
+    Editor::EntityDisplay::DrawEntityList(registry);
+
     ImGui::Begin("Demo Controls");
 
     if (ImGui::Button("Spawn Box")) {
