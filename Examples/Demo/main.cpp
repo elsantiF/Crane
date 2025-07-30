@@ -12,6 +12,8 @@
 #include <imgui.h>
 #include <iostream>
 #include <numbers>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 using namespace Crane;
 
@@ -57,20 +59,23 @@ Vector<i32> CreateCircleIndices(i32 segments) {
   return indices;
 }
 
-Graphics::Texture CreateSimpleTexture() {
-  // Representation in a box:
-  // 1 2
-  // 3 4
-  return {
-      2,
-      2,
-      {
-        0xFF0000FF, // First pixel
-          0xFF00FF00, // Second pixel
-          0xFFFF0000, // Third pixel
-          0xFFFFFFFF  // Fourth pixel
-      }
-  };
+Graphics::Texture CreateSimpleTexture(const Path &path) {
+  u32 width, height, channels;
+  unsigned char *data = stbi_load(path.generic_string().c_str(), reinterpret_cast<int *>(&width), reinterpret_cast<int *>(&height),
+                                  reinterpret_cast<int *>(&channels), 4);
+
+  Vector<u32> pixelData;
+  for (u32 i = 0; i < width * height; ++i) {
+    u32 r = data[i * 4 + 0];
+    u32 g = data[i * 4 + 1];
+    u32 b = data[i * 4 + 2];
+    u32 a = data[i * 4 + 3];
+    pixelData.push_back((a << 24) | (b << 16) | (g << 8) | r);
+  }
+
+  auto texture = Graphics::Texture{width, height, pixelData};
+  stbi_image_free(data);
+  return texture;
 }
 
 const Core::ApplicationInfo appInfo = {
@@ -92,7 +97,8 @@ protected:
     m_BoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
     m_CircleVertexDataId = m_Renderer->LoadVertexData(CreateCircleVertices(20.0f, 16, Graphics::Colors::White));
     m_CircleIndexDataId = m_Renderer->LoadIndexData(CreateCircleIndices(16));
-    m_SimpleTextureId = m_Renderer->LoadTexture(CreateSimpleTexture());
+    m_SquareTextureId = m_Renderer->LoadTexture(CreateSimpleTexture("Resources/square.png"));
+    m_CircleTextureId = m_Renderer->LoadTexture(CreateSimpleTexture("Resources/circle.png"));
 
     // Create ground body
     Id groundVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));
@@ -166,7 +172,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       box.AddComponent<Scene::Components::Transform>(Math::Vec2f{x, y});
-      box.AddComponent<Scene::Components::Renderable>(m_BoxVertexDataId, m_BoxIndexDataId, m_SimpleTextureId);
+      box.AddComponent<Scene::Components::Renderable>(m_BoxVertexDataId, m_BoxIndexDataId, m_SquareTextureId);
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {x,  y },
           {40, 40},
@@ -181,7 +187,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       circle.AddComponent<Scene::Components::Transform>(Math::Vec2f{x, y});
-      circle.AddComponent<Scene::Components::Renderable>(m_CircleVertexDataId, m_CircleIndexDataId, m_SimpleTextureId);
+      circle.AddComponent<Scene::Components::Renderable>(m_CircleVertexDataId, m_CircleIndexDataId, m_CircleTextureId);
       auto [rb, circlecollider] = m_PhysicsSystem->CreateCircleBody({
           {x, y},
           20, Physics::BodyType::Dynamic
@@ -199,7 +205,8 @@ private:
   Id m_BoxIndexDataId = 0;
   Id m_CircleVertexDataId = 0;
   Id m_CircleIndexDataId = 0;
-  Id m_SimpleTextureId = 0;
+  Id m_SquareTextureId = 0;
+  Id m_CircleTextureId = 0;
   Physics::PhysicsSystem *m_PhysicsSystem;
 };
 
