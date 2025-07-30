@@ -2,6 +2,7 @@
 #include "PlayerComponent.hpp"
 #include "Scene/Components/RigidBody.hpp"
 #include <box2d/box2d.h>
+#include <SDL3/SDL_keycode.h>
 
 void PlayerSystem::Initialize(Crane::Scene::World &world) {
   m_World = &world;

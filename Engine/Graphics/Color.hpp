@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Base/Types.hpp"
-#include <SDL3/SDL_render.h>
 
 namespace Crane::Graphics {
 
@@ -9,11 +8,6 @@ namespace Crane::Graphics {
   public:
     Color() : r(0.f), g(0.f), b(0.f), a(1.f) {}
     Color(f32 r, f32 g, f32 b, f32 a = 1.0) : r(r), g(g), b(b), a(a) {}
-    Color(const SDL_FColor &color) : r(color.r), g(color.g), b(color.b), a(color.a) {}
-
-    operator SDL_FColor() const {
-      return SDL_FColor{r, g, b, a};
-    }
 
     bool operator==(const Color &other) const {
       return r == other.r && g == other.g && b == other.b && a == other.a;

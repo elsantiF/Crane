@@ -5,6 +5,8 @@
 
 struct SDL_Renderer;
 struct SDL_Window;
+struct SDL_Vertex;
+struct SDL_Texture;
 
 namespace Crane::Graphics::SDLRenderer {
   class SDLRenderer : public IRenderer {

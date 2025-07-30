@@ -235,7 +235,8 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_Vertex vertices[4];
     for (i32 i = 0; i < 4; ++i) {
       vertices[i].position = points[i];
-      vertices[i].color = m_Context.fillColor;
+      SDL_FColor fillColor = {m_Context.fillColor.r, m_Context.fillColor.g, m_Context.fillColor.b, m_Context.fillColor.a};
+      vertices[i].color = fillColor;
     }
 
     i32 indices[6] = {0, 1, 2, 2, 3, 0};
@@ -252,7 +253,6 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_RenderLines(m_Renderer, points, 2);
   }
 
-  // TODO: extract renderable to its own class, somthing like a VertexBuffer
   void SDLRenderer::DrawRenderable(const Math::Transform &transform) {
     PROFILE_SCOPE();
 
