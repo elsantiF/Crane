@@ -71,9 +71,14 @@ Graphics::Texture CreateSimpleTexture() {
   };
 }
 
+const Core::ApplicationInfo appInfo = {
+    "Crane Demo", {1,    0,   0   },
+     {1600, 900, true}
+};
+
 class Demo : public Core::Application {
 public:
-  Demo() = default;
+  Demo() : Core::Application(appInfo) {}
 
 protected:
   void OnInitialize() override {

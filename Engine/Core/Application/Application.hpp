@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ApplicationInfo.hpp"
 #include "Base/Types.hpp"
 #include "Graphics/IRenderer.hpp"
 #include "Scene/World/World.hpp"
@@ -9,7 +10,7 @@
 namespace Crane::Core {
   class Application {
   public:
-    Application() : m_Window(nullptr), m_Renderer(nullptr), m_Running(false) {}
+    explicit Application(const ApplicationInfo &info) : m_Window(nullptr), m_Renderer(nullptr), m_Running(false), m_AppInfo(info) {}
     ~Application() {
       Cleanup();
     }
@@ -44,6 +45,7 @@ namespace Crane::Core {
     virtual void OnImGui() = 0;
 
   protected: // TODO: Protected is not ideal, but necessary for now
+    const ApplicationInfo &m_AppInfo;
     SDL_Window *m_Window;
     Scope<Graphics::IRenderer> m_Renderer;
     Scope<Scene::World> m_World;

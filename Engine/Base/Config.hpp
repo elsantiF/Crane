@@ -6,8 +6,6 @@
 namespace Crane {
   namespace Core {
     constexpr f64 PHYSICS_TIMESTEP = 1.0 / 60.0;
-    constexpr i32 WINDOW_WIDTH = 1600;
-    constexpr i32 WINDOW_HEIGHT = 900;
   }
 
   namespace Physics {
