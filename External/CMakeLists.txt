@@ -6,8 +6,20 @@ target_include_directories(glm INTERFACE "glm")
 
 option(SDL_STATIC "" ON)
 option(SDL_SHARED "" OFF)
+option(SDL_TESTS "" OFF)
+option(SDL_INSTALL "" OFF)
+option(SDL_SAMPLES "" OFF)
+option(SDL_CAMERA "" OFF)
+option(SDL_HAPTIC "" OFF)
+option(SDL_JOYSTICK "" OFF)
+option(SDL_SENSOR "" OFF)
 add_subdirectory("SDL")
+
+option(SPDLOG_BUILD_EXAMPLES "" OFF)
+option(SPDLOG_BUILD_TESTS "" OFF)
+option(SPDLOG_BUILD_BENCH "" OFF)
 add_subdirectory("spdlog")
+
 add_subdirectory("tracy")
 
 file(GLOB IMGUI_SOURCES
