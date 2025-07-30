@@ -20,6 +20,12 @@ option(SPDLOG_BUILD_TESTS "" OFF)
 option(SPDLOG_BUILD_BENCH "" OFF)
 add_subdirectory("spdlog")
 
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stb/>
+        $<INSTALL_INTERFACE:include/stb>
+)
+
 add_subdirectory("tracy")
 
 file(GLOB IMGUI_SOURCES
