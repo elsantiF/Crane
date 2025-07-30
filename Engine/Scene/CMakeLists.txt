@@ -16,4 +16,4 @@ set(SCENE_SOURCES
 add_library(CraneScene STATIC ${SCENE_SOURCES})
 target_include_directories(CraneScene PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(CraneScene PUBLIC "${CMAKE_SOURCE_DIR}/Engine")
-target_link_libraries(CraneScene PUBLIC CraneBase CraneGraphics CranePhysics CraneCore EnTT::EnTT)
+target_link_libraries(CraneScene PUBLIC CraneBase CranePhysics CraneCore EnTT::EnTT)
