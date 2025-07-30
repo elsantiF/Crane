@@ -10,7 +10,8 @@
 namespace Crane::Core {
   class Application {
   public:
-    explicit Application(const ApplicationInfo &info) : m_Window(nullptr), m_Renderer(nullptr), m_Running(false), m_AppInfo(info) {}
+    explicit Application(const ApplicationInfo &info)
+        : m_AppInfo(info), m_Window(nullptr), m_Renderer(nullptr), m_RenderingSystem(nullptr), m_Running(false) {}
     ~Application() {
       Cleanup();
     }
