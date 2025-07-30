@@ -17,6 +17,15 @@ namespace Crane::Graphics::SDLRenderer {
     // TODO: Make VSync optional
     SDL_SetRenderVSync(m_Renderer, 1);
     Logger::Info("SDLRenderer initialized successfully");
+
+    // Initialize ImGui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    ImGui::StyleColorsDark();
+    ImGui_ImplSDL3_InitForSDLRenderer(m_Window, m_Renderer);
+    ImGui_ImplSDLRenderer3_Init(m_Renderer);
+    Logger::Info("ImGui initialized for SDLRenderer");
     return true;
   }
 
@@ -30,17 +39,10 @@ namespace Crane::Graphics::SDLRenderer {
     if (!m_Renderer) {
       Logger::Info("SDLRenderer has been shut down");
     }
-  }
 
-  void SDLRenderer::InitializeImGui() {
-    ImGui_ImplSDL3_InitForSDLRenderer(m_Window, m_Renderer);
-    ImGui_ImplSDLRenderer3_Init(m_Renderer);
-    Logger::Info("ImGui initialized for SDLRenderer");
-  }
-
-  void SDLRenderer::ShutdownImGui() {
     ImGui_ImplSDLRenderer3_Shutdown();
     ImGui_ImplSDL3_Shutdown();
+    ImGui::DestroyContext();
     Logger::Info("ImGui shutdown for SDLRenderer");
   }
 

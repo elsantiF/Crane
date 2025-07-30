@@ -19,7 +19,6 @@ namespace Crane::Core {
     }
     m_World = MakeScope<Scene::World>();
     m_RenderingSystem = MakeScope<Graphics::RenderingSystem>();
-    InitializeImGui();
     m_Running = true;
     OnInitialize();
     return true;
@@ -47,14 +46,6 @@ namespace Crane::Core {
     Logger::Info("SDL Initialized successfully");
 
     return true;
-  }
-
-  void Application::InitializeImGui() {
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    ImGui::StyleColorsDark();
-    m_Renderer->InitializeImGui();
   }
 
   void Application::HandleEvents() {
@@ -156,9 +147,6 @@ namespace Crane::Core {
   }
 
   void Application::Cleanup() {
-    m_Renderer->ShutdownImGui();
-    ImGui::DestroyContext();
-
     if (m_Window) {
       SDL_DestroyWindow(m_Window);
     }

@@ -15,8 +15,6 @@ namespace Crane::Graphics {
     virtual bool Initialize() = 0;
     virtual void Shutdown() = 0;
 
-    virtual void InitializeImGui() = 0;
-    virtual void ShutdownImGui() = 0;
     virtual void BeginImGuiFrame() = 0;
     virtual void EndImGuiFrame() = 0;
 

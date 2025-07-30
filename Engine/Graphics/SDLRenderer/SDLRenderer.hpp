@@ -13,8 +13,6 @@ namespace Crane::Graphics::SDLRenderer {
     bool Initialize() override;
     void Shutdown() override;
 
-    void InitializeImGui() override;
-    void ShutdownImGui() override;
     void BeginImGuiFrame() override;
     void EndImGuiFrame() override;
 

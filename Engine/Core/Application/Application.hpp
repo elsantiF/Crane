@@ -27,7 +27,6 @@ namespace Crane::Core {
 
   private:
     bool InitializeSDL();
-    void InitializeImGui();
     void HandleEvents();
     void FixedUpdate();
     void Update(f64 deltaTime);
