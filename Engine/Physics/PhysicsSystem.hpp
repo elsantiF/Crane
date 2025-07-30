@@ -6,7 +6,8 @@
 #include "Scene/Components/BoxCollider.hpp"
 #include "Scene/Components/CircleCollider.hpp"
 #include "Scene/Components/RigidBody.hpp"
-#include <box2d/box2d.h>
+
+struct b2WorldId;
 
 namespace Crane::Physics {
   class PhysicsSystem : public Core::Systems::IFixedUpdateSystem {

@@ -4,8 +4,9 @@
 #include "Base/Types.hpp"
 #include "Graphics/IRenderer.hpp"
 #include "Scene/World/World.hpp"
-#include <entt/entt.hpp>
-#include <SDL3/SDL.h>
+#include <entt/signal/dispatcher.hpp>
+
+struct SDL_Window;
 
 namespace Crane::Core {
   class Application {

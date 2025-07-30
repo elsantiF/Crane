@@ -5,6 +5,7 @@
 #include "Scene/Components/RigidBody.hpp"
 #include "Scene/Components/Transform.hpp"
 #include "Scene/World/World.hpp"
+#include <box2d/box2d.h>
 
 namespace Crane::Physics {
   void PhysicsSystem::Initialize(Scene::World &world) {

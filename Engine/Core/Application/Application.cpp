@@ -7,8 +7,10 @@
 #include "Graphics/RenderingSystem.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include "Scene/Entity/Entity.hpp"
+#include <entt/entt.hpp>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
+#include <SDL3/SDL.h>
 
 namespace Crane::Core {
   bool Application::Initialize() {

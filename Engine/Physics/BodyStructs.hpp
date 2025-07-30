@@ -2,10 +2,9 @@
 
 #include "Base/Math/Vector.hpp"
 #include "Base/Types.hpp"
-#include <box2d/box2d.h>
 
 namespace Crane::Physics {
-  enum class BodyType { Static = b2_staticBody, Dynamic = b2_dynamicBody, Kinematic = b2_kinematicBody };
+  enum class BodyType { Static = 0, Kinematic = 1, Dynamic = 2 };
 
   struct BaseBodyConfig {
     Math::Vec2f center;

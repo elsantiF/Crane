@@ -2,7 +2,9 @@
 
 #include "Base/Types.hpp"
 #include "Graphics/IRenderer.hpp"
-#include <SDL3/SDL_render.h>
+
+struct SDL_Renderer;
+struct SDL_Window;
 
 namespace Crane::Graphics::SDLRenderer {
   class SDLRenderer : public IRenderer {

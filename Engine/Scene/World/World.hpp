@@ -3,7 +3,7 @@
 #include "Base/Config.hpp"
 #include "Base/Types.hpp"
 #include "Core/Systems/SystemManager.hpp"
-#include <entt/entt.hpp>
+#include <entt/entity/registry.hpp>
 
 namespace Crane::Scene {
   class Entity;
