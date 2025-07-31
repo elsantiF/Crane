@@ -8,7 +8,6 @@ set(SCENE_SOURCES
     # World
     "World.cpp"
     "World.hpp"
-    "World.inl"
 )
 
 add_library(CraneScene STATIC ${SCENE_SOURCES})
