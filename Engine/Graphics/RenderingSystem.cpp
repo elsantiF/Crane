@@ -3,7 +3,7 @@
 #include "Graphics/IRenderer.hpp"
 #include "Scene/Components/Renderable.hpp"
 #include "Scene/Components/Transform.hpp"
-#include "Scene/World/World.hpp"
+#include "Scene/World.hpp"
 
 namespace Crane::Graphics {
   void RenderingSystem::Render(Scene::World &world, Graphics::IRenderer &renderer) {

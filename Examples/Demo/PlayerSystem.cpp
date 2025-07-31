@@ -9,11 +9,11 @@ void PlayerSystem::Initialize(Crane::Scene::World &world) {
   m_App->GetDispatcher().sink<Crane::Events::KeyDown>().connect<&PlayerSystem::HandleKeyDown>(this);
   m_App->GetDispatcher().sink<Crane::Events::KeyUp>().connect<&PlayerSystem::HandleKeyUp>(this);
 
-  m_PlayerComponent = &m_PlayerEntity->GetComponent<PlayerComponent>();
+  m_PlayerComponent = &world.GetComponent<PlayerComponent>(*m_PlayerEntity);
 }
 
 void PlayerSystem::Update([[maybe_unused]] Crane::Scene::World &world, [[maybe_unused]] f64 deltaTime) {
-  auto &rb = m_PlayerEntity->GetComponent<Crane::Scene::Components::RigidBody>();
+  auto &rb = world.GetComponent<Crane::Scene::Components::RigidBody>(*m_PlayerEntity);
   b2Vec2 position = b2Body_GetPosition(rb.bodyId);
   if (m_PlayerComponent->isMovingLeft) {
     b2Body_ApplyForce(rb.bodyId, b2Vec2(-SPEED, 0), position, true);

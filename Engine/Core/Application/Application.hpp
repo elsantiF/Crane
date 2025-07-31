@@ -4,7 +4,7 @@
 #include "Base/Types.hpp"
 #include "Graphics/IRenderer.hpp"
 #include "Graphics/SDLWindow.hpp"
-#include "Scene/World/World.hpp"
+#include "Scene/World.hpp"
 #include <entt/signal/dispatcher.hpp>
 
 namespace Crane::Core {

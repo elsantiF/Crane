@@ -5,12 +5,10 @@ set(SCENE_SOURCES
     "Components/Renderable.hpp"
     "Components/RigidBody.hpp"
     "Components/Transform.hpp"
-    # Entity
-    "Entity/Entity.hpp"
-    "Entity/Entity.inl"
     # World
-    "World/World.cpp"
-    "World/World.hpp"
+    "World.cpp"
+    "World.hpp"
+    "World.inl"
 )
 
 add_library(CraneScene STATIC ${SCENE_SOURCES})

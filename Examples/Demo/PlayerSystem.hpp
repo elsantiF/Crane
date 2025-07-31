@@ -4,7 +4,6 @@
 #include "Core/Systems/ISystem.hpp"
 #include "Events/Events.hpp"
 #include "PlayerComponent.hpp"
-#include "Scene/Entity/Entity.hpp"
 
 class PlayerSystem : public Crane::Core::Systems::IUpdateSystem {
 public:
