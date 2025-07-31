@@ -1,4 +1,5 @@
-#include "Application.hpp"
+#include "ClientApplication.hpp"
+#include "Base/Assert.hpp"
 #include "Base/Logger.hpp"
 #include "Base/Profiler.hpp"
 #include "Events/Events.hpp"
@@ -8,39 +9,23 @@
 #include <SDL3/SDL.h>
 
 namespace Crane {
-  bool Application::Initialize() {
+  void ClientApplication::PlatformInitialize() {
     PROFILE_SCOPE();
-    Logger::Initialize();
-    if (!InitializeSDL()) {
-      return false;
-    }
-    m_World = MakeScope<Scene::World>();
-    m_RenderingSystem = MakeScope<Graphics::RenderingSystem>();
-    m_Running = true;
-    OnInitialize();
-    return true;
-  }
 
-  bool Application::InitializeSDL() {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
-      Logger::Error("SDL Initialization Error: {}", SDL_GetError());
-      return false;
+      Assert::Crash("Failed to initialize SDL");
     }
 
     m_Window = MakeScope<Graphics::SDLWindow>(m_AppInfo.appName, m_AppInfo.window.width, m_AppInfo.window.height);
-
     m_Renderer = MakeScope<Graphics::SDLRenderer::SDLRenderer>(m_Window->GetHandle());
     if (!m_Renderer->Initialize()) {
-      Logger::Error("SDLRenderer Initialization Error: {}", SDL_GetError());
-      return false;
+      Assert::Crash("Failed to initialize SDLRenderer");
     }
 
-    Logger::Info("SDL Initialized successfully");
-
-    return true;
+    m_RenderingSystem = MakeScope<Graphics::RenderingSystem>();
   }
 
-  void Application::HandleEvents() {
+  void ClientApplication::HandleEvents() {
     SDL_Event event;
 
     while (SDL_PollEvent(&event)) {
@@ -80,21 +65,7 @@ namespace Crane {
     m_Dispatcher.update();
   }
 
-  void Application::FixedUpdate(f64 deltaTime) {
-    PROFILE_SCOPE();
-    OnPreFixedUpdate();
-    m_World->FixedUpdate(deltaTime);
-    OnPostFixedUpdate();
-  }
-
-  void Application::Update(f64 deltaTime) {
-    PROFILE_SCOPE();
-    OnPreUpdate();
-    m_World->Update(deltaTime);
-    OnPostUpdate();
-  }
-
-  void Application::Render() {
+  void ClientApplication::Render() {
     PROFILE_SCOPE();
 
     m_Renderer->BeginFrame();
@@ -111,28 +82,9 @@ namespace Crane {
     m_Renderer->EndFrame();
   }
 
-  void Application::Run() {
-    f64 lastTime = SDL_GetTicks() / 1000.0;
-    while (m_Running) {
-      const f64 currentTime = SDL_GetTicks() / 1000.0;
-      m_DeltaTime = currentTime - lastTime;
-      m_Accumulator += m_DeltaTime;
-
-      HandleEvents();
-
-      while (m_Accumulator >= PHYSICS_TIMESTEP) {
-        FixedUpdate(PHYSICS_TIMESTEP);
-        m_Accumulator -= PHYSICS_TIMESTEP;
-      }
-
-      Update(m_DeltaTime);
-      Render();
-
-      lastTime = currentTime;
-    }
-  }
-
-  void Application::Cleanup() {
+  void ClientApplication::Cleanup() {
+    m_RenderingSystem.reset();
+    m_Renderer.reset();
     m_Window.reset();
     SDL_Quit();
     Logger::Info("Application cleaned up");

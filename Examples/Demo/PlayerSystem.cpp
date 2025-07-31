@@ -6,7 +6,8 @@
 
 using namespace Crane;
 
-PlayerSystem::PlayerSystem(Scene::World &world, Crane::Application &app, Scene::Entity &playerEntity) : m_App(&app), m_PlayerEntity(&playerEntity) {
+PlayerSystem::PlayerSystem(Scene::World &world, Crane::ClientApplication &app, Scene::Entity &playerEntity)
+    : m_App(&app), m_PlayerEntity(&playerEntity) {
   m_App->GetDispatcher().sink<Events::KeyDown>().connect<&PlayerSystem::HandleKeyDown>(this);
   m_App->GetDispatcher().sink<Events::KeyUp>().connect<&PlayerSystem::HandleKeyUp>(this);
 

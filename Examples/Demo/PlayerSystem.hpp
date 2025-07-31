@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Application/Application.hpp"
+#include "Application/ClientApplication.hpp"
 #include "Core/Systems/ISystem.hpp"
 #include "Events/Events.hpp"
 #include "PlayerComponent.hpp"
 
 class PlayerSystem : public Crane::Systems::IUpdateSystem {
 public:
-  PlayerSystem(Crane::Scene::World &world, Crane::Application &app, Crane::Scene::Entity &playerEntity);
+  PlayerSystem(Crane::Scene::World &world, Crane::ClientApplication &app, Crane::Scene::Entity &playerEntity);
 
   void Update(Crane::Scene::World &world, f64 deltaTime) override;
 
@@ -16,7 +16,7 @@ private:
   void HandleKeyUp(Crane::Events::KeyUp &event);
 
 private:
-  Crane::Application *m_App = nullptr;
+  Crane::ClientApplication *m_App = nullptr;
   Crane::Scene::Entity *m_PlayerEntity = nullptr;
   PlayerComponent *m_PlayerComponent = nullptr;
 

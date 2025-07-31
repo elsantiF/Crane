@@ -1,4 +1,4 @@
-#include "Application/Application.hpp"
+#include "Application/ClientApplication.hpp"
 #include "Base/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
 #include "Graphics/TextureManager.hpp"
@@ -10,7 +10,6 @@
 #include "Scene/Components/RigidBody.hpp"
 #include "Scene/Components/Transform.hpp"
 #include <imgui.h>
-#include <iostream>
 #include <numbers>
 
 using namespace Crane;
@@ -64,9 +63,9 @@ const ApplicationInfo appInfo = {
 
 static Graphics::TextureManager textureManager;
 
-class Demo : public Application {
+class Demo : public ClientApplication {
 public:
-  Demo() : Application(appInfo) {}
+  Demo() : ClientApplication(appInfo) {}
 
 protected:
   void OnInitialize() override {
@@ -143,7 +142,6 @@ protected:
     PROFILE_SCOPE();
     ImGui::Begin("Stats");
     ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
-    ImGui::Text("Delta: %.3f ms", m_DeltaTime * 1000.0);
     ImGui::Text("ESC to exit");
     ImGui::End();
 
@@ -197,11 +195,7 @@ private:
 
 int main() {
   Demo demo;
-  if (!demo.Initialize()) {
-    std::cerr << "Failed to initialize Crane." << std::endl;
-    return -1;
-  }
-
+  demo.Initialize();
   demo.Run();
   return 0;
 }
