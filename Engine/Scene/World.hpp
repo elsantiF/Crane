@@ -21,25 +21,29 @@ namespace Crane::Scene {
 
     // --- System management section ---
     template <typename T, typename... Args>
-    void AddSystem(Args &&...args) {
+    T *AddSystem(Args &&...args) {
       auto system = MakeScope<T>(std::forward<Args>(args)...);
+      T *systemPtr = system.get();
+
       if constexpr (std::is_base_of_v<Systems::IFixedUpdateSystem, T>) {
         if (m_FixedUpdateSystems.find(typeid(T)) != m_FixedUpdateSystems.end()) {
           Logger::Error("System of type {} already exists", typeid(T).name());
-          return;
+          return nullptr;
         }
 
         m_FixedUpdateSystems[typeid(T)] = std::move(system);
+        return systemPtr;
       } else if constexpr (std::is_base_of_v<Systems::IUpdateSystem, T>) {
         if (m_UpdateSystems.find(typeid(T)) != m_UpdateSystems.end()) {
           Logger::Error("System of type {} already exists", typeid(T).name());
-          return;
+          return nullptr;
         }
 
         m_UpdateSystems[typeid(T)] = std::move(system);
+        return systemPtr;
       } else {
         Logger::Error("System type must derive from IFixedUpdateSystem or IUpdateSystem");
-        return;
+        return nullptr;
       }
     }
 
