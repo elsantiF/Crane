@@ -1,8 +1,9 @@
 PROJECT_NAME           = "Crane"
 OUTPUT_DIRECTORY       = docs
-INPUT                  = Sources
+INPUT                  = Engine
 RECURSIVE              = YES
 GENERATE_HTML          = YES
 GENERATE_LATEX         = NO
 EXTRACT_ALL            = YES
 QUIET                  = YES
+HAVE_DOT               = YES
