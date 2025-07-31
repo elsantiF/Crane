@@ -14,9 +14,6 @@ namespace Crane::Systems {
   class ISystem {
   public:
     virtual ~ISystem() = default;
-
-    virtual void Initialize(Scene::World &world) = 0;
-    virtual void Shutdown(Scene::World &world) = 0;
   };
 
   class IFixedUpdateSystem : public ISystem {

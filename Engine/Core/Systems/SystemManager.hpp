@@ -14,8 +14,6 @@ namespace Crane::Systems {
     template <typename T, typename... Args>
     void AddSystem(Args &&...args) {
       auto system = MakeScope<T>(std::forward<Args>(args)...);
-      system->Initialize(m_World);
-
       if constexpr (std::is_base_of_v<IFixedUpdateSystem, T>) {
         if (m_FixedUpdateSystems.find(typeid(T)) != m_FixedUpdateSystems.end()) {
           Logger::Error("System of type {} already exists", typeid(T).name());
@@ -63,7 +61,6 @@ namespace Crane::Systems {
           Logger::Error("System of type {} not found", typeid(T).name());
           return;
         }
-        it->second->Shutdown(m_World);
         m_FixedUpdateSystems.erase(it);
       } else if constexpr (std::is_base_of_v<IUpdateSystem, T>) {
         auto it = m_UpdateSystems.find(typeid(T));
@@ -71,7 +68,6 @@ namespace Crane::Systems {
           Logger::Error("System of type {} not found", typeid(T).name());
           return;
         }
-        it->second->Shutdown(m_World);
         m_UpdateSystems.erase(it);
       } else {
         Logger::Error("System type must derive from IFixedUpdateSystem or IUpdateSystem");

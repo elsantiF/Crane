@@ -4,16 +4,17 @@
 #include <box2d/box2d.h>
 #include <SDL3/SDL_keycode.h>
 
-void PlayerSystem::Initialize(Crane::Scene::World &world) {
-  m_World = &world;
-  m_App->GetDispatcher().sink<Crane::Events::KeyDown>().connect<&PlayerSystem::HandleKeyDown>(this);
-  m_App->GetDispatcher().sink<Crane::Events::KeyUp>().connect<&PlayerSystem::HandleKeyUp>(this);
+using namespace Crane;
+
+PlayerSystem::PlayerSystem(Scene::World &world, Crane::Application &app, Scene::Entity &playerEntity) : m_App(&app), m_PlayerEntity(&playerEntity) {
+  m_App->GetDispatcher().sink<Events::KeyDown>().connect<&PlayerSystem::HandleKeyDown>(this);
+  m_App->GetDispatcher().sink<Events::KeyUp>().connect<&PlayerSystem::HandleKeyUp>(this);
 
   m_PlayerComponent = &world.GetComponent<PlayerComponent>(*m_PlayerEntity);
 }
 
-void PlayerSystem::Update([[maybe_unused]] Crane::Scene::World &world, [[maybe_unused]] f64 deltaTime) {
-  auto &rb = world.GetComponent<Crane::Scene::Components::RigidBody>(*m_PlayerEntity);
+void PlayerSystem::Update(Scene::World &world, [[maybe_unused]] f64 deltaTime) {
+  auto &rb = world.GetComponent<Scene::Components::RigidBody>(*m_PlayerEntity);
   b2Vec2 position = b2Body_GetPosition(rb.bodyId);
   if (m_PlayerComponent->isMovingLeft) {
     b2Body_ApplyForce(rb.bodyId, b2Vec2(-SPEED, 0), position, true);

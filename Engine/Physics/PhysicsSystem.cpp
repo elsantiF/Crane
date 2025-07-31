@@ -8,7 +8,8 @@
 #include <box2d/box2d.h>
 
 namespace Crane::Physics {
-  void PhysicsSystem::Initialize(Scene::World &world) {
+  PhysicsSystem::PhysicsSystem(Scene::World &world, Math::Vec2f gravity, f32 pixelsPerMeter, u32 physicsSteps)
+      : m_World(world), m_Gravity(gravity), m_PixelsPerMeter(pixelsPerMeter), m_PhysicsSteps(physicsSteps) {
     PROFILE_SCOPE();
     b2WorldDef worldDef = b2DefaultWorldDef();
     worldDef.gravity = {m_Gravity.x, m_Gravity.y};
@@ -17,7 +18,7 @@ namespace Crane::Physics {
     Logger::Info("PhysicsSystem created");
   }
 
-  void PhysicsSystem::Shutdown(Scene::World &world) {
+  PhysicsSystem::~PhysicsSystem() {
     if (b2World_IsValid(m_WorldId)) {
       b2DestroyWorld(m_WorldId);
       Logger::Info("PhysicsSystem destroyed");

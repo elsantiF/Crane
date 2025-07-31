@@ -7,11 +7,8 @@
 
 class PlayerSystem : public Crane::Systems::IUpdateSystem {
 public:
-  PlayerSystem(Crane::Application &app, Crane::Scene::Entity &playerEntity) : m_PlayerEntity(&playerEntity), m_App(&app) {}
+  PlayerSystem(Crane::Scene::World &world, Crane::Application &app, Crane::Scene::Entity &playerEntity);
 
-  void Initialize(Crane::Scene::World &world) override;
-
-  void Shutdown([[maybe_unused]] Crane::Scene::World &world) override {};
   void Update(Crane::Scene::World &world, f64 deltaTime) override;
 
 private:
@@ -19,9 +16,8 @@ private:
   void HandleKeyUp(Crane::Events::KeyUp &event);
 
 private:
-  Crane::Scene::World *m_World = nullptr;
-  Crane::Scene::Entity *m_PlayerEntity = nullptr;
   Crane::Application *m_App = nullptr;
+  Crane::Scene::Entity *m_PlayerEntity = nullptr;
   PlayerComponent *m_PlayerComponent = nullptr;
 
   const f32 SPEED = 10.0;
