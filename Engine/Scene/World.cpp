@@ -24,7 +24,7 @@ namespace Crane::Scene {
     return m_Registry;
   }
 
-  Core::Systems::SystemManager &World::GetSystemManager() {
+  Systems::SystemManager &World::GetSystemManager() {
     return m_SystemManager;
   }
 }

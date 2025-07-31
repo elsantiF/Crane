@@ -2,7 +2,7 @@
 
 #include "Base/Types.hpp"
 
-namespace Crane::Core {
+namespace Crane {
   struct ApplicationInfo {
     String appName;
 

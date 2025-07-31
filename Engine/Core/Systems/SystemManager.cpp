@@ -1,7 +1,7 @@
 #include "SystemManager.hpp"
 #include "Base/Profiler.hpp"
 
-namespace Crane::Core::Systems {
+namespace Crane::Systems {
   void SystemManager::UpdateSystems(f64 deltaTime) {
     PROFILE_SCOPE();
     for (auto &system : m_UpdateSystems) {

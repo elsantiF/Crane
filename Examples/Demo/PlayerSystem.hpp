@@ -5,9 +5,9 @@
 #include "Events/Events.hpp"
 #include "PlayerComponent.hpp"
 
-class PlayerSystem : public Crane::Core::Systems::IUpdateSystem {
+class PlayerSystem : public Crane::Systems::IUpdateSystem {
 public:
-  PlayerSystem(Crane::Core::Application &app, Crane::Scene::Entity &playerEntity) : m_PlayerEntity(&playerEntity), m_App(&app) {}
+  PlayerSystem(Crane::Application &app, Crane::Scene::Entity &playerEntity) : m_PlayerEntity(&playerEntity), m_App(&app) {}
 
   void Initialize(Crane::Scene::World &world) override;
 
@@ -21,7 +21,7 @@ private:
 private:
   Crane::Scene::World *m_World = nullptr;
   Crane::Scene::Entity *m_PlayerEntity = nullptr;
-  Crane::Core::Application *m_App = nullptr;
+  Crane::Application *m_App = nullptr;
   PlayerComponent *m_PlayerComponent = nullptr;
 
   const f32 SPEED = 10.0;

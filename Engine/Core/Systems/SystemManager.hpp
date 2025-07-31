@@ -5,7 +5,7 @@
 #include "ISystem.hpp"
 #include <typeindex>
 
-namespace Crane::Core::Systems {
+namespace Crane::Systems {
   class SystemManager {
   public:
     SystemManager(Scene::World &world) : m_World(world) {}

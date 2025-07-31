@@ -57,16 +57,16 @@ Vector<i32> CreateCircleIndices(i32 segments) {
   return indices;
 }
 
-const Core::ApplicationInfo appInfo = {
+const ApplicationInfo appInfo = {
     "Crane Demo", {1,    0,   0   },
      {1600, 900, true}
 };
 
 static Graphics::TextureManager textureManager;
 
-class Demo : public Core::Application {
+class Demo : public Application {
 public:
-  Demo() : Core::Application(appInfo) {}
+  Demo() : Application(appInfo) {}
 
 protected:
   void OnInitialize() override {

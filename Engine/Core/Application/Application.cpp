@@ -7,7 +7,7 @@
 #include <imgui_impl_sdl3.h>
 #include <SDL3/SDL.h>
 
-namespace Crane::Core {
+namespace Crane {
   bool Application::Initialize() {
     PROFILE_SCOPE();
     Logger::Initialize();

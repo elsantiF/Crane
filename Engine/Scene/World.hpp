@@ -54,10 +54,10 @@ namespace Crane::Scene {
 
     // --- Accessors ---
     entt::registry &GetRegistry();
-    Core::Systems::SystemManager &GetSystemManager();
+    Systems::SystemManager &GetSystemManager();
 
   private:
     entt::registry m_Registry;
-    Core::Systems::SystemManager m_SystemManager;
+    Systems::SystemManager m_SystemManager;
   };
 }

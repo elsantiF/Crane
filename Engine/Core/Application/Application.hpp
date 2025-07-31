@@ -7,7 +7,7 @@
 #include "Scene/World.hpp"
 #include <entt/signal/dispatcher.hpp>
 
-namespace Crane::Core {
+namespace Crane {
   class Application {
   public:
     explicit Application(const ApplicationInfo &info)

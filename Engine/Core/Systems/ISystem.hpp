@@ -10,7 +10,7 @@ namespace Crane::Graphics {
   class IRenderer;
 }
 
-namespace Crane::Core::Systems {
+namespace Crane::Systems {
   class ISystem {
   public:
     virtual ~ISystem() = default;
