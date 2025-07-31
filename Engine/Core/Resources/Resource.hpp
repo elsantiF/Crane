@@ -28,12 +28,13 @@ namespace Crane::Resources {
     explicit operator bool() const {
       return static_cast<bool>(m_Data);
     }
+
     bool Valid() const {
-      return static_cast<bool>(m_Data);
+      return m_Data.use_count() > 1;
     }
 
     u64 UseCount() const {
-      return m_Data ? m_Data->UseCount() : 0;
+      return m_Data.use_count();
     }
 
   public:
