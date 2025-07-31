@@ -23,7 +23,6 @@ namespace Crane::Core {
   }
 
   bool Application::InitializeSDL() {
-    PROFILE_SCOPE();
     if (!SDL_Init(SDL_INIT_VIDEO)) {
       Logger::Error("SDL Initialization Error: {}", SDL_GetError());
       return false;

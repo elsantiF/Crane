@@ -12,7 +12,6 @@ namespace Crane::Graphics {
     };
 
     Resources::Resource<Texture> LoadTexture(const Path &path) {
-      PROFILE_SCOPE();
       return Load(path);
     };
 

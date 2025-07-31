@@ -30,7 +30,7 @@ namespace Crane::Physics {
   void PhysicsSystem::FixedUpdate(Scene::World &world, f64 deltaTime) {
     PROFILE_SCOPE();
     auto &registry = world.GetRegistry();
-    auto ppm = world.GetPixelsPerMeter();
+    auto ppm = Crane::Scene::PIXELS_PER_METER;
 
     auto rbTransformView = registry.view<Scene::Components::RigidBody, Scene::Components::Transform>();
     for (auto [entity, rigidBody, transform] : rbTransformView.each()) {
