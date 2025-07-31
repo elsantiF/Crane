@@ -12,7 +12,8 @@ struct b2WorldId;
 namespace Crane::Physics {
   class PhysicsSystem : public Core::Systems::IFixedUpdateSystem {
   public:
-    PhysicsSystem(Math::Vec2f gravity) : m_Gravity(gravity) {}
+    PhysicsSystem(Math::Vec2f gravity, f32 pixelsPerMeter, u32 physicsSteps)
+        : m_Gravity(gravity), m_PixelsPerMeter(pixelsPerMeter), m_PhysicsSteps(physicsSteps) {}
 
     void Initialize(Scene::World &world) override;
     void Shutdown(Scene::World &world) override;
@@ -28,5 +29,7 @@ namespace Crane::Physics {
   private:
     b2WorldId m_WorldId;
     Math::Vec2f m_Gravity;
+    f32 m_PixelsPerMeter;
+    u32 m_PhysicsSteps;
   };
 }

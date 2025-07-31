@@ -1,5 +1,4 @@
 #include "Application.hpp"
-#include "Base/Config.hpp"
 #include "Base/Logger.hpp"
 #include "Base/Profiler.hpp"
 #include "Events/Events.hpp"
@@ -81,10 +80,10 @@ namespace Crane::Core {
     m_Dispatcher.update();
   }
 
-  void Application::FixedUpdate() {
+  void Application::FixedUpdate(f64 deltaTime) {
     PROFILE_SCOPE();
     OnPreFixedUpdate();
-    m_World->FixedUpdate(Core::PHYSICS_TIMESTEP);
+    m_World->FixedUpdate(deltaTime);
     OnPostFixedUpdate();
   }
 
@@ -121,9 +120,9 @@ namespace Crane::Core {
 
       HandleEvents();
 
-      while (m_Accumulator >= Core::PHYSICS_TIMESTEP) {
-        FixedUpdate();
-        m_Accumulator -= Core::PHYSICS_TIMESTEP;
+      while (m_Accumulator >= PHYSICS_TIMESTEP) {
+        FixedUpdate(PHYSICS_TIMESTEP);
+        m_Accumulator -= PHYSICS_TIMESTEP;
       }
 
       Update(m_DeltaTime);

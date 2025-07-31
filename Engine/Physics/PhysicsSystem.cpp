@@ -1,5 +1,4 @@
 #include "PhysicsSystem.hpp"
-#include "Base/Config.hpp"
 #include "Base/Logger.hpp"
 #include "Base/Profiler.hpp"
 #include "Scene/Components/BoxCollider.hpp"
@@ -30,7 +29,6 @@ namespace Crane::Physics {
   void PhysicsSystem::FixedUpdate(Scene::World &world, f64 deltaTime) {
     PROFILE_SCOPE();
     auto &registry = world.GetRegistry();
-    auto ppm = Crane::Scene::PIXELS_PER_METER;
 
     auto rbTransformView = registry.view<Scene::Components::RigidBody, Scene::Components::Transform>();
     for (auto [entity, rigidBody, transform] : rbTransformView.each()) {
@@ -38,7 +36,7 @@ namespace Crane::Physics {
         continue;
       }
 
-      b2Vec2 position = {transform.transform.position.x / ppm, transform.transform.position.y / ppm};
+      b2Vec2 position = {transform.transform.position.x / m_PixelsPerMeter, transform.transform.position.y / m_PixelsPerMeter};
       b2Rot angle = b2MakeRot(transform.transform.rotation);
       b2Body_SetTransform(rigidBody.bodyId, position, angle);
       transform.dirty = false;
@@ -90,7 +88,7 @@ namespace Crane::Physics {
       circleCollider.dirty = false;
     }
 
-    b2World_Step(m_WorldId, static_cast<float>(deltaTime), Physics::PHYSICS_STEPS);
+    b2World_Step(m_WorldId, static_cast<float>(deltaTime), m_PhysicsSteps);
 
     for (auto [entity, rigidBody, transform] : rbTransformView.each()) {
       if (!b2Body_IsValid(rigidBody.bodyId)) {
@@ -101,8 +99,8 @@ namespace Crane::Physics {
       b2Rot angle = b2Body_GetRotation(rigidBody.bodyId);
       f32 angleDegrees = b2Rot_GetAngle(angle);
 
-      transform.transform.position.x = position.x * ppm;
-      transform.transform.position.y = position.y * ppm;
+      transform.transform.position.x = position.x * m_PixelsPerMeter;
+      transform.transform.position.y = position.y * m_PixelsPerMeter;
       transform.transform.rotation = angleDegrees;
     }
   }
@@ -110,9 +108,8 @@ namespace Crane::Physics {
   Pair<Scene::Components::RigidBody, Scene::Components::BoxCollider> PhysicsSystem::CreateBoxBody(const Physics::BoxBodyConfig &config) {
     PROFILE_SCOPE();
     Scene::Components::RigidBody rigidBody = CreateRigidBody(config);
-    f32 ppm = Crane::Scene::PIXELS_PER_METER;
-    f32 width = config.dimensions.x / ppm;
-    f32 height = config.dimensions.y / ppm;
+    f32 width = config.dimensions.x / m_PixelsPerMeter;
+    f32 height = config.dimensions.y / m_PixelsPerMeter;
     b2Polygon boxShape = b2MakeBox(width / 2, height / 2);
     b2ShapeDef shapeDef = b2DefaultShapeDef();
     shapeDef.density = 1.0f;
@@ -124,8 +121,7 @@ namespace Crane::Physics {
   Pair<Scene::Components::RigidBody, Scene::Components::CircleCollider> PhysicsSystem::CreateCircleBody(const Physics::CircleBodyConfig &config) {
     PROFILE_SCOPE();
     Scene::Components::RigidBody rigidBody = CreateRigidBody(config);
-    f32 ppm = Crane::Scene::PIXELS_PER_METER;
-    f32 radius = config.radius / ppm;
+    f32 radius = config.radius / m_PixelsPerMeter;
     b2Circle circleShape = b2Circle{
         {0, 0},
         radius
@@ -139,10 +135,9 @@ namespace Crane::Physics {
 
   Scene::Components::RigidBody PhysicsSystem::CreateRigidBody(const Physics::BaseBodyConfig &config) {
     PROFILE_SCOPE();
-    f32 ppm = Crane::Scene::PIXELS_PER_METER;
     b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = static_cast<b2BodyType>(config.type);
-    bodyDef.position = {config.center.x / ppm, config.center.y / ppm};
+    bodyDef.position = {config.center.x / m_PixelsPerMeter, config.center.y / m_PixelsPerMeter};
     b2BodyId bodyId = b2CreateBody(m_WorldId, &bodyDef);
 
     return Scene::Components::RigidBody(bodyId);

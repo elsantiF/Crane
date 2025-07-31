@@ -30,7 +30,7 @@ namespace Crane::Core {
   private:
     bool InitializeSDL();
     void HandleEvents();
-    void FixedUpdate();
+    void FixedUpdate(f64 deltaTime);
     void Update(f64 deltaTime);
     void Render();
     void Cleanup();
@@ -56,5 +56,7 @@ namespace Crane::Core {
 
     f64 m_DeltaTime = 0.0;
     f64 m_Accumulator = 0.0;
+
+    const f64 PHYSICS_TIMESTEP = 1.0 / 60.0;
   };
 }
