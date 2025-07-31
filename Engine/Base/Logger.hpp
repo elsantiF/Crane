@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Base/Types.hpp"
-#include <source_location>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
@@ -23,12 +22,14 @@ namespace Crane {
       return m_Logger;
     }
 
-    static void Info(const String &message, const std::source_location &location = std::source_location::current()) {
-      m_Logger->info("[{}:{}] {}", location.file_name(), location.line(), message);
+    template <typename... Args>
+    static void Info(const String &fmt, Args &&...args) {
+      m_Logger->info(fmt::runtime(fmt), std::forward<Args>(args)...);
     }
 
-    static void Error(const String &message, const std::source_location &location = std::source_location::current()) {
-      m_Logger->error("[{}:{}] {}", location.file_name(), location.line(), message);
+    template <typename... Args>
+    static void Error(const String &fmt, Args &&...args) {
+      m_Logger->error(fmt::runtime(fmt), std::forward<Args>(args)...);
     }
 
     static void Shutdown() {

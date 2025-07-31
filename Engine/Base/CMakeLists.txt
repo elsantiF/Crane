@@ -1,5 +1,6 @@
 set(BASE_SOURCES
     # Core files
+    "Assert.hpp"
     "Config.hpp"
     "Logger.hpp"
     "Profiler.cpp"

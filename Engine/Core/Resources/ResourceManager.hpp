@@ -59,7 +59,7 @@ namespace Crane::Resources {
         return *it->second;
       }
 
-      Logger::Error(std::format("ResourceManager: Resource not found for path: {}", path.generic_string()));
+      Logger::Error("ResourceManager: Resource not found for path: {}", path.generic_string());
       return {};
     }
 

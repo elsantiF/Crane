@@ -11,7 +11,7 @@ namespace Crane::Graphics::SDLRenderer {
     PROFILE_SCOPE();
     m_Renderer = SDL_CreateRenderer(m_Window, NULL);
     if (!m_Renderer) {
-      Logger::Error(std::format("Failed to create SDL Renderer: {}", SDL_GetError()));
+      Logger::Error("Failed to create SDL Renderer: {}", SDL_GetError());
       return false;
     }
 
@@ -92,7 +92,7 @@ namespace Crane::Graphics::SDLRenderer {
     }
 
     m_Context.vertexData[vertexDataId] = sdlVertices;
-    Logger::Info(std::format("Loaded vertex data with ID: {}", vertexDataId));
+    Logger::Info("Loaded vertex data with ID: {}", vertexDataId);
     return vertexDataId;
   }
 
@@ -106,9 +106,9 @@ namespace Crane::Graphics::SDLRenderer {
     auto it = m_Context.vertexData.find(vertexDataId);
     if (it != m_Context.vertexData.end()) {
       m_Context.vertexData.erase(it);
-      Logger::Info(std::format("Unloaded vertex data with ID: {}", vertexDataId));
+      Logger::Info("Unloaded vertex data with ID: {}", vertexDataId);
     } else {
-      Logger::Error(std::format("Failed to unload vertex data with ID: {} - not found", vertexDataId));
+      Logger::Error("Failed to unload vertex data with ID: {} - not found", vertexDataId);
     }
   }
 
@@ -116,7 +116,7 @@ namespace Crane::Graphics::SDLRenderer {
     PROFILE_SCOPE();
     Id indexDataId = static_cast<Id>(m_Context.indexData.size()) + 1;
     m_Context.indexData[indexDataId] = indices;
-    Logger::Info(std::format("Loaded index data with ID: {}", indexDataId));
+    Logger::Info("Loaded index data with ID: {}", indexDataId);
     return indexDataId;
   }
 
@@ -130,9 +130,9 @@ namespace Crane::Graphics::SDLRenderer {
     auto it = m_Context.indexData.find(indexDataId);
     if (it != m_Context.indexData.end()) {
       m_Context.indexData.erase(it);
-      Logger::Info(std::format("Unloaded index data with ID: {}", indexDataId));
+      Logger::Info("Unloaded index data with ID: {}", indexDataId);
     } else {
-      Logger::Error(std::format("Failed to unload index data with ID: {} - not found", indexDataId));
+      Logger::Error("Failed to unload index data with ID: {} - not found", indexDataId);
     }
   }
 
@@ -142,14 +142,14 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_Texture *sdlTexture = SDL_CreateTexture(m_Renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, texture.width, texture.height);
 
     if (!sdlTexture) {
-      Logger::Error(std::format("Failed to create SDL texture: {}", SDL_GetError()));
+      Logger::Error("Failed to create SDL texture: {}", SDL_GetError());
       return 0;
     }
 
     SDL_UpdateTexture(sdlTexture, NULL, texture.data.data(), texture.width * 4);
 
     m_Context.textures[textureId] = sdlTexture;
-    Logger::Info(std::format("Loaded texture with ID: {}", textureId));
+    Logger::Info("Loaded texture with ID: {}", textureId);
     return textureId;
   }
 
@@ -164,9 +164,9 @@ namespace Crane::Graphics::SDLRenderer {
     if (it != m_Context.textures.end()) {
       SDL_DestroyTexture(it->second);
       m_Context.textures.erase(it);
-      Logger::Info(std::format("Unloaded texture with ID: {}", textureId));
+      Logger::Info("Unloaded texture with ID: {}", textureId);
     } else {
-      Logger::Error(std::format("Failed to unload texture with ID: {} - not found", textureId));
+      Logger::Error("Failed to unload texture with ID: {} - not found", textureId);
     }
   }
 

@@ -25,7 +25,7 @@ namespace Crane::Core {
   bool Application::InitializeSDL() {
     PROFILE_SCOPE();
     if (!SDL_Init(SDL_INIT_VIDEO)) {
-      Logger::Error(std::format("SDL Initialization Error: {}", SDL_GetError()));
+      Logger::Error("SDL Initialization Error: {}", SDL_GetError());
       return false;
     }
 
@@ -33,7 +33,7 @@ namespace Crane::Core {
 
     m_Renderer = MakeScope<Graphics::SDLRenderer::SDLRenderer>(m_Window->GetHandle());
     if (!m_Renderer->Initialize()) {
-      Logger::Error(std::format("SDLRenderer Initialization Error: {}", SDL_GetError()));
+      Logger::Error("SDLRenderer Initialization Error: {}", SDL_GetError());
       return false;
     }
 
