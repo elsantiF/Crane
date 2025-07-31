@@ -3,10 +3,9 @@
 #include "ApplicationInfo.hpp"
 #include "Base/Types.hpp"
 #include "Graphics/IRenderer.hpp"
+#include "Graphics/SDLWindow.hpp"
 #include "Scene/World/World.hpp"
 #include <entt/signal/dispatcher.hpp>
-
-struct SDL_Window;
 
 namespace Crane::Core {
   class Application {
@@ -48,7 +47,7 @@ namespace Crane::Core {
 
   protected: // TODO: Protected is not ideal, but necessary for now
     const ApplicationInfo &m_AppInfo;
-    SDL_Window *m_Window;
+    Scope<Graphics::SDLWindow> m_Window;
     Scope<Graphics::IRenderer> m_Renderer;
     Scope<Scene::World> m_World;
     Scope<Systems::IRenderSystem> m_RenderingSystem;

@@ -29,13 +29,9 @@ namespace Crane::Core {
       return false;
     }
 
-    m_Window = SDL_CreateWindow(m_AppInfo.appName.c_str(), m_AppInfo.window.width, m_AppInfo.window.height, 0);
-    if (!m_Window) {
-      Logger::Error(std::format("SDL_CreateWindow Error: {}", SDL_GetError()));
-      return false;
-    }
+    m_Window = MakeScope<Graphics::SDLWindow>(m_AppInfo.appName, m_AppInfo.window.width, m_AppInfo.window.height);
 
-    m_Renderer = MakeScope<Graphics::SDLRenderer::SDLRenderer>(m_Window);
+    m_Renderer = MakeScope<Graphics::SDLRenderer::SDLRenderer>(m_Window->GetHandle());
     if (!m_Renderer->Initialize()) {
       Logger::Error(std::format("SDLRenderer Initialization Error: {}", SDL_GetError()));
       return false;
@@ -139,10 +135,7 @@ namespace Crane::Core {
   }
 
   void Application::Cleanup() {
-    if (m_Window) {
-      SDL_DestroyWindow(m_Window);
-    }
-
+    m_Window.reset();
     SDL_Quit();
     Logger::Info("Application cleaned up");
     Logger::Shutdown();

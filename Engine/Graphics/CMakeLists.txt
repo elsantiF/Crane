@@ -5,6 +5,8 @@ set(GRAPHICS_SOURCES
     "IRenderer.hpp"
     "RenderingSystem.cpp"
     "RenderingSystem.hpp"
+    "SDLWindow.cpp"
+    "SDLWindow.hpp"
     "Texture.hpp"
     "TextureManager.cpp"
     "TextureManager.hpp"
