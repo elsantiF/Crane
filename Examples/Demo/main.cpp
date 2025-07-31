@@ -1,6 +1,7 @@
 #include "Application/Application.hpp"
 #include "Base/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
+#include "Graphics/TextureManager.hpp"
 #include "Physics/PhysicsSystem.hpp"
 #include "PlayerComponent.hpp"
 #include "PlayerSystem.hpp"
@@ -12,8 +13,6 @@
 #include <imgui.h>
 #include <iostream>
 #include <numbers>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
 using namespace Crane;
 
@@ -59,29 +58,12 @@ Vector<i32> CreateCircleIndices(i32 segments) {
   return indices;
 }
 
-Graphics::Texture CreateSimpleTexture(const Path &path) {
-  u32 width, height, channels;
-  unsigned char *data = stbi_load(path.generic_string().c_str(), reinterpret_cast<int *>(&width), reinterpret_cast<int *>(&height),
-                                  reinterpret_cast<int *>(&channels), 4);
-
-  Vector<u32> pixelData;
-  for (u32 i = 0; i < width * height; ++i) {
-    u32 r = data[i * 4 + 0];
-    u32 g = data[i * 4 + 1];
-    u32 b = data[i * 4 + 2];
-    u32 a = data[i * 4 + 3];
-    pixelData.push_back((a << 24) | (b << 16) | (g << 8) | r);
-  }
-
-  auto texture = Graphics::Texture{width, height, pixelData};
-  stbi_image_free(data);
-  return texture;
-}
-
 const Core::ApplicationInfo appInfo = {
     "Crane Demo", {1,    0,   0   },
      {1600, 900, true}
 };
+
+static Graphics::TextureManager textureManager;
 
 class Demo : public Core::Application {
 public:
@@ -97,8 +79,12 @@ protected:
     m_BoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
     m_CircleVertexDataId = m_Renderer->LoadVertexData(CreateCircleVertices(20.0f, 16, Graphics::Colors::White));
     m_CircleIndexDataId = m_Renderer->LoadIndexData(CreateCircleIndices(16));
-    m_SquareTextureId = m_Renderer->LoadTexture(CreateSimpleTexture("Resources/square.png"));
-    m_CircleTextureId = m_Renderer->LoadTexture(CreateSimpleTexture("Resources/circle.png"));
+
+    auto squareTexture = textureManager.LoadTexture("Resources/square.png");
+    auto circleTexture = textureManager.LoadTexture("Resources/circle.png");
+
+    m_SquareTextureId = m_Renderer->LoadTexture(*squareTexture);
+    m_CircleTextureId = m_Renderer->LoadTexture(*circleTexture);
 
     // Create ground body
     Id groundVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));

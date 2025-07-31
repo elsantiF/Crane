@@ -5,6 +5,9 @@ set(CORE_SOURCES
     # Events
     "Events/IEvent.hpp"
     "Events/Events.hpp"
+    # Resources
+    "Resources/Resource.hpp"
+    "Resources/ResourceManager.hpp"
     # Systems
     "Systems/ISystem.hpp"
     "Systems/SystemManager.hpp"
