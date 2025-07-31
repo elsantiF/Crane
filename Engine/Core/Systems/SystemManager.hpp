@@ -3,6 +3,7 @@
 #include "Base/Logger.hpp"
 #include "Base/Types.hpp"
 #include "ISystem.hpp"
+#include <typeindex>
 
 namespace Crane::Core::Systems {
   class SystemManager {
@@ -16,9 +17,19 @@ namespace Crane::Core::Systems {
       system->Initialize(m_World);
 
       if constexpr (std::is_base_of_v<IFixedUpdateSystem, T>) {
-        m_FixedUpdateSystems.emplace_back(std::move(system));
+        if (m_FixedUpdateSystems.find(typeid(T)) != m_FixedUpdateSystems.end()) {
+          Logger::Error("System of type {} already exists", typeid(T).name());
+          return;
+        }
+
+        m_FixedUpdateSystems[typeid(T)] = std::move(system);
       } else if constexpr (std::is_base_of_v<IUpdateSystem, T>) {
-        m_UpdateSystems.emplace_back(std::move(system));
+        if (m_UpdateSystems.find(typeid(T)) != m_UpdateSystems.end()) {
+          Logger::Error("System of type {} already exists", typeid(T).name());
+          return;
+        }
+
+        m_UpdateSystems[typeid(T)] = std::move(system);
       } else {
         Logger::Error("System type must derive from IFixedUpdateSystem or IUpdateSystem");
         return;
@@ -28,45 +39,40 @@ namespace Crane::Core::Systems {
     template <typename T>
     T *GetSystem() {
       if constexpr (std::is_base_of_v<IFixedUpdateSystem, T>) {
-        for (auto &system : m_FixedUpdateSystems) {
-          if (auto ptr = dynamic_cast<T *>(system.get())) {
-            return ptr;
-          }
+        if (m_FixedUpdateSystems.find(typeid(T)) == m_FixedUpdateSystems.end()) {
+          Logger::Error("System of type {} not found", typeid(T).name());
+          return nullptr;
         }
-      } else if constexpr (std::is_base_of_v<IUpdateSystem, T>) {
-        for (auto &system : m_UpdateSystems) {
-          if (auto ptr = dynamic_cast<T *>(system.get())) {
-            return ptr;
-          }
-        }
-      }
 
-      Logger::Error("System not found");
-      return nullptr;
+        return dynamic_cast<T *>(m_FixedUpdateSystems[typeid(T)].get());
+      } else if constexpr (std::is_base_of_v<IUpdateSystem, T>) {
+        if (m_UpdateSystems.find(typeid(T)) == m_UpdateSystems.end()) {
+          Logger::Error("System of type {} not found", typeid(T).name());
+          return nullptr;
+        }
+
+        return dynamic_cast<T *>(m_UpdateSystems[typeid(T)].get());
+      }
     }
 
     template <typename T>
     void RemoveSystem() {
       if constexpr (std::is_base_of_v<IFixedUpdateSystem, T>) {
-        auto it = m_FixedUpdateSystems.begin();
-        while (it != m_FixedUpdateSystems.end()) {
-          if (auto ptr = dynamic_cast<T *>(it->get())) {
-            ptr->Shutdown(m_World);
-            it = m_FixedUpdateSystems.erase(it);
-          } else {
-            ++it;
-          }
+        auto it = m_FixedUpdateSystems.find(typeid(T));
+        if (it == m_FixedUpdateSystems.end()) {
+          Logger::Error("System of type {} not found", typeid(T).name());
+          return;
         }
+        it->second->Shutdown(m_World);
+        m_FixedUpdateSystems.erase(it);
       } else if constexpr (std::is_base_of_v<IUpdateSystem, T>) {
-        auto it = m_UpdateSystems.begin();
-        while (it != m_UpdateSystems.end()) {
-          if (auto ptr = dynamic_cast<T *>(it->get())) {
-            ptr->Shutdown(m_World);
-            it = m_UpdateSystems.erase(it);
-          } else {
-            ++it;
-          }
+        auto it = m_UpdateSystems.find(typeid(T));
+        if (it == m_UpdateSystems.end()) {
+          Logger::Error("System of type {} not found", typeid(T).name());
+          return;
         }
+        it->second->Shutdown(m_World);
+        m_UpdateSystems.erase(it);
       } else {
         Logger::Error("System type must derive from IFixedUpdateSystem or IUpdateSystem");
       }
@@ -76,8 +82,8 @@ namespace Crane::Core::Systems {
     void FixedUpdateSystems(f64 deltaTime);
 
   private:
-    Vector<Scope<IFixedUpdateSystem>> m_FixedUpdateSystems;
-    Vector<Scope<IUpdateSystem>> m_UpdateSystems;
+    UnorderedMap<std::type_index, Scope<IFixedUpdateSystem>> m_FixedUpdateSystems;
+    UnorderedMap<std::type_index, Scope<IUpdateSystem>> m_UpdateSystems;
     Scene::World &m_World;
   };
 }
