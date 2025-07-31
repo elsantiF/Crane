@@ -146,6 +146,7 @@ protected:
     ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
     ImGui::Text("Delta: %.3f ms", m_DeltaTime * 1000.0);
     ImGui::Text("ESC to exit");
+    ImGui::End();
 
     auto &registry = m_World->GetRegistry();
     Editor::EntityDisplay::DrawEntityList(registry);

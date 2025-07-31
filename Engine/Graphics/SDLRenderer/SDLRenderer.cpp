@@ -54,7 +54,6 @@ namespace Crane::Graphics::SDLRenderer {
   }
 
   void SDLRenderer::EndImGuiFrame() {
-    ImGui::End();
     ImGui::Render();
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_Renderer);
   }
