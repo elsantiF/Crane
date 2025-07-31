@@ -4,12 +4,16 @@
 namespace Crane::Scene {
   void World::FixedUpdate(f64 deltaTime) {
     PROFILE_SCOPE();
-    m_SystemManager.FixedUpdateSystems(deltaTime);
+    for (auto &[type, system] : m_FixedUpdateSystems) {
+      system->FixedUpdate(*this, deltaTime);
+    }
   }
 
   void World::Update(f64 deltaTime) {
     PROFILE_SCOPE();
-    m_SystemManager.UpdateSystems(deltaTime);
+    for (auto &[type, system] : m_UpdateSystems) {
+      system->Update(*this, deltaTime);
+    }
   }
 
   Scene::Entity World::CreateEntity() {
@@ -22,9 +26,5 @@ namespace Crane::Scene {
 
   entt::registry &World::GetRegistry() {
     return m_Registry;
-  }
-
-  Systems::SystemManager &World::GetSystemManager() {
-    return m_SystemManager;
   }
 }

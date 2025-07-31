@@ -10,8 +10,6 @@ set(CORE_SOURCES
     "Resources/ResourceManager.hpp"
     # Systems
     "Systems/ISystem.hpp"
-    "Systems/SystemManager.hpp"
-    "Systems/SystemManager.cpp"
 )
 
 add_library(CraneCore STATIC ${CORE_SOURCES})
