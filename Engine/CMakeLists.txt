@@ -1,3 +1,4 @@
+add_subdirectory("Application")
 add_subdirectory("Base")
 add_subdirectory("Core")
 add_subdirectory("Editor")

@@ -1,7 +1,5 @@
 set(PHYSICS_SOURCES 
-    "BodyStructs.hpp"
     "PhysicsSystem.cpp"
-    "PhysicsSystem.hpp"
 )
 
 add_library(CranePhysics STATIC ${PHYSICS_SOURCES})

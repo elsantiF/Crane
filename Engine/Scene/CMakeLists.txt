@@ -1,16 +1,4 @@
-set(SCENE_SOURCES
-    # Components
-    "Components/BoxCollider.hpp"
-    "Components/CircleCollider.hpp"
-    "Components/Renderable.hpp"
-    "Components/RigidBody.hpp"
-    "Components/Transform.hpp"
-    # World
-    "World.cpp"
-    "World.hpp"
-)
-
-add_library(CraneScene STATIC ${SCENE_SOURCES})
-target_include_directories(CraneScene PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(CraneScene PUBLIC "${CMAKE_SOURCE_DIR}/Engine")
-target_link_libraries(CraneScene PUBLIC CraneBase CranePhysics CraneCore EnTT::EnTT)
+add_library(CraneScene INTERFACE)
+target_include_directories(CraneScene INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(CraneScene INTERFACE "${CMAKE_SOURCE_DIR}/Crane")
+target_link_libraries(CraneScene INTERFACE CraneBase box2d EnTT::EnTT)
