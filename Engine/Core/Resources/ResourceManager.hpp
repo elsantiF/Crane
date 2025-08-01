@@ -7,10 +7,12 @@
 #include <functional>
 
 namespace Crane::Resources {
+  enum class ResourceManagerError { LoaderNotSet, ResourceNotFound, LoadFailed, InvalidResource, UndefinedError };
+
   template <typename T>
   class ResourceManager {
   public:
-    using LoaderFunc = std::function<Ref<T>(const Path &)>;
+    using LoaderFunc = std::function<Expected<Resource<T>, ResourceManagerError>(const Path &)>;
 
     ResourceManager() = default;
     ResourceManager(const ResourceManager &) = delete;
@@ -20,7 +22,7 @@ namespace Crane::Resources {
       m_Loader = std::move(loader);
     }
 
-    Resource<T> Load(const Path &path) {
+    Expected<Resource<T>, ResourceManagerError> Load(const Path &path) {
       PROFILE_SCOPE();
       auto hash = std::hash<Path>{}(path);
 
@@ -31,16 +33,16 @@ namespace Crane::Resources {
 
       if (!m_Loader) {
         Logger::Error("ResourceManager: Loader function is not set.");
-        return {};
+        return std::unexpected<ResourceManagerError>(ResourceManagerError::LoaderNotSet);
       }
 
       auto data = m_Loader(path);
       if (!data) {
         Logger::Error("ResourceManager: Failed to load resource.");
-        return {};
+        return std::unexpected<ResourceManagerError>(ResourceManagerError::LoadFailed);
       }
 
-      Resource<T> resource{data};
+      Resource<T> resource{data.value()};
       m_Cache.emplace(hash, resource);
       return resource;
     }
@@ -51,7 +53,7 @@ namespace Crane::Resources {
       return Load(path);
     }
 
-    Optional<T> GetResource(const Path &path) {
+    Expected<Resource<T>, ResourceManagerError> GetResource(const Path &path) {
       PROFILE_SCOPE();
       auto hash = std::hash<Path>{}(path);
       auto it = m_Cache.find(hash);
@@ -60,7 +62,7 @@ namespace Crane::Resources {
       }
 
       Logger::Error("ResourceManager: Resource not found for path: {}", path.generic_string());
-      return {};
+      return std::unexpected<ResourceManagerError>(ResourceManagerError::ResourceNotFound);
     }
 
     void Clear() {

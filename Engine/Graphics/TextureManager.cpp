@@ -4,10 +4,15 @@
 #include <stb_image.h>
 
 namespace Crane::Graphics {
-  Ref<Texture> TextureManager::LoadTextureFunc(const Path &path) {
+  Expected<Ref<Texture>, Resources::ResourceManagerError> TextureManager::LoadTextureFunc(const Path &path) {
     u32 width, height, channels;
     unsigned char *data = stbi_load(path.generic_string().c_str(), reinterpret_cast<int *>(&width), reinterpret_cast<int *>(&height),
                                     reinterpret_cast<int *>(&channels), 4);
+
+    if (!data) {
+      Logger::Error("TextureManager: Failed to load texture from path: {}", path.generic_string());
+      return std::unexpected(Resources::ResourceManagerError::LoadFailed);
+    }
 
     Vector<u32> pixelData;
     for (u32 i = 0; i < width * height; ++i) {

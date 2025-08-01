@@ -11,11 +11,11 @@ namespace Crane::Graphics {
       SetLoader(LoadTextureFunc);
     };
 
-    Resources::Resource<Texture> LoadTexture(const Path &path) {
+    Expected<Resources::Resource<Texture>, Resources::ResourceManagerError> LoadTexture(const Path &path) {
       return Load(path);
     };
 
   private:
-    static Ref<Texture> LoadTextureFunc(const Path &path);
+    static Expected<Ref<Texture>, Resources::ResourceManagerError> LoadTextureFunc(const Path &path);
   };
 }

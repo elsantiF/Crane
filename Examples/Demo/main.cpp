@@ -80,8 +80,8 @@ protected:
     m_CircleVertexDataId = m_Renderer->LoadVertexData(CreateCircleVertices(20.0f, 16, Graphics::Colors::White));
     m_CircleIndexDataId = m_Renderer->LoadIndexData(CreateCircleIndices(16));
 
-    auto squareTexture = textureManager.LoadTexture("Resources/square.png");
-    auto circleTexture = textureManager.LoadTexture("Resources/circle.png");
+    auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
+    auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();
 
     m_SquareTextureId = m_Renderer->LoadTexture(*squareTexture);
     m_CircleTextureId = m_Renderer->LoadTexture(*circleTexture);
