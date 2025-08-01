@@ -3,7 +3,6 @@
 #include "Base/Logger.hpp"
 #include "Base/Profiler.hpp"
 #include "Events/Events.hpp"
-#include "Graphics/RenderingSystem.hpp"
 #include "Graphics/SDLRenderer/SDLRenderer.hpp"
 #include <imgui_impl_sdl3.h>
 #include <SDL3/SDL.h>
@@ -22,7 +21,7 @@ namespace Crane {
       Assert::Crash("Failed to initialize SDLRenderer");
     }
 
-    m_RenderingSystem = MakeScope<Graphics::RenderingSystem>();
+    m_RenderPipeline = MakeScope<Graphics::RenderPipeline>(*m_Renderer);
   }
 
   void ClientApplication::HandleEvents() {
@@ -67,21 +66,15 @@ namespace Crane {
 
   void ClientApplication::Render() {
     PROFILE_SCOPE();
-
-    m_Renderer->BeginFrame();
-    m_Renderer->Clear(Graphics::Colors::CLEAR_COLOR);
-    m_RenderingSystem->Render(*m_World, *m_Renderer);
-
-    m_Renderer->BeginImGuiFrame();
-    OnImGui();
-    m_Renderer->EndImGuiFrame();
-
-    m_Renderer->Present();
-    m_Renderer->EndFrame();
+    m_RenderPipeline->Render(*m_World);
+    m_RenderPipeline->RenderImGui([this]() {
+      OnImGui();
+    });
+    m_RenderPipeline->Present();
   }
 
   void ClientApplication::Cleanup() {
-    m_RenderingSystem.reset();
+    m_RenderPipeline.reset();
     m_Renderer.reset();
     m_Window.reset();
     SDL_Quit();

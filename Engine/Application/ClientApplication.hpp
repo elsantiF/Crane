@@ -2,8 +2,8 @@
 
 #include "Core/Application/BaseApplication.hpp"
 #include "Graphics/IRenderer.hpp"
+#include "Graphics/RenderPipeline.hpp"
 #include "Graphics/SDLWindow.hpp"
-#include "Systems/ISystem.hpp"
 
 namespace Crane {
   class ClientApplication : public BaseApplication {
@@ -22,7 +22,7 @@ namespace Crane {
   protected: // TODO: This should be private, but needs to be accessible
     Scope<Graphics::SDLWindow> m_Window;
     Scope<Graphics::IRenderer> m_Renderer;
-    Scope<Systems::IRenderSystem> m_RenderingSystem;
+    Scope<Graphics::RenderPipeline> m_RenderPipeline;
     entt::dispatcher m_Dispatcher;
   };
 }
