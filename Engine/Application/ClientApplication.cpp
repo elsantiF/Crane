@@ -70,9 +70,7 @@ namespace Crane {
 
     m_Renderer->BeginFrame();
     m_Renderer->Clear(Graphics::Colors::CLEAR_COLOR);
-    OnPreRender();
     m_RenderingSystem->Render(*m_World, *m_Renderer);
-    OnPostRender();
 
     m_Renderer->BeginImGuiFrame();
     OnImGui();

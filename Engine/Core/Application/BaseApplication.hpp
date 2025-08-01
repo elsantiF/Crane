@@ -28,13 +28,6 @@ namespace Crane {
     virtual void HandleEvents() = 0;
 
     virtual void OnInitialize() = 0;
-    virtual void OnPreFixedUpdate() = 0;
-    virtual void OnPostFixedUpdate() = 0;
-    virtual void OnPreUpdate() = 0;
-    virtual void OnPostUpdate() = 0;
-
-    virtual void OnPreRender() = 0;
-    virtual void OnPostRender() = 0;
 
     void FixedUpdate(f64 deltaTime);
     void Update(f64 deltaTime);

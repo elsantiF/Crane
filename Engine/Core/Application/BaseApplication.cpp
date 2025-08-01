@@ -31,10 +31,7 @@ namespace Crane {
       }
 
       Update(deltaTime);
-
-      OnPreRender();
       Render();
-      OnPostRender();
 
       lastTime = currentTime;
     }
@@ -42,15 +39,11 @@ namespace Crane {
 
   void BaseApplication::FixedUpdate(f64 deltaTime) {
     PROFILE_SCOPE();
-    OnPreFixedUpdate();
     m_World->FixedUpdate(deltaTime);
-    OnPostFixedUpdate();
   }
 
   void BaseApplication::Update(f64 deltaTime) {
     PROFILE_SCOPE();
-    OnPreUpdate();
     m_World->Update(deltaTime);
-    OnPostUpdate();
   }
 }

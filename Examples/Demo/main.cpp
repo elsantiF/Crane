@@ -132,12 +132,7 @@ protected:
 
     GetWorld().AddSystem<PlayerSystem>(GetWorld(), *this, m_Player);
   }
-  void OnPreFixedUpdate() override {}
-  void OnPostFixedUpdate() override {}
-  void OnPreUpdate() override {}
-  void OnPostUpdate() override {}
-  void OnPreRender() override {}
-  void OnPostRender() override {}
+
   void OnImGui() override {
     PROFILE_SCOPE();
     ImGui::Begin("Stats");
