@@ -23,6 +23,5 @@ namespace Crane {
     Scope<Graphics::SDLWindow> m_Window;
     Scope<Graphics::IRenderer> m_Renderer;
     Scope<Graphics::RenderPipeline> m_RenderPipeline;
-    entt::dispatcher m_Dispatcher;
   };
 }

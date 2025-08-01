@@ -5,14 +5,14 @@ namespace Crane::Scene {
   void World::FixedUpdate(f64 deltaTime) {
     PROFILE_SCOPE();
     for (auto &[type, system] : m_FixedUpdateSystems) {
-      system->FixedUpdate(*this, deltaTime);
+      system->FixedUpdate(deltaTime);
     }
   }
 
   void World::Update(f64 deltaTime) {
     PROFILE_SCOPE();
     for (auto &[type, system] : m_UpdateSystems) {
-      system->Update(*this, deltaTime);
+      system->Update(deltaTime);
     }
   }
 
@@ -26,5 +26,9 @@ namespace Crane::Scene {
 
   entt::registry &World::GetRegistry() {
     return m_Registry;
+  }
+
+  entt::dispatcher &World::GetDispatcher() {
+    return m_Dispatcher;
   }
 }

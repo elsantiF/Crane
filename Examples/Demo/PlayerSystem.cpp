@@ -6,16 +6,15 @@
 
 using namespace Crane;
 
-PlayerSystem::PlayerSystem(Scene::World &world, Crane::ClientApplication &app, Scene::Entity &playerEntity)
-    : m_App(&app), m_PlayerEntity(&playerEntity) {
-  m_App->GetDispatcher().sink<Events::KeyDown>().connect<&PlayerSystem::HandleKeyDown>(this);
-  m_App->GetDispatcher().sink<Events::KeyUp>().connect<&PlayerSystem::HandleKeyUp>(this);
+PlayerSystem::PlayerSystem(Scene::World &world, Scene::Entity &playerEntity) : Systems::IUpdateSystem(world), m_PlayerEntity(&playerEntity) {
+  m_World.GetDispatcher().sink<Events::KeyDown>().connect<&PlayerSystem::HandleKeyDown>(this);
+  m_World.GetDispatcher().sink<Events::KeyUp>().connect<&PlayerSystem::HandleKeyUp>(this);
 
-  m_PlayerComponent = &world.GetComponent<PlayerComponent>(*m_PlayerEntity);
+  m_PlayerComponent = &m_World.GetComponent<PlayerComponent>(*m_PlayerEntity);
 }
 
-void PlayerSystem::Update(Scene::World &world, [[maybe_unused]] f64 deltaTime) {
-  auto &rb = world.GetComponent<Scene::Components::RigidBody>(*m_PlayerEntity);
+void PlayerSystem::Update([[maybe_unused]] f64 deltaTime) {
+  auto &rb = m_World.GetComponent<Scene::Components::RigidBody>(*m_PlayerEntity);
   b2Vec2 position = b2Body_GetPosition(rb.bodyId);
   if (m_PlayerComponent->isMovingLeft) {
     b2Body_ApplyForce(rb.bodyId, b2Vec2(-SPEED, 0), position, true);

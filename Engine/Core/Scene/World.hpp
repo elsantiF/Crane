@@ -4,6 +4,7 @@
 #include "Base/Types.hpp"
 #include "Core/Systems/ISystem.hpp"
 #include <entt/entity/registry.hpp>
+#include <entt/signal/dispatcher.hpp>
 #include <typeindex>
 
 namespace Crane::Scene {
@@ -22,7 +23,7 @@ namespace Crane::Scene {
     // --- System management section ---
     template <typename T, typename... Args>
     T *AddSystem(Args &&...args) {
-      auto system = MakeScope<T>(std::forward<Args>(args)...);
+      auto system = MakeScope<T>(*this, std::forward<Args>(args)...);
       T *systemPtr = system.get();
 
       if constexpr (std::is_base_of_v<Systems::IFixedUpdateSystem, T>) {
@@ -124,8 +125,11 @@ namespace Crane::Scene {
     // --- Accessors ---
     entt::registry &GetRegistry();
 
+    entt::dispatcher &GetDispatcher();
+
   private:
     entt::registry m_Registry;
+    entt::dispatcher m_Dispatcher;
     UnorderedMap<std::type_index, Scope<Systems::IFixedUpdateSystem>> m_FixedUpdateSystems;
     UnorderedMap<std::type_index, Scope<Systems::IUpdateSystem>> m_UpdateSystems;
   };

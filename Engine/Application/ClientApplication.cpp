@@ -38,20 +38,20 @@ namespace Crane {
         }
 
         if (!event.key.repeat) {
-          m_Dispatcher.trigger(Events::KeyDown{event.key.key});
+          m_World->GetDispatcher().trigger(Events::KeyDown{event.key.key});
         }
         break;
       case SDL_EVENT_KEY_UP:
         if (!event.key.repeat) {
-          m_Dispatcher.trigger(Events::KeyUp{event.key.key});
+          m_World->GetDispatcher().trigger(Events::KeyUp{event.key.key});
         }
         break;
       case SDL_EVENT_MOUSE_BUTTON_DOWN: {
         auto position = Math::Vec2f(event.button.x, event.button.y);
         switch (event.button.button) {
-        case SDL_BUTTON_LEFT:   m_Dispatcher.trigger(Events::MouseClick{position, Events::MouseButton::Left}); break;
-        case SDL_BUTTON_RIGHT:  m_Dispatcher.trigger(Events::MouseClick{position, Events::MouseButton::Right}); break;
-        case SDL_BUTTON_MIDDLE: m_Dispatcher.trigger(Events::MouseClick{position, Events::MouseButton::Middle}); break;
+        case SDL_BUTTON_LEFT:   m_World->GetDispatcher().trigger(Events::MouseClick{position, Events::MouseButton::Left}); break;
+        case SDL_BUTTON_RIGHT:  m_World->GetDispatcher().trigger(Events::MouseClick{position, Events::MouseButton::Right}); break;
+        case SDL_BUTTON_MIDDLE: m_World->GetDispatcher().trigger(Events::MouseClick{position, Events::MouseButton::Middle}); break;
         default:
           // TODO: Handle other mouse buttons if needed
           break;
@@ -61,7 +61,7 @@ namespace Crane {
       }
     }
 
-    m_Dispatcher.update();
+    m_World->GetDispatcher().update();
   }
 
   void ClientApplication::Render() {

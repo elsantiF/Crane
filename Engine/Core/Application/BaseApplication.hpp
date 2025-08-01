@@ -18,10 +18,6 @@ namespace Crane {
       return *m_World;
     }
 
-    entt::dispatcher &GetDispatcher() {
-      return m_Dispatcher;
-    }
-
   protected:
     virtual void Cleanup() = 0;
     virtual void PlatformInitialize() = 0;
@@ -36,7 +32,6 @@ namespace Crane {
   protected:
     const ApplicationInfo &m_AppInfo;
     Scope<Scene::World> m_World;
-    entt::dispatcher m_Dispatcher;
     bool m_Running;
 
     const f64 PHYSICS_TIMESTEP = 1.0 / 60.0;

@@ -10,12 +10,18 @@
 struct b2WorldId;
 
 namespace Crane::Physics {
+  struct PhysicsSystemConfig {
+    Math::Vec2f gravity = {0.0f, -9.81f};
+    f32 pixelsPerMeter = 30.0f;
+    u32 physicsSteps = 4;
+  };
+
   class PhysicsSystem : public Systems::IFixedUpdateSystem {
   public:
-    PhysicsSystem(Scene::World &world, Math::Vec2f gravity, f32 pixelsPerMeter, u32 physicsSteps);
+    PhysicsSystem(Scene::World &world, const PhysicsSystemConfig &config);
     ~PhysicsSystem() override;
 
-    void FixedUpdate(Scene::World &world, f64 deltaTime) override;
+    void FixedUpdate(f64 deltaTime) override;
 
     Pair<Scene::Components::RigidBody, Scene::Components::BoxCollider> CreateBoxBody(const Physics::BoxBodyConfig &config);
     Pair<Scene::Components::RigidBody, Scene::Components::CircleCollider> CreateCircleBody(const Physics::CircleBodyConfig &config);
@@ -25,9 +31,6 @@ namespace Crane::Physics {
 
   private:
     b2WorldId m_WorldId;
-    Scene::World &m_World;
-    Math::Vec2f m_Gravity;
-    f32 m_PixelsPerMeter;
-    u32 m_PhysicsSteps;
+    PhysicsSystemConfig m_Config;
   };
 }
