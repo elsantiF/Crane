@@ -50,9 +50,9 @@ public:
     m_PlanetVerticesId = m_Renderer->LoadVertexData(CreateCircleVertices(48.0f, 24, Graphics::Colors::White));
     m_PlanetIndicesId = m_Renderer->LoadIndexData(CreateCircleIndices(24));
 
-    auto redTexture = textureManager.LoadTexture("Resources/red.png");
-    auto greenTexture = textureManager.LoadTexture("Resources/green.png");
-    auto purpleTexture = textureManager.LoadTexture("Resources/purple.png");
+    auto redTexture = textureManager.LoadTexture("Resources/red.png").value();
+    auto greenTexture = textureManager.LoadTexture("Resources/green.png").value();
+    auto purpleTexture = textureManager.LoadTexture("Resources/purple.png").value();
     m_RedTextureId = m_Renderer->LoadTexture(*redTexture);
     m_GreenTextureId = m_Renderer->LoadTexture(*greenTexture);
     m_PurpleTextureId = m_Renderer->LoadTexture(*purpleTexture);
@@ -71,12 +71,6 @@ public:
     GetWorld().AddComponent<Scene::Components::Renderable>(purplePlanet, m_PlanetVerticesId, m_PlanetIndicesId, m_PurpleTextureId);
   }
 
-  void OnPreFixedUpdate() override {}
-  void OnPostFixedUpdate() override {}
-  void OnPreUpdate() override {}
-  void OnPostUpdate() override {}
-  void OnPreRender() override {}
-  void OnPostRender() override {}
   void OnImGui() override {}
 
 private:
