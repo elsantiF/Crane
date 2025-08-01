@@ -2,6 +2,7 @@
 
 #include <expected>
 #include <filesystem>
+#include <functional>
 #include <map>
 #include <memory>
 #include <optional>
@@ -55,6 +56,10 @@ using Optional = std::optional<T>;
 // -- Expected Type --
 template <typename T, typename E>
 using Expected = std::expected<T, E>;
+
+// -- Function Types --
+template <typename... Args>
+using Function = std::function<Args...>;
 
 // -- File System Types --
 namespace fs = std::filesystem;

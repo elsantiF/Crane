@@ -10,7 +10,7 @@ namespace Crane::Graphics {
     RenderPipeline(IRenderer &renderer) : m_Renderer(renderer) {}
 
     void Render(Scene::World &world);
-    void RenderImGui(std::function<void()> imguiCallback);
+    void RenderImGui(Function<void()> imguiCallback);
     void Present();
 
   private:

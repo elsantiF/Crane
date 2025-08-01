@@ -12,7 +12,7 @@ namespace Crane::Resources {
   template <typename T>
   class ResourceManager {
   public:
-    using LoaderFunc = std::function<Expected<Resource<T>, ResourceManagerError>(const Path &)>;
+    using LoaderFunc = Function<Expected<Resource<T>, ResourceManagerError>(const Path &)>;
 
     ResourceManager() = default;
     ResourceManager(const ResourceManager &) = delete;

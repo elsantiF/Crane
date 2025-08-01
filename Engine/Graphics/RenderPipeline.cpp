@@ -1,5 +1,6 @@
 #include "RenderPipeline.hpp"
 #include "Base/Profiler.hpp"
+#include "Base/Types.hpp"
 #include "Scene/Components/Renderable.hpp"
 #include "Scene/Components/Transform.hpp"
 
@@ -12,7 +13,7 @@ namespace Crane::Graphics {
     m_Renderer.EndFrame();
   }
 
-  void RenderPipeline::RenderImGui(std::function<void()> imguiCallback) {
+  void RenderPipeline::RenderImGui(Function<void()> imguiCallback) {
     m_Renderer.BeginImGuiFrame();
     if (imguiCallback) {
       imguiCallback();
