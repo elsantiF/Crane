@@ -3,7 +3,7 @@
 #include "Core/Application/BaseApplication.hpp"
 #include "Graphics/IRenderer.hpp"
 #include "Graphics/RenderPipeline.hpp"
-#include "Graphics/SDLWindow.hpp"
+#include "Graphics/Window/SDLWindow.hpp"
 
 namespace Crane {
   class ClientApplication : public BaseApplication {
