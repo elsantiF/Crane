@@ -10,46 +10,8 @@
 #include "Scene/Components/RigidBody.hpp"
 #include "Scene/Components/Transform.hpp"
 #include <imgui.h>
-#include <numbers>
 
 using namespace Crane;
-
-Graphics::Mesh CreateSquareVertices(f32 xdim, f32 ydim, Graphics::Color color) {
-  return {
-      .vertices = {{{-xdim / 2, -ydim / 2}, color, {0.f, 0.f}},
-                   {{xdim / 2, -ydim / 2}, color, {1.f, 0.f}},
-                   {{xdim / 2, ydim / 2}, color, {1.f, 1.f}},
-                   {{-xdim / 2, ydim / 2}, color, {0.f, 1.f}}},
-      .indices = {{0, 1, 2, 2, 3, 0}}
-  };
-}
-
-Graphics::Mesh CreateCircleVertices(f32 radius, i32 segments, Graphics::Color color) {
-  Graphics::SVertex2List vertices;
-  for (i32 i = 0; i < segments; ++i) {
-    f32 angle = (2.0f * std::numbers::pi_v<f32> * i) / segments;
-    f32 u = (cos(angle) + 1.0f) * 0.5f;
-    f32 v = (sin(angle) + 1.0f) * 0.5f;
-    vertices.push_back({
-        {radius * cos(angle), radius * sin(angle)},
-        color, {u,                   v                  }
-    });
-  }
-
-  vertices.push_back({
-      {0.0f, 0.0f},
-      color, {0.5f, 0.5f}
-  });
-
-  Vector<i32> indices;
-  for (i32 i = 0; i < segments; ++i) {
-    indices.push_back(i);
-    indices.push_back((i + 1) % segments);
-    indices.push_back(segments);
-  }
-
-  return Graphics::Mesh{vertices, indices};
-}
 
 const ApplicationInfo appInfo = {
     "Crane Demo", {1,    0,   0   },
@@ -70,8 +32,8 @@ protected:
         30.0f, 4
     });
 
-    m_BoxMeshId = m_Renderer->LoadMesh(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::White));
-    m_CircleMeshId = m_Renderer->LoadMesh(CreateCircleVertices(20.0f, 16, Graphics::Colors::White));
+    m_BoxMeshId = m_Renderer->LoadMesh(Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}));
+    m_CircleMeshId = m_Renderer->LoadMesh(Graphics::MeshBuilder::CreateCircle(20.0f, 16));
 
     auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
     auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();
@@ -80,7 +42,7 @@ protected:
     m_CircleTextureId = m_Renderer->LoadTexture(circleTexture);
 
     // Create ground body
-    Id groundMeshId = m_Renderer->LoadMesh(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));
+    Id groundMeshId = m_Renderer->LoadMesh(Graphics::MeshBuilder::CreateQuad({1000.0f, 50.0f}, Graphics::Colors::Green));
     Scene::Entity ground = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(ground, Math::Vec2f{512.0f, 725.0f}, 0.1f);
@@ -96,7 +58,7 @@ protected:
     }
 
     // Create a dynamic box body
-    Id redBoxMeshId = m_Renderer->LoadMesh(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Red));
+    Id redBoxMeshId = m_Renderer->LoadMesh(Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Red));
     Scene::Entity box = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(box, Math::Vec2f{400.0f, 100.0f});
@@ -111,7 +73,7 @@ protected:
       GetWorld().AddComponent<Scene::Components::BoxCollider>(box, boxcollider);
     }
 
-    Id blueBoxMeshId = m_Renderer->LoadMesh(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Blue));
+    Id blueBoxMeshId = m_Renderer->LoadMesh(Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Blue));
     m_Player = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(m_Player, Math::Vec2f{600.0f, 100.0f});

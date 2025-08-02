@@ -4,36 +4,8 @@
 #include "GravitySystem.hpp"
 #include "Scene/Components/Renderable.hpp"
 #include "Scene/Components/Transform.hpp"
-#include <numbers>
 
 using namespace Crane;
-
-Graphics::Mesh CreateCircleVertices(f32 radius, i32 segments, Graphics::Color color) {
-  Graphics::SVertex2List vertices;
-  for (i32 i = 0; i < segments; ++i) {
-    f32 angle = (2.0f * std::numbers::pi_v<f32> * i) / segments;
-    f32 u = (cos(angle) + 1.0f) * 0.5f;
-    f32 v = (sin(angle) + 1.0f) * 0.5f;
-    vertices.push_back({
-        {radius * cos(angle), radius * sin(angle)},
-        color, {u,                   v                  }
-    });
-  }
-
-  vertices.push_back({
-      {0.0f, 0.0f},
-      color, {0.5f, 0.5f}
-  });
-
-  Vector<i32> indices;
-  for (i32 i = 0; i < segments; ++i) {
-    indices.push_back(i);
-    indices.push_back((i + 1) % segments);
-    indices.push_back(segments);
-  }
-
-  return Graphics::Mesh{vertices, indices};
-}
 
 static Graphics::TextureManager textureManager;
 
@@ -49,7 +21,7 @@ public:
   NBody() : ClientApplication(appInfo) {}
 
   void OnInitialize() override {
-    m_PlanetMeshId = m_Renderer->LoadMesh(CreateCircleVertices(24.0f, 24, Graphics::Colors::White));
+    m_PlanetMeshId = m_Renderer->LoadMesh(Graphics::MeshBuilder::CreateCircle(24.0f, 24));
 
     auto redTexture = textureManager.LoadTexture("Resources/red.png").value();
     auto greenTexture = textureManager.LoadTexture("Resources/green.png").value();
