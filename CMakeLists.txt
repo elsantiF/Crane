@@ -31,7 +31,6 @@ target_link_libraries(Crane INTERFACE
     CraneEditor
     CraneGraphics
     CranePhysics
-    CraneScene
 )
 
 if(NOT MSVC)

@@ -6,8 +6,7 @@
 #include "Scene/Components/BoxCollider.hpp"
 #include "Scene/Components/CircleCollider.hpp"
 #include "Scene/Components/RigidBody.hpp"
-
-struct b2WorldId;
+#include <box2d/box2d.h>
 
 namespace Crane::Physics {
   struct PhysicsSystemConfig {
@@ -31,6 +30,12 @@ namespace Crane::Physics {
 
   private:
     b2WorldId m_WorldId;
+
+    struct {
+      UnorderedMap<Id, b2BodyId> bodies;
+      UnorderedMap<Id, b2ShapeId> shapes;
+    } m_Context;
+
     PhysicsSystemConfig m_Config;
   };
 }

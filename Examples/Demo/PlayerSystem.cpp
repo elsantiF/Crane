@@ -14,7 +14,7 @@ PlayerSystem::PlayerSystem(Scene::World &world, Scene::Entity &playerEntity) : S
 }
 
 void PlayerSystem::Update([[maybe_unused]] f64 deltaTime) {
-  auto &rb = m_World.GetComponent<Scene::Components::RigidBody>(*m_PlayerEntity);
+  /*auto &rb = m_World.GetComponent<Scene::Components::RigidBody>(*m_PlayerEntity);
   b2Vec2 position = b2Body_GetPosition(rb.bodyId);
   if (m_PlayerComponent->isMovingLeft) {
     b2Body_ApplyForce(rb.bodyId, b2Vec2(-SPEED, 0), position, true);
@@ -25,7 +25,7 @@ void PlayerSystem::Update([[maybe_unused]] f64 deltaTime) {
   if (m_PlayerComponent->isJumping) {
     b2Body_ApplyForce(rb.bodyId, b2Vec2(0, -SPEED * 75), position, true);
     m_PlayerComponent->isJumping = false;
-  }
+  }*/
 }
 
 void PlayerSystem::HandleKeyDown(Crane::Events::KeyDown &event) {
