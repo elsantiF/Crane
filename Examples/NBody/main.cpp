@@ -57,9 +57,9 @@ public:
     auto redTexture = textureManager.LoadTexture("Resources/red.png").value();
     auto greenTexture = textureManager.LoadTexture("Resources/green.png").value();
     auto purpleTexture = textureManager.LoadTexture("Resources/purple.png").value();
-    m_RedTextureId = m_Renderer->LoadTexture(*redTexture);
-    m_GreenTextureId = m_Renderer->LoadTexture(*greenTexture);
-    m_PurpleTextureId = m_Renderer->LoadTexture(*purpleTexture);
+    m_RedTextureId = m_Renderer->LoadTexture(redTexture);
+    m_GreenTextureId = m_Renderer->LoadTexture(greenTexture);
+    m_PurpleTextureId = m_Renderer->LoadTexture(purpleTexture);
 
     // Temporary: Create a few planets
     CreatePlanet(GetWorld(), Math::Vec2f{100.0f, 300.0f}, 500.0f, 24.0f, Math::Vec2f{5.0f, 0.0f}, PlanetColor::Red);

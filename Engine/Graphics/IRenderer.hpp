@@ -4,6 +4,7 @@
 #include "Base/Math/Vector.hpp"
 #include "Base/Types.hpp"
 #include "Color.hpp"
+#include "Resources/Resource.hpp"
 #include "Texture.hpp"
 #include "Vertex.hpp"
 
@@ -29,7 +30,7 @@ namespace Crane::Graphics {
     virtual Id LoadIndexData(const IndexList &indices) = 0;
     virtual void UnloadIndexData(Id indexDataId) = 0;
 
-    virtual Id LoadTexture(const Texture &texture) = 0;
+    virtual Id LoadTexture(Resources::Resource<Texture> textureResource) = 0;
     virtual void UnloadTexture(Id textureId) = 0;
 
     virtual void SetFillColor(const Color &color) = 0;

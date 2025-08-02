@@ -18,9 +18,11 @@ namespace Crane::Resources {
     T &operator*() {
       return *m_Data;
     }
+
     T *operator->() {
       return m_Data.get();
     }
+
     T *get() {
       return m_Data.get();
     }

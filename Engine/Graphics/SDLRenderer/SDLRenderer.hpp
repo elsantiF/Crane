@@ -31,7 +31,7 @@ namespace Crane::Graphics::SDLRenderer {
     Id LoadIndexData(const IndexList &indices) override;
     void UnloadIndexData(Id indexDataId) override;
 
-    Id LoadTexture(const Texture &texture) override;
+    Id LoadTexture(Resources::Resource<Texture> textureResource) override;
     void UnloadTexture(Id textureId) override;
 
     void SetFillColor(const Color &color) override;

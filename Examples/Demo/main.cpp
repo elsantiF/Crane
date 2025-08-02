@@ -83,8 +83,8 @@ protected:
     auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
     auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();
 
-    m_SquareTextureId = m_Renderer->LoadTexture(*squareTexture);
-    m_CircleTextureId = m_Renderer->LoadTexture(*circleTexture);
+    m_SquareTextureId = m_Renderer->LoadTexture(squareTexture);
+    m_CircleTextureId = m_Renderer->LoadTexture(circleTexture);
 
     // Create ground body
     Id groundVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));

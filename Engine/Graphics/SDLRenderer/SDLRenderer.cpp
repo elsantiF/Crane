@@ -135,8 +135,9 @@ namespace Crane::Graphics::SDLRenderer {
     }
   }
 
-  Id SDLRenderer::LoadTexture(const Texture &texture) {
+  Id SDLRenderer::LoadTexture(Resources::Resource<Texture> textureResource) {
     PROFILE_SCOPE();
+    const Texture texture = *textureResource;
     Id textureId = static_cast<Id>(m_Context.textures.size()) + 1;
     SDL_Texture *sdlTexture = SDL_CreateTexture(m_Renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, texture.width, texture.height);
 
