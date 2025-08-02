@@ -14,6 +14,9 @@ namespace Crane::Physics {
     worldDef.gravity = {m_Config.gravity.x, m_Config.gravity.y};
     worldDef.enableSleep = false;
     m_WorldId = b2CreateWorld(&worldDef);
+
+    m_World.GetDispatcher().sink<Events::ForceApplied>().connect<&PhysicsSystem::ApplyForce>(this);
+
     Logger::Info("PhysicsSystem created");
   }
 
@@ -168,5 +171,18 @@ namespace Crane::Physics {
     m_Context.bodies[bodyMapId] = bodyId;
 
     return Scene::Components::RigidBody(bodyMapId);
+  }
+
+  void PhysicsSystem::ApplyForce(const Events::ForceApplied &event) {
+    PROFILE_SCOPE();
+    auto bodyIt = m_Context.bodies.find(event.GetBodyId());
+    if (bodyIt == m_Context.bodies.end() || !b2Body_IsValid(bodyIt->second)) {
+      return;
+    }
+
+    b2BodyId bodyId = bodyIt->second;
+    b2Vec2 force = {event.GetForce().x / m_Config.pixelsPerMeter, event.GetForce().y / m_Config.pixelsPerMeter};
+    b2Vec2 point = {event.GetPoint().x / m_Config.pixelsPerMeter, event.GetPoint().y / m_Config.pixelsPerMeter};
+    b2Body_ApplyForce(bodyId, force, point, true);
   }
 }

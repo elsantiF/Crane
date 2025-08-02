@@ -1,7 +1,8 @@
 #include "PlayerSystem.hpp"
+#include "Events/Events.hpp"
 #include "PlayerComponent.hpp"
 #include "Scene/Components/RigidBody.hpp"
-#include <box2d/box2d.h>
+#include "Scene/Components/Transform.hpp"
 #include <SDL3/SDL_keycode.h>
 
 using namespace Crane;
@@ -14,18 +15,29 @@ PlayerSystem::PlayerSystem(Scene::World &world, Scene::Entity &playerEntity) : S
 }
 
 void PlayerSystem::Update([[maybe_unused]] f64 deltaTime) {
-  /*auto &rb = m_World.GetComponent<Scene::Components::RigidBody>(*m_PlayerEntity);
-  b2Vec2 position = b2Body_GetPosition(rb.bodyId);
+  auto &rb = m_World.GetComponent<Scene::Components::RigidBody>(*m_PlayerEntity);
+  auto &transform = m_World.GetComponent<Scene::Components::Transform>(*m_PlayerEntity);
+
+  Math::Vec2f position = transform.transform.position;
   if (m_PlayerComponent->isMovingLeft) {
-    b2Body_ApplyForce(rb.bodyId, b2Vec2(-SPEED, 0), position, true);
+    m_World.GetDispatcher().trigger(Events::ForceApplied{
+        rb.bodyId, Math::Vec2f{-SPEED * 30.0f, 0},
+         position
+    });
   }
   if (m_PlayerComponent->isMovingRight) {
-    b2Body_ApplyForce(rb.bodyId, b2Vec2(SPEED, 0), position, true);
+    m_World.GetDispatcher().trigger(Events::ForceApplied{
+        rb.bodyId, Math::Vec2f{SPEED * 30.0f, 0},
+         position
+    });
   }
   if (m_PlayerComponent->isJumping) {
-    b2Body_ApplyForce(rb.bodyId, b2Vec2(0, -SPEED * 75), position, true);
+    m_World.GetDispatcher().trigger(Events::ForceApplied{
+        rb.bodyId, Math::Vec2f{0, -SPEED * 2000.0f},
+         position
+    });
     m_PlayerComponent->isJumping = false;
-  }*/
+  }
 }
 
 void PlayerSystem::HandleKeyDown(Crane::Events::KeyDown &event) {

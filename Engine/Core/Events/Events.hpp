@@ -5,6 +5,7 @@
 #include "IEvent.hpp"
 
 namespace Crane::Events {
+  // --- Input Events ---
   class KeyDown : public IEvent {
   public:
     KeyDown(u32 keyCode) : m_KeyCode(keyCode) {}
@@ -46,5 +47,28 @@ namespace Crane::Events {
   private:
     Math::Vec2f m_Position;
     MouseButton m_Button;
+  };
+
+  // --- Physics Events ---
+  class ForceApplied : public IEvent {
+  public:
+    ForceApplied(Id bodyId, const Math::Vec2f &force, const Math::Vec2f &point) : m_BodyId(bodyId), m_Force(force), m_Point(point) {}
+
+    Id GetBodyId() const {
+      return m_BodyId;
+    }
+
+    Math::Vec2f GetForce() const {
+      return m_Force;
+    }
+
+    Math::Vec2f GetPoint() const {
+      return m_Point;
+    }
+
+  private:
+    Id m_BodyId;
+    Math::Vec2f m_Force;
+    Math::Vec2f m_Point;
   };
 }

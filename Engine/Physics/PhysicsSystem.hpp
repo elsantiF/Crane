@@ -2,6 +2,7 @@
 
 #include "Base/Types.hpp"
 #include "Core/Systems/ISystem.hpp"
+#include "Events/Events.hpp"
 #include "Physics/BodyStructs.hpp"
 #include "Scene/Components/BoxCollider.hpp"
 #include "Scene/Components/CircleCollider.hpp"
@@ -27,6 +28,8 @@ namespace Crane::Physics {
 
   private:
     Scene::Components::RigidBody CreateRigidBody(const Physics::BaseBodyConfig &config);
+
+    void ApplyForce(const Events::ForceApplied &event);
 
   private:
     b2WorldId m_WorldId;
