@@ -1,5 +1,7 @@
 #include "Application/ClientApplication.hpp"
+#include "CelestialBody.hpp"
 #include "Graphics/TextureManager.hpp"
+#include "GravitySystem.hpp"
 #include "Scene/Components/Renderable.hpp"
 #include "Scene/Components/Transform.hpp"
 #include <numbers>
@@ -42,12 +44,14 @@ const ApplicationInfo appInfo = {
      {1600, 900, true}
 };
 
+enum class PlanetColor { Red, Green, Purple };
+
 class NBody : public ClientApplication {
 public:
   NBody() : ClientApplication(appInfo) {}
 
   void OnInitialize() override {
-    m_PlanetVerticesId = m_Renderer->LoadVertexData(CreateCircleVertices(48.0f, 24, Graphics::Colors::White));
+    m_PlanetVerticesId = m_Renderer->LoadVertexData(CreateCircleVertices(24.0f, 24, Graphics::Colors::White));
     m_PlanetIndicesId = m_Renderer->LoadIndexData(CreateCircleIndices(24));
 
     auto redTexture = textureManager.LoadTexture("Resources/red.png").value();
@@ -58,20 +62,32 @@ public:
     m_PurpleTextureId = m_Renderer->LoadTexture(*purpleTexture);
 
     // Temporary: Create a few planets
-    Scene::Entity redPlanet = GetWorld().CreateEntity();
-    GetWorld().AddComponent<Scene::Components::Transform>(redPlanet, Math::Vec2f{300.0f, 300.0f});
-    GetWorld().AddComponent<Scene::Components::Renderable>(redPlanet, m_PlanetVerticesId, m_PlanetIndicesId, m_RedTextureId);
+    CreatePlanet(GetWorld(), Math::Vec2f{100.0f, 300.0f}, 500.0f, 24.0f, Math::Vec2f{5.0f, 0.0f}, PlanetColor::Red);
+    CreatePlanet(GetWorld(), Math::Vec2f{600.0f, 400.0f}, 500.0f, 24.0f, Math::Vec2f{-1.0f, -2.0f}, PlanetColor::Green);
+    CreatePlanet(GetWorld(), Math::Vec2f{900.0f, 800.0f}, 500.0f, 24.0f, Math::Vec2f{0.0f, 10.0f}, PlanetColor::Purple);
 
-    Scene::Entity greenPlanet = GetWorld().CreateEntity();
-    GetWorld().AddComponent<Scene::Components::Transform>(greenPlanet, Math::Vec2f{600.0f, 300.0f});
-    GetWorld().AddComponent<Scene::Components::Renderable>(greenPlanet, m_PlanetVerticesId, m_PlanetIndicesId, m_GreenTextureId);
-
-    Scene::Entity purplePlanet = GetWorld().CreateEntity();
-    GetWorld().AddComponent<Scene::Components::Transform>(purplePlanet, Math::Vec2f{900.0f, 300.0f});
-    GetWorld().AddComponent<Scene::Components::Renderable>(purplePlanet, m_PlanetVerticesId, m_PlanetIndicesId, m_PurpleTextureId);
+    GetWorld().AddSystem<GravitySystem>();
   }
 
   void OnImGui() override {}
+
+  Scene::Entity CreatePlanet(Scene::World &world, const Math::Vec2f &position, f64 mass, f64 radius, Math::Vec2f velocity, PlanetColor color) {
+    Scene::Entity planet = world.CreateEntity();
+    world.AddComponent<Scene::Components::Transform>(planet, position);
+    world.AddComponent<CelestialBody>(planet, CelestialBody{mass, radius, velocity});
+
+    switch (color) {
+    case PlanetColor::Red: world.AddComponent<Scene::Components::Renderable>(planet, m_PlanetVerticesId, m_PlanetIndicesId, m_RedTextureId); break;
+    case PlanetColor::Green:
+      world.AddComponent<Scene::Components::Renderable>(planet, m_PlanetVerticesId, m_PlanetIndicesId, m_GreenTextureId);
+      break;
+    case PlanetColor::Purple:
+      world.AddComponent<Scene::Components::Renderable>(planet, m_PlanetVerticesId, m_PlanetIndicesId, m_PurpleTextureId);
+      break;
+    }
+
+    return planet;
+  }
 
 private:
   Id m_PlanetVerticesId;

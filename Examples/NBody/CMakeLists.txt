@@ -1,6 +1,6 @@
 project(NBody)
 
-add_executable(NBody "main.cpp")
+add_executable(NBody "main.cpp" "GravitySystem.cpp")
 target_link_libraries(NBody PUBLIC Crane)
 
 add_custom_command(TARGET NBody POST_BUILD
