@@ -4,9 +4,9 @@
 #include "Base/Math/Vector.hpp"
 #include "Base/Types.hpp"
 #include "Color.hpp"
+#include "Mesh.hpp"
 #include "Resources/Resource.hpp"
 #include "Texture.hpp"
-#include "Vertex.hpp"
 
 namespace Crane::Graphics {
   class IRenderer {
@@ -24,18 +24,14 @@ namespace Crane::Graphics {
     virtual void Clear(const Color &color) = 0;
     virtual void Present() = 0;
 
-    virtual Id LoadVertexData(const SVertex2List &vertices) = 0;
-    virtual void UnloadVertexData(Id vertexDataId) = 0;
-
-    virtual Id LoadIndexData(const IndexList &indices) = 0;
-    virtual void UnloadIndexData(Id indexDataId) = 0;
+    virtual Id LoadMesh(const Mesh &mesh) = 0;
+    virtual void UnloadMesh(Id meshId) = 0;
 
     virtual Id LoadTexture(Resources::Resource<Texture> textureResource) = 0;
     virtual void UnloadTexture(Id textureId) = 0;
 
     virtual void SetFillColor(const Color &color) = 0;
-    virtual void SetVertexData(Id vertexDataId) = 0;
-    virtual void SetIndexData(Id indexDataId) = 0;
+    virtual void SetMesh(Id meshId) = 0;
     virtual void SetTexture(Id textureId) = 0;
 
     virtual void DrawPoint(const Math::Vec2f &point) = 0;

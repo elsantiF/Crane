@@ -8,7 +8,7 @@
 
 using namespace Crane;
 
-Graphics::SVertex2List CreateCircleVertices(f32 radius, i32 segments, Graphics::Color color) {
+Graphics::Mesh CreateCircleVertices(f32 radius, i32 segments, Graphics::Color color) {
   Graphics::SVertex2List vertices;
   for (i32 i = 0; i < segments; ++i) {
     f32 angle = (2.0f * std::numbers::pi_v<f32> * i) / segments;
@@ -24,17 +24,15 @@ Graphics::SVertex2List CreateCircleVertices(f32 radius, i32 segments, Graphics::
       {0.0f, 0.0f},
       color, {0.5f, 0.5f}
   });
-  return vertices;
-}
 
-Vector<i32> CreateCircleIndices(i32 segments) {
   Vector<i32> indices;
   for (i32 i = 0; i < segments; ++i) {
     indices.push_back(i);
     indices.push_back((i + 1) % segments);
     indices.push_back(segments);
   }
-  return indices;
+
+  return Graphics::Mesh{vertices, indices};
 }
 
 static Graphics::TextureManager textureManager;
@@ -51,8 +49,7 @@ public:
   NBody() : ClientApplication(appInfo) {}
 
   void OnInitialize() override {
-    m_PlanetVerticesId = m_Renderer->LoadVertexData(CreateCircleVertices(24.0f, 24, Graphics::Colors::White));
-    m_PlanetIndicesId = m_Renderer->LoadIndexData(CreateCircleIndices(24));
+    m_PlanetMeshId = m_Renderer->LoadMesh(CreateCircleVertices(24.0f, 24, Graphics::Colors::White));
 
     auto redTexture = textureManager.LoadTexture("Resources/red.png").value();
     auto greenTexture = textureManager.LoadTexture("Resources/green.png").value();
@@ -77,21 +74,16 @@ public:
     world.AddComponent<CelestialBody>(planet, CelestialBody{mass, radius, velocity});
 
     switch (color) {
-    case PlanetColor::Red: world.AddComponent<Scene::Components::Renderable>(planet, m_PlanetVerticesId, m_PlanetIndicesId, m_RedTextureId); break;
-    case PlanetColor::Green:
-      world.AddComponent<Scene::Components::Renderable>(planet, m_PlanetVerticesId, m_PlanetIndicesId, m_GreenTextureId);
-      break;
-    case PlanetColor::Purple:
-      world.AddComponent<Scene::Components::Renderable>(planet, m_PlanetVerticesId, m_PlanetIndicesId, m_PurpleTextureId);
-      break;
+    case PlanetColor::Red:    world.AddComponent<Scene::Components::Renderable>(planet, m_PlanetMeshId, m_RedTextureId); break;
+    case PlanetColor::Green:  world.AddComponent<Scene::Components::Renderable>(planet, m_PlanetMeshId, m_GreenTextureId); break;
+    case PlanetColor::Purple: world.AddComponent<Scene::Components::Renderable>(planet, m_PlanetMeshId, m_PurpleTextureId); break;
     }
 
     return planet;
   }
 
 private:
-  Id m_PlanetVerticesId;
-  Id m_PlanetIndicesId;
+  Id m_PlanetMeshId;
   Id m_RedTextureId;
   Id m_GreenTextureId;
   Id m_PurpleTextureId;

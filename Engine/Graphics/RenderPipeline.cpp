@@ -33,9 +33,8 @@ namespace Crane::Graphics {
     for (auto entity : view) {
       const auto &[transform, renderable] = view.get<Scene::Components::Transform, Scene::Components::Renderable>(entity);
 
-      m_Renderer.SetTexture(renderable.textureDataId);
-      m_Renderer.SetVertexData(renderable.vertexDataId);
-      m_Renderer.SetIndexData(renderable.indexDataId);
+      m_Renderer.SetTexture(renderable.textureId);
+      m_Renderer.SetMesh(renderable.meshId);
       m_Renderer.DrawRenderable(transform.transform);
     }
   }

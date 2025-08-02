@@ -37,8 +37,8 @@ namespace Crane::Editor {
 
     if (auto *renderable = registry.try_get<Scene::Components::Renderable>(entity)) {
       if (ImGui::CollapsingHeader("Renderable")) {
-        ImGui::Text("Vertex Data ID: %u", renderable->vertexDataId);
-        ImGui::Text("Index Data ID: %u", renderable->indexDataId);
+        ImGui::Text("Mesh ID: %u", renderable->meshId);
+        ImGui::Text("Texture ID: %u", renderable->textureId);
       }
     }
 

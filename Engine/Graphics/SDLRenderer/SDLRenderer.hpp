@@ -10,6 +10,8 @@ struct SDL_Texture;
 
 namespace Crane::Graphics::SDLRenderer {
   class SDLRenderer : public IRenderer {
+    using SDLMesh = Pair<Vector<SDL_Vertex>, IndexList>;
+
   public:
     SDLRenderer(SDL_Window *window) : m_Renderer(nullptr), m_Window(window) {}
     ~SDLRenderer() override = default;
@@ -25,18 +27,14 @@ namespace Crane::Graphics::SDLRenderer {
     void Clear(const Color &color) override;
     void Present() override;
 
-    Id LoadVertexData(const SVertex2List &vertices) override;
-    void UnloadVertexData(Id vertexDataId) override;
-
-    Id LoadIndexData(const IndexList &indices) override;
-    void UnloadIndexData(Id indexDataId) override;
+    Id LoadMesh(const Mesh &mesh) override;
+    void UnloadMesh(Id meshId) override;
 
     Id LoadTexture(Resources::Resource<Texture> textureResource) override;
     void UnloadTexture(Id textureId) override;
 
     void SetFillColor(const Color &color) override;
-    void SetVertexData(Id vertexDataId) override;
-    void SetIndexData(Id indexDataId) override;
+    void SetMesh(Id meshId) override;
     void SetTexture(Id textureId) override;
 
     void DrawPoint(const Math::Vec2f &point) override;
@@ -54,14 +52,11 @@ namespace Crane::Graphics::SDLRenderer {
     struct SDLRendererContext {
       Color fillColor = {-1.0f, -1.0f, -1.0f, -1.0f};
 
-      Map<Id, Vector<SDL_Vertex>> vertexData;
-      Map<Id, IndexList> indexData;
+      Map<Id, SDLMesh> meshes;
       Map<Id, SDL_Texture *> textures;
 
-      Id activeVertexDataId = 0;
-      Vector<SDL_Vertex> *activeVertexData = nullptr;
-      Id activeIndexDataId = 0;
-      IndexList *activeIndexData = nullptr;
+      Id activeMeshId = 0;
+      SDLMesh *activeMesh = nullptr;
       Id activeTextureId = 0;
       SDL_Texture *activeTexture = nullptr;
     } m_Context;

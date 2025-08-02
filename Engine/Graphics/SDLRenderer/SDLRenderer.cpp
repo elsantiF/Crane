@@ -79,59 +79,35 @@ namespace Crane::Graphics::SDLRenderer {
     SDL_RenderPresent(m_Renderer);
   }
 
-  Id SDLRenderer::LoadVertexData(const SVertex2List &vertices) {
+  Id SDLRenderer::LoadMesh(const Mesh &mesh) {
     PROFILE_SCOPE();
-    Id vertexDataId = static_cast<Id>(m_Context.vertexData.size()) + 1;
-    Vector<SDL_Vertex> sdlVertices(vertices.size());
+    Id meshId = static_cast<Id>(m_Context.meshes.size()) + 1;
+    Vector<SDL_Vertex> sdlVertices(mesh.vertices.size());
 
-    for (size_t i = 0; i < vertices.size(); ++i) {
-      sdlVertices[i].position = {vertices[i].position.x, vertices[i].position.y};
-      sdlVertices[i].color = {vertices[i].color.r, vertices[i].color.g, vertices[i].color.b, vertices[i].color.a};
-      sdlVertices[i].tex_coord = {vertices[i].uv.x, vertices[i].uv.y};
+    for (size_t i = 0; i < mesh.vertices.size(); ++i) {
+      sdlVertices[i].position = {mesh.vertices[i].position.x, mesh.vertices[i].position.y};
+      sdlVertices[i].color = {mesh.vertices[i].color.r, mesh.vertices[i].color.g, mesh.vertices[i].color.b, mesh.vertices[i].color.a};
+      sdlVertices[i].tex_coord = {mesh.vertices[i].uv.x, mesh.vertices[i].uv.y};
     }
 
-    m_Context.vertexData[vertexDataId] = sdlVertices;
-    Logger::Info("Loaded vertex data with ID: {}", vertexDataId);
-    return vertexDataId;
+    m_Context.meshes[meshId] = {sdlVertices, mesh.indices};
+    Logger::Info("Loaded mesh with ID: {}", meshId);
+    return meshId;
   }
 
-  void SDLRenderer::UnloadVertexData(Id vertexDataId) {
+  void SDLRenderer::UnloadMesh(Id meshId) {
     PROFILE_SCOPE();
-    if (m_Context.activeVertexDataId == vertexDataId) {
-      m_Context.activeVertexDataId = 0;
-      m_Context.activeVertexData = nullptr;
+    if (m_Context.activeMeshId == meshId) {
+      m_Context.activeMeshId = 0;
+      m_Context.activeMesh = nullptr;
     }
 
-    auto it = m_Context.vertexData.find(vertexDataId);
-    if (it != m_Context.vertexData.end()) {
-      m_Context.vertexData.erase(it);
-      Logger::Info("Unloaded vertex data with ID: {}", vertexDataId);
+    auto it = m_Context.meshes.find(meshId);
+    if (it != m_Context.meshes.end()) {
+      m_Context.meshes.erase(it);
+      Logger::Info("Unloaded mesh with ID: {}", meshId);
     } else {
-      Logger::Error("Failed to unload vertex data with ID: {} - not found", vertexDataId);
-    }
-  }
-
-  Id SDLRenderer::LoadIndexData(const IndexList &indices) {
-    PROFILE_SCOPE();
-    Id indexDataId = static_cast<Id>(m_Context.indexData.size()) + 1;
-    m_Context.indexData[indexDataId] = indices;
-    Logger::Info("Loaded index data with ID: {}", indexDataId);
-    return indexDataId;
-  }
-
-  void SDLRenderer::UnloadIndexData(Id indexDataId) {
-    PROFILE_SCOPE();
-    if (m_Context.activeIndexDataId == indexDataId) {
-      m_Context.activeIndexDataId = 0;
-      m_Context.activeIndexData = nullptr;
-    }
-
-    auto it = m_Context.indexData.find(indexDataId);
-    if (it != m_Context.indexData.end()) {
-      m_Context.indexData.erase(it);
-      Logger::Info("Unloaded index data with ID: {}", indexDataId);
-    } else {
-      Logger::Error("Failed to unload index data with ID: {} - not found", indexDataId);
+      Logger::Error("Failed to unload mesh with ID: {} - not found", meshId);
     }
   }
 
@@ -178,29 +154,16 @@ namespace Crane::Graphics::SDLRenderer {
     }
   }
 
-  void SDLRenderer::SetVertexData(Id vertexDataId) {
+  void SDLRenderer::SetMesh(Id meshId) {
     PROFILE_SCOPE();
-    if (m_Context.activeVertexDataId == vertexDataId) {
+    if (m_Context.activeMeshId == meshId) {
       return;
     }
 
-    auto it = m_Context.vertexData.find(vertexDataId);
-    if (it != m_Context.vertexData.end()) {
-      m_Context.activeVertexDataId = vertexDataId;
-      m_Context.activeVertexData = &it->second;
-    }
-  }
-
-  void SDLRenderer::SetIndexData(Id indexDataId) {
-    PROFILE_SCOPE();
-    if (m_Context.activeIndexDataId == indexDataId) {
-      return;
-    }
-
-    auto it = m_Context.indexData.find(indexDataId);
-    if (it != m_Context.indexData.end()) {
-      m_Context.activeIndexDataId = indexDataId;
-      m_Context.activeIndexData = &it->second;
+    auto it = m_Context.meshes.find(meshId);
+    if (it != m_Context.meshes.end()) {
+      m_Context.activeMeshId = meshId;
+      m_Context.activeMesh = &it->second;
     }
   }
 
@@ -256,13 +219,12 @@ namespace Crane::Graphics::SDLRenderer {
   void SDLRenderer::DrawRenderable(const Math::Transform &transform) {
     PROFILE_SCOPE();
 
-    if (m_Context.activeIndexDataId == 0 || m_Context.activeVertexDataId == 0 || m_Context.activeVertexData == nullptr ||
-        m_Context.activeIndexData == nullptr) {
+    if (m_Context.activeMeshId == 0 || m_Context.activeMesh == nullptr) {
       return;
     }
 
-    Vector<SDL_Vertex> &vertices = *m_Context.activeVertexData;
-    IndexList &indices = *m_Context.activeIndexData;
+    Vector<SDL_Vertex> &vertices = m_Context.activeMesh->first;
+    IndexList &indices = m_Context.activeMesh->second;
 
     Vector<SDL_Vertex> transformedVertices = vertices;
 

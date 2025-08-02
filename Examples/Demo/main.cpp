@@ -14,20 +14,17 @@
 
 using namespace Crane;
 
-Graphics::SVertex2List CreateSquareVertices(f32 xdim, f32 ydim, Graphics::Color color) {
+Graphics::Mesh CreateSquareVertices(f32 xdim, f32 ydim, Graphics::Color color) {
   return {
-      {{-xdim / 2, -ydim / 2}, color, {0.f, 0.f}},
-      {{xdim / 2, -ydim / 2},  color, {1.f, 0.f}},
-      {{xdim / 2, ydim / 2},   color, {1.f, 1.f}},
-      {{-xdim / 2, ydim / 2},  color, {0.f, 1.f}}
+      .vertices = {{{-xdim / 2, -ydim / 2}, color, {0.f, 0.f}},
+                   {{xdim / 2, -ydim / 2}, color, {1.f, 0.f}},
+                   {{xdim / 2, ydim / 2}, color, {1.f, 1.f}},
+                   {{-xdim / 2, ydim / 2}, color, {0.f, 1.f}}},
+      .indices = {{0, 1, 2, 2, 3, 0}}
   };
 }
 
-Vector<i32> CreateSquareIndices() {
-  return {0, 1, 2, 2, 3, 0};
-}
-
-Graphics::SVertex2List CreateCircleVertices(f32 radius, i32 segments, Graphics::Color color) {
+Graphics::Mesh CreateCircleVertices(f32 radius, i32 segments, Graphics::Color color) {
   Graphics::SVertex2List vertices;
   for (i32 i = 0; i < segments; ++i) {
     f32 angle = (2.0f * std::numbers::pi_v<f32> * i) / segments;
@@ -43,17 +40,15 @@ Graphics::SVertex2List CreateCircleVertices(f32 radius, i32 segments, Graphics::
       {0.0f, 0.0f},
       color, {0.5f, 0.5f}
   });
-  return vertices;
-}
 
-Vector<i32> CreateCircleIndices(i32 segments) {
   Vector<i32> indices;
   for (i32 i = 0; i < segments; ++i) {
     indices.push_back(i);
     indices.push_back((i + 1) % segments);
     indices.push_back(segments);
   }
-  return indices;
+
+  return Graphics::Mesh{vertices, indices};
 }
 
 const ApplicationInfo appInfo = {
@@ -75,10 +70,8 @@ protected:
         30.0f, 4
     });
 
-    m_BoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::White));
-    m_BoxIndexDataId = m_Renderer->LoadIndexData(CreateSquareIndices());
-    m_CircleVertexDataId = m_Renderer->LoadVertexData(CreateCircleVertices(20.0f, 16, Graphics::Colors::White));
-    m_CircleIndexDataId = m_Renderer->LoadIndexData(CreateCircleIndices(16));
+    m_BoxMeshId = m_Renderer->LoadMesh(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::White));
+    m_CircleMeshId = m_Renderer->LoadMesh(CreateCircleVertices(20.0f, 16, Graphics::Colors::White));
 
     auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
     auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();
@@ -87,11 +80,11 @@ protected:
     m_CircleTextureId = m_Renderer->LoadTexture(circleTexture);
 
     // Create ground body
-    Id groundVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));
+    Id groundMeshId = m_Renderer->LoadMesh(CreateSquareVertices(1000.0f, 50.0f, Graphics::Colors::Green));
     Scene::Entity ground = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(ground, Math::Vec2f{512.0f, 725.0f}, 0.1f);
-      GetWorld().AddComponent<Scene::Components::Renderable>(ground, groundVertexDataId, m_BoxVertexDataId, 0);
+      GetWorld().AddComponent<Scene::Components::Renderable>(ground, groundMeshId, 0);
 
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {512,  700},
@@ -103,11 +96,11 @@ protected:
     }
 
     // Create a dynamic box body
-    Id redBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Red));
+    Id redBoxMeshId = m_Renderer->LoadMesh(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Red));
     Scene::Entity box = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(box, Math::Vec2f{400.0f, 100.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(box, redBoxVertexDataId, m_BoxVertexDataId, 0);
+      GetWorld().AddComponent<Scene::Components::Renderable>(box, redBoxMeshId, 0);
 
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {400, 100},
@@ -118,11 +111,11 @@ protected:
       GetWorld().AddComponent<Scene::Components::BoxCollider>(box, boxcollider);
     }
 
-    Id blueBoxVertexDataId = m_Renderer->LoadVertexData(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Blue));
+    Id blueBoxMeshId = m_Renderer->LoadMesh(CreateSquareVertices(40.0f, 40.0f, Graphics::Colors::Blue));
     m_Player = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(m_Player, Math::Vec2f{600.0f, 100.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(m_Player, blueBoxVertexDataId, m_BoxIndexDataId, 0);
+      GetWorld().AddComponent<Scene::Components::Renderable>(m_Player, blueBoxMeshId, 0);
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {600, 100},
           {40,  40 },
@@ -153,7 +146,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       GetWorld().AddComponent<Scene::Components::Transform>(box, Math::Vec2f{x, y});
-      GetWorld().AddComponent<Scene::Components::Renderable>(box, m_BoxVertexDataId, m_BoxIndexDataId, m_SquareTextureId);
+      GetWorld().AddComponent<Scene::Components::Renderable>(box, m_BoxMeshId, m_SquareTextureId);
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {x,  y },
           {40, 40},
@@ -168,7 +161,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       GetWorld().AddComponent<Scene::Components::Transform>(circle, Math::Vec2f{x, y});
-      GetWorld().AddComponent<Scene::Components::Renderable>(circle, m_CircleVertexDataId, m_CircleIndexDataId, m_CircleTextureId);
+      GetWorld().AddComponent<Scene::Components::Renderable>(circle, m_CircleMeshId, m_CircleTextureId);
       auto [rb, circlecollider] = m_PhysicsSystem->CreateCircleBody({
           {x, y},
           20, Physics::BodyType::Dynamic
@@ -182,10 +175,8 @@ protected:
 
 private:
   Scene::Entity m_Player;
-  Id m_BoxVertexDataId = 0;
-  Id m_BoxIndexDataId = 0;
-  Id m_CircleVertexDataId = 0;
-  Id m_CircleIndexDataId = 0;
+  Id m_BoxMeshId = 0;
+  Id m_CircleMeshId = 0;
   Id m_SquareTextureId = 0;
   Id m_CircleTextureId = 0;
   Physics::PhysicsSystem *m_PhysicsSystem;
