@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Application/BaseApplication.hpp"
-#include "Graphics/IRenderer.hpp"
 #include "Graphics/Pipeline/RenderPipeline.hpp"
 #include "Graphics/Window/SDLWindow.hpp"
 
@@ -21,7 +20,6 @@ namespace Crane {
 
   protected: // TODO: This should be private, but needs to be accessible
     Scope<Graphics::SDLWindow> m_Window;
-    Scope<Graphics::IRenderer> m_Renderer;
     Scope<Graphics::RenderPipeline> m_RenderPipeline;
   };
 }

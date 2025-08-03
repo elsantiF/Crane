@@ -16,7 +16,7 @@ namespace Crane::Graphics::SDLRenderer {
     SDLRenderer(SDL_Window *window) : m_Renderer(nullptr), m_Window(window) {}
     ~SDLRenderer() override = default;
 
-    bool Initialize() override;
+    void Initialize() override;
     void Shutdown() override;
 
     void BeginImGuiFrame() override;

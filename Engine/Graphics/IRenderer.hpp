@@ -13,7 +13,7 @@ namespace Crane::Graphics {
   public:
     virtual ~IRenderer() = default;
 
-    virtual bool Initialize() = 0;
+    virtual void Initialize() = 0;
     virtual void Shutdown() = 0;
 
     virtual void BeginImGuiFrame() = 0;

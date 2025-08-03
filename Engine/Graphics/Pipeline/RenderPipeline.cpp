@@ -5,22 +5,22 @@
 namespace Crane::Graphics {
   void RenderPipeline::Render(Scene::World &world) {
     PROFILE_SCOPE();
-    m_Renderer.BeginFrame();
-    m_Renderer.Clear(Graphics::Colors::CLEAR_COLOR);
+    m_Renderer->BeginFrame();
+    m_Renderer->Clear(Graphics::Colors::CLEAR_COLOR);
     RenderScene(world);
-    m_Renderer.EndFrame();
+    m_Renderer->EndFrame();
   }
 
   void RenderPipeline::RenderImGui(Function<void()> imguiCallback) {
-    m_Renderer.BeginImGuiFrame();
+    m_Renderer->BeginImGuiFrame();
     if (imguiCallback) {
       imguiCallback();
     }
-    m_Renderer.EndImGuiFrame();
+    m_Renderer->EndImGuiFrame();
   }
 
   void RenderPipeline::Present() {
-    m_Renderer.Present();
+    m_Renderer->Present();
   }
 
   void RenderPipeline::RenderScene(Scene::World &world) {

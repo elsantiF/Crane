@@ -16,12 +16,9 @@ namespace Crane {
     }
 
     m_Window = MakeScope<Graphics::SDLWindow>(m_AppInfo.appName, m_AppInfo.window.width, m_AppInfo.window.height);
-    m_Renderer = MakeScope<Graphics::SDLRenderer::SDLRenderer>(m_Window->GetHandle());
-    if (!m_Renderer->Initialize()) {
-      Assert::Crash("Failed to initialize SDLRenderer");
-    }
+    auto renderer = MakeScope<Graphics::SDLRenderer::SDLRenderer>(m_Window->GetHandle());
 
-    m_RenderPipeline = MakeScope<Graphics::RenderPipeline>(*m_Renderer);
+    m_RenderPipeline = MakeScope<Graphics::RenderPipeline>(std::move(renderer));
   }
 
   void ClientApplication::HandleEvents() {
@@ -75,7 +72,6 @@ namespace Crane {
 
   void ClientApplication::Cleanup() {
     m_RenderPipeline.reset();
-    m_Renderer.reset();
     m_Window.reset();
     SDL_Quit();
     Logger::Info("Application cleaned up");

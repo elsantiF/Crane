@@ -1,4 +1,5 @@
 #include "SDLRenderer.hpp"
+#include "Base/Assert.hpp"
 #include "Base/Logger.hpp"
 #include "Base/Profiler.hpp"
 #include <cmath>
@@ -7,12 +8,12 @@
 #include <SDL3/SDL_render.h>
 
 namespace Crane::Graphics::SDLRenderer {
-  bool SDLRenderer::Initialize() {
+  void SDLRenderer::Initialize() {
     PROFILE_SCOPE();
     m_Renderer = SDL_CreateRenderer(m_Window, NULL);
     if (!m_Renderer) {
       Logger::Error("Failed to create SDL Renderer: {}", SDL_GetError());
-      return false;
+      Assert::Crash("Failed to create SDL Renderer");
     }
 
     // TODO: Make VSync optional
@@ -27,7 +28,6 @@ namespace Crane::Graphics::SDLRenderer {
     ImGui_ImplSDL3_InitForSDLRenderer(m_Window, m_Renderer);
     ImGui_ImplSDLRenderer3_Init(m_Renderer);
     Logger::Info("ImGui initialized for SDLRenderer");
-    return true;
   }
 
   void SDLRenderer::Shutdown() {

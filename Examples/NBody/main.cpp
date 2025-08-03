@@ -24,17 +24,18 @@ public:
   NBody() : ClientApplication(appInfo) {}
 
   void OnInitialize() override {
-    m_RenderPipeline->AddRenderPass(MakeScope<TrailPass>(*m_Renderer));
-    m_RenderPipeline->AddRenderPass(MakeScope<Graphics::DefaultPass>(*m_Renderer));
+    auto &renderer = m_RenderPipeline->GetRenderer();
+    m_RenderPipeline->AddRenderPass(MakeScope<TrailPass>(renderer));
+    m_RenderPipeline->AddRenderPass(MakeScope<Graphics::DefaultPass>(renderer));
 
-    m_PlanetMeshId = m_Renderer->LoadMesh(Graphics::MeshBuilder::CreateCircle(24.0f, 24));
+    m_PlanetMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateCircle(24.0f, 24));
 
     auto redTexture = textureManager.LoadTexture("Resources/red.png").value();
     auto greenTexture = textureManager.LoadTexture("Resources/green.png").value();
     auto purpleTexture = textureManager.LoadTexture("Resources/purple.png").value();
-    m_RedTextureId = m_Renderer->LoadTexture(redTexture);
-    m_GreenTextureId = m_Renderer->LoadTexture(greenTexture);
-    m_PurpleTextureId = m_Renderer->LoadTexture(purpleTexture);
+    m_RedTextureId = renderer.LoadTexture(redTexture);
+    m_GreenTextureId = renderer.LoadTexture(greenTexture);
+    m_PurpleTextureId = renderer.LoadTexture(purpleTexture);
 
     // Temporary: Create a few planets
     CreatePlanet(GetWorld(), Math::Vec2f{100.0f, 300.0f}, 500.0f, 24.0f, Math::Vec2f{5.0f, 0.0f}, PlanetColor::Red);
