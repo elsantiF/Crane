@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Base/Types.hpp"
-#include "Graphics/IRenderer.hpp"
+#include "Graphics/Renderer/IRenderer.hpp"
 
 struct SDL_Renderer;
 struct SDL_Window;

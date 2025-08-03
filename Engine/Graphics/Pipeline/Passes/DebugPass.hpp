@@ -1,6 +1,6 @@
 #include "Base/Profiler.hpp"
-#include "Graphics/IRenderer.hpp"
 #include "Graphics/Pipeline/RenderPass.hpp"
+#include "Graphics/Renderer/IRenderer.hpp"
 #include "Scene/Components/BoxCollider.hpp"
 #include "Scene/Components/CircleCollider.hpp"
 #include "Scene/Components/Renderable.hpp"

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Graphics/IRenderer.hpp"
 #include "Graphics/Pipeline/RenderPass.hpp"
+#include "Graphics/Renderer/IRenderer.hpp"
 #include "Scene/World.hpp"
 #include "Trail.hpp"
 

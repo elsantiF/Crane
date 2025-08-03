@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Base/Assert.hpp"
-#include "IRenderer.hpp"
+#include "Renderer/IRenderer.hpp"
 #include "RenderPass.hpp"
 #include "Scene/World.hpp"
 #include "Systems/ISystem.hpp"

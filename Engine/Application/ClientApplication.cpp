@@ -3,7 +3,7 @@
 #include "Base/Logger.hpp"
 #include "Base/Profiler.hpp"
 #include "Events/Events.hpp"
-#include "Graphics/SDLRenderer/SDLRenderer.hpp"
+#include "Graphics/Renderer/SDLRenderer/SDLRenderer.hpp"
 #include <imgui_impl_sdl3.h>
 #include <SDL3/SDL.h>
 
