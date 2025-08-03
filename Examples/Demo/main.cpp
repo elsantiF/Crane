@@ -1,6 +1,8 @@
 #include "Application/ClientApplication.hpp"
 #include "Base/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
+#include "Graphics/DebugPass.hpp"
+#include "Graphics/DefaultPass.hpp"
 #include "Graphics/TextureManager.hpp"
 #include "Physics/PhysicsSystem.hpp"
 #include "PlayerComponent.hpp"
@@ -26,7 +28,8 @@ public:
 
 protected:
   void OnInitialize() override {
-    // TODO: merge this two lines
+    m_RenderPipeline->AddRenderPass(MakeScope<Graphics::DefaultPass>(*m_Renderer));
+    m_RenderPipeline->AddRenderPass(MakeScope<Graphics::DebugPass>(*m_Renderer, 30.0f));
     m_PhysicsSystem = GetWorld().AddSystem<Physics::PhysicsSystem>(Physics::PhysicsSystemConfig{
         Math::Vec2f{0.0f, 9.81f},
         30.0f, 4

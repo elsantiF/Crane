@@ -1,8 +1,6 @@
 #include "RenderPipeline.hpp"
 #include "Base/Profiler.hpp"
 #include "Base/Types.hpp"
-#include "Scene/Components/Renderable.hpp"
-#include "Scene/Components/Transform.hpp"
 
 namespace Crane::Graphics {
   void RenderPipeline::Render(Scene::World &world) {
@@ -27,15 +25,10 @@ namespace Crane::Graphics {
 
   void RenderPipeline::RenderScene(Scene::World &world) {
     PROFILE_SCOPE();
-    auto &registry = world.GetRegistry();
-    auto view = registry.view<Scene::Components::Transform, Scene::Components::Renderable>();
-
-    for (auto entity : view) {
-      const auto &[transform, renderable] = view.get<Scene::Components::Transform, Scene::Components::Renderable>(entity);
-
-      m_Renderer.SetTexture(renderable.textureId);
-      m_Renderer.SetMesh(renderable.meshId);
-      m_Renderer.DrawRenderable(transform.transform);
+    for (auto &pass : m_RenderPasses) {
+      pass->Begin();
+      pass->Execute(world);
+      pass->End();
     }
   }
 }
