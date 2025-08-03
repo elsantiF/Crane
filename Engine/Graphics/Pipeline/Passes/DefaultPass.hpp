@@ -1,5 +1,5 @@
-#include "IRenderer.hpp"
-#include "RenderPass.hpp"
+#include "Graphics/IRenderer.hpp"
+#include "Graphics/Pipeline/RenderPass.hpp"
 #include "Scene/Components/Renderable.hpp"
 #include "Scene/Components/Transform.hpp"
 #include "Scene/World.hpp"

@@ -3,10 +3,10 @@
 #include "Base/Math/Transform.hpp"
 #include "Base/Math/Vector.hpp"
 #include "Base/Types.hpp"
-#include "Color.hpp"
-#include "Mesh.hpp"
+#include "Primitives/Color.hpp"
+#include "Primitives/Mesh.hpp"
+#include "Primitives/Texture.hpp"
 #include "Resources/Resource.hpp"
-#include "Texture.hpp"
 
 namespace Crane::Graphics {
   class IRenderer {

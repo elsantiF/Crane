@@ -1,5 +1,5 @@
 #include "Graphics/TextureManager.hpp"
-#include "Texture.hpp"
+#include "Primitives/Texture.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 

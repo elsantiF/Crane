@@ -2,7 +2,7 @@
 
 #include "Core/Application/BaseApplication.hpp"
 #include "Graphics/IRenderer.hpp"
-#include "Graphics/RenderPipeline.hpp"
+#include "Graphics/Pipeline/RenderPipeline.hpp"
 #include "Graphics/Window/SDLWindow.hpp"
 
 namespace Crane {
