@@ -146,12 +146,12 @@ namespace Crane::Graphics::SDLRenderer {
     }
   }
 
+  // TODO: This should check if the color is different before setting it
+  //       to avoid unnecessary state changes, but is kinda buggy.
   void SDLRenderer::SetFillColor(const Color &color) {
     PROFILE_SCOPE();
-    if (m_Context.fillColor != color) {
-      SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
-      m_Context.fillColor = color;
-    }
+    SDL_SetRenderDrawColorFloat(m_Renderer, color.r, color.g, color.b, color.a);
+    m_Context.fillColor = color;
   }
 
   void SDLRenderer::SetMesh(Id meshId) {

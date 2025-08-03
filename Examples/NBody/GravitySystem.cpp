@@ -2,6 +2,7 @@
 #include "CelestialBody.hpp"
 #include "Scene/Components/Transform.hpp"
 #include "Scene/World.hpp"
+#include "Trail.hpp"
 
 using namespace Crane;
 
@@ -9,7 +10,7 @@ constexpr double eps = 1e-10;
 constexpr double G = 1000.0;
 
 void GravitySystem::FixedUpdate(f64 deltaTime) {
-  auto view = m_World.GetRegistry().view<CelestialBody, Scene::Components::Transform>();
+  auto view = m_World.GetRegistry().view<CelestialBody, Trail, Scene::Components::Transform>();
   // Reset all accelerations to zero
   for (auto entity : view) {
     auto &body = view.get<CelestialBody>(entity);
@@ -47,5 +48,18 @@ void GravitySystem::FixedUpdate(f64 deltaTime) {
 
     body.velocity += body.acceleration * static_cast<f32>(deltaTime);
     transform.transform.position += body.velocity * static_cast<f32>(deltaTime);
+  }
+
+  for (auto entity : view) {
+    auto &trail = view.get<Trail>(entity);
+    auto &transform = view.get<Scene::Components::Transform>(entity);
+    if (trail.points.size() > 256) {
+      trail.points.erase(trail.points.begin());
+    }
+
+    auto &lastPoint = trail.points.back();
+    if (trail.points.empty() || glm::distance(lastPoint, transform.transform.position) > 3.0f) {
+      trail.points.push_back(transform.transform.position);
+    }
   }
 }

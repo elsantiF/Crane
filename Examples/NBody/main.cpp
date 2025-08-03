@@ -1,9 +1,12 @@
 #include "Application/ClientApplication.hpp"
 #include "CelestialBody.hpp"
+#include "Graphics/Pipeline/Passes/DefaultPass.hpp"
 #include "Graphics/TextureManager.hpp"
 #include "GravitySystem.hpp"
 #include "Scene/Components/Renderable.hpp"
 #include "Scene/Components/Transform.hpp"
+#include "Trail.hpp"
+#include "TrailPass.hpp"
 
 using namespace Crane;
 
@@ -21,6 +24,9 @@ public:
   NBody() : ClientApplication(appInfo) {}
 
   void OnInitialize() override {
+    m_RenderPipeline->AddRenderPass(MakeScope<TrailPass>(*m_Renderer));
+    m_RenderPipeline->AddRenderPass(MakeScope<Graphics::DefaultPass>(*m_Renderer));
+
     m_PlanetMeshId = m_Renderer->LoadMesh(Graphics::MeshBuilder::CreateCircle(24.0f, 24));
 
     auto redTexture = textureManager.LoadTexture("Resources/red.png").value();
@@ -44,6 +50,7 @@ public:
     Scene::Entity planet = world.CreateEntity();
     world.AddComponent<Scene::Components::Transform>(planet, position);
     world.AddComponent<CelestialBody>(planet, CelestialBody{mass, radius, velocity});
+    world.AddComponent<Trail>(planet, Trail{Vector<Math::Vec2f>{position}});
 
     switch (color) {
     case PlanetColor::Red:    world.AddComponent<Scene::Components::Renderable>(planet, m_PlanetMeshId, m_RedTextureId); break;
