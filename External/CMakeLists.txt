@@ -32,6 +32,7 @@ file(GLOB IMGUI_SOURCES
     "imgui/*.cpp"
     "imgui/backends/imgui_impl_sdl3.cpp"
     "imgui/backends/imgui_impl_sdlrenderer3.cpp"
+    "imgui/backends/imgui_impl_sdlgpu3.cpp"
 )
 
 add_library(imgui STATIC ${IMGUI_SOURCES})

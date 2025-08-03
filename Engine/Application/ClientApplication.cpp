@@ -3,7 +3,7 @@
 #include "Base/Logger.hpp"
 #include "Base/Profiler.hpp"
 #include "Events/Events.hpp"
-#include "Graphics/Renderer/SDLRenderer/SDLRenderer.hpp"
+#include "Graphics/Renderer/SDLGPU/SDLGPURenderer.hpp"
 #include <imgui_impl_sdl3.h>
 #include <SDL3/SDL.h>
 
@@ -16,7 +16,7 @@ namespace Crane {
     }
 
     m_Window = MakeScope<Graphics::SDLWindow>(m_AppInfo.appName, m_AppInfo.window.width, m_AppInfo.window.height);
-    auto renderer = MakeScope<Graphics::SDLRenderer::SDLRenderer>(m_Window->GetHandle());
+    auto renderer = MakeScope<Graphics::SDLGPURenderer::SDLGPURenderer>(m_Window->GetHandle());
 
     m_RenderPipeline = MakeScope<Graphics::RenderPipeline>(std::move(renderer));
   }
