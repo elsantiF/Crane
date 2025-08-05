@@ -36,17 +36,18 @@ protected:
         30.0f, 4
     });
 
-    m_BoxMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}));
-    m_CircleMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateCircle(20.0f, 16));
+    /*m_BoxMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}));
+    m_CircleMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateCircle(20.0f, 16));*/
 
     auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
     auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();
 
-    m_SquareTextureId = renderer.LoadTexture(squareTexture);
-    m_CircleTextureId = renderer.LoadTexture(circleTexture);
+    /*m_SquareTextureId = renderer.LoadTexture(squareTexture);
+    m_CircleTextureId = renderer.LoadTexture(circleTexture);*/
 
     // Create ground body
-    Id groundMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateQuad({1000.0f, 50.0f}, Graphics::Colors::Green));
+    // Id groundMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateQuad({1000.0f, 50.0f}, Graphics::Colors::Green));
+    Id groundMeshId = 0;
     Scene::Entity ground = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(ground, Math::Vec2f{512.0f, 725.0f}, 0.1f);
@@ -62,7 +63,8 @@ protected:
     }
 
     // Create a dynamic box body
-    Id redBoxMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Red));
+    // Id redBoxMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Red));
+    Id redBoxMeshId = 0;
     Scene::Entity box = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(box, Math::Vec2f{400.0f, 100.0f});
@@ -77,7 +79,8 @@ protected:
       GetWorld().AddComponent<Scene::Components::BoxCollider>(box, boxcollider);
     }
 
-    Id blueBoxMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Blue));
+    // Id blueBoxMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Blue));
+    Id blueBoxMeshId = 0;
     m_Player = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(m_Player, Math::Vec2f{600.0f, 100.0f});

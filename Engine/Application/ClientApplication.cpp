@@ -67,7 +67,7 @@ namespace Crane {
     m_RenderPipeline->RenderImGui([this]() {
       OnImGui();
     });
-    m_RenderPipeline->Present();
+    m_RenderPipeline->GetRenderer().SubmitCommandBuffer();
   }
 
   void ClientApplication::Cleanup() {

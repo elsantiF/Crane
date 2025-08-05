@@ -46,13 +46,13 @@ namespace Crane::Graphics {
         bottomLeft = rotate(bottomLeft);
         bottomRight = rotate(bottomRight);
 
-        m_Renderer.SetFillColor(Colors::White);
+        /*m_Renderer.SetFillColor(Colors::White);
         m_Renderer.DrawLine(topLeft, topRight);
         m_Renderer.DrawLine(topRight, bottomRight);
         m_Renderer.DrawLine(bottomRight, bottomLeft);
         m_Renderer.DrawLine(bottomLeft, topLeft);
         m_Renderer.SetFillColor(Colors::Yellow);
-        m_Renderer.DrawPoint(transform.transform.position);
+        m_Renderer.DrawPoint(transform.transform.position);*/
       }
 
       auto circleView = registry.view<Scene::Components::Transform, Scene::Components::Renderable, Scene::Components::CircleCollider>();
@@ -65,7 +65,7 @@ namespace Crane::Graphics {
         int segments = 16;
         float angleStep = 2.0f * PI / segments;
 
-        m_Renderer.SetFillColor(Colors::White);
+        /*m_Renderer.SetFillColor(Colors::White);
         for (int i = 0; i < segments; ++i) {
           float angle1 = i * angleStep;
           float angle2 = (i + 1) * angleStep;
@@ -74,7 +74,7 @@ namespace Crane::Graphics {
           m_Renderer.DrawLine(point1, point2);
         }
         m_Renderer.SetFillColor(Colors::Yellow);
-        m_Renderer.DrawPoint(transform.transform.position);
+        m_Renderer.DrawPoint(transform.transform.position);*/
       }
     }
 

@@ -19,7 +19,6 @@ namespace Crane::Graphics {
 
     void Render(Scene::World &world);
     void RenderImGui(Function<void()> imguiCallback);
-    void Present();
 
     void AddRenderPass(Scope<RenderPass> pass) {
       m_RenderPasses.push_back(std::move(pass));
