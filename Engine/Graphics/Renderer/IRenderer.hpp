@@ -26,7 +26,6 @@ namespace Crane::Graphics {
     virtual void EndFrame() = 0;
     virtual void BeginRenderPass() = 0;
     virtual void EndRenderPass() = 0;
-    virtual void SubmitCommandBuffer() = 0; // TODO: This is temporary
 
     // Resource management
     virtual Id CreateBuffer(BufferType type, size_t size, const void *data = nullptr) = 0;
@@ -41,9 +40,6 @@ namespace Crane::Graphics {
 
     virtual Id CreatePipeline(const PipelineCreateInfo &state) = 0;
     virtual void DestroyPipeline(Id pipelineId) = 0;
-
-    virtual Id CreateRenderPass() = 0;
-    virtual void DestroyRenderPass(Id renderPassId) = 0;
 
     // Drawing commands
     virtual void BindPipeline(Id pipelineId) = 0;

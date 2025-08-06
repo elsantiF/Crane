@@ -132,7 +132,6 @@ namespace Crane {
     m_Renderer->BeginImGuiFrame();
     OnImGui();
     m_Renderer->EndImGuiFrame();
-    m_Renderer->SubmitCommandBuffer();
     m_Renderer->EndFrame();
   }
 

@@ -26,10 +26,9 @@ namespace Crane::Graphics::SDLGPURenderer {
 
     // Command buffer management
     void BeginFrame() override;
-    void EndFrame() override {};
+    void EndFrame() override;
     void BeginRenderPass() override;
     void EndRenderPass() override;
-    void SubmitCommandBuffer() override;
 
     // Resource management
     Id CreateBuffer(BufferType type, size_t size, const void *data = nullptr) override;
@@ -46,11 +45,6 @@ namespace Crane::Graphics::SDLGPURenderer {
 
     Id CreatePipeline(const PipelineCreateInfo &state) override;
     void DestroyPipeline(Id pipelineId) override {};
-
-    Id CreateRenderPass() override {
-      return 0;
-    };
-    void DestroyRenderPass(Id renderPassId) override {};
 
     // Drawing commands
     void BindPipeline(Id pipelineId) override;
@@ -81,6 +75,5 @@ namespace Crane::Graphics::SDLGPURenderer {
     UnorderedMap<Id, SDL_GPUTexture *> m_Textures;
     UnorderedMap<Id, SDLGPUShader> m_Shaders;
     UnorderedMap<Id, SDL_GPUGraphicsPipeline *> m_Pipelines;
-    UnorderedMap<Id, SDL_GPURenderPass *> m_RenderPasses;
   };
 }

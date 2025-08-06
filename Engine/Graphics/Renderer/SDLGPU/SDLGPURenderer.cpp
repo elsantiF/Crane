@@ -50,6 +50,14 @@ namespace Crane::Graphics::SDLGPURenderer {
     SDL_AcquireGPUSwapchainTexture(m_Context.commandBuffer, m_Context.window, &m_Context.swapchainTexture, nullptr, nullptr);
   }
 
+  void SDLGPURenderer::EndFrame() {
+    PROFILE_SCOPE();
+    if (m_Context.commandBuffer) {
+      SDL_SubmitGPUCommandBuffer(m_Context.commandBuffer);
+      m_Context.commandBuffer = nullptr;
+    }
+  }
+
   void SDLGPURenderer::BeginRenderPass() {
     PROFILE_SCOPE();
     Color clearColor = Colors::CLEAR_COLOR;
@@ -71,14 +79,6 @@ namespace Crane::Graphics::SDLGPURenderer {
     if (m_Context.renderPass) {
       SDL_EndGPURenderPass(m_Context.renderPass);
       m_Context.renderPass = nullptr;
-    }
-  }
-
-  void SDLGPURenderer::SubmitCommandBuffer() {
-    PROFILE_SCOPE();
-    if (m_Context.commandBuffer) {
-      SDL_SubmitGPUCommandBuffer(m_Context.commandBuffer);
-      m_Context.commandBuffer = nullptr;
     }
   }
 
