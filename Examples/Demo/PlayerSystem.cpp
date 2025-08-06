@@ -7,27 +7,27 @@
 
 using namespace Crane;
 
-PlayerSystem::PlayerSystem(Scene::World &world, Scene::Entity &playerEntity) : Systems::IUpdateSystem(world), m_PlayerEntity(&playerEntity) {
+PlayerSystem::PlayerSystem(Scene::World &world, Scene::Entity &playerEntity) : Systems::IFixedUpdateSystem(world), m_PlayerEntity(&playerEntity) {
   m_World.GetDispatcher().sink<Events::KeyDown>().connect<&PlayerSystem::HandleKeyDown>(this);
   m_World.GetDispatcher().sink<Events::KeyUp>().connect<&PlayerSystem::HandleKeyUp>(this);
 
   m_PlayerComponent = &m_World.GetComponent<PlayerComponent>(*m_PlayerEntity);
 }
 
-void PlayerSystem::Update([[maybe_unused]] f64 deltaTime) {
+void PlayerSystem::FixedUpdate([[maybe_unused]] f64 deltaTime) {
   auto &rb = m_World.GetComponent<Scene::Components::RigidBody>(*m_PlayerEntity);
   auto &transform = m_World.GetComponent<Scene::Components::Transform>(*m_PlayerEntity);
 
   Math::Vec2f position = transform.transform.position;
   if (m_PlayerComponent->isMovingLeft) {
     m_World.GetDispatcher().trigger(Events::ForceApplied{
-        rb.bodyId, Math::Vec2f{-SPEED * 30.0f, 0},
+        rb.bodyId, Math::Vec2f{-SPEED * 150.0f, 0},
          position
     });
   }
   if (m_PlayerComponent->isMovingRight) {
     m_World.GetDispatcher().trigger(Events::ForceApplied{
-        rb.bodyId, Math::Vec2f{SPEED * 30.0f, 0},
+        rb.bodyId, Math::Vec2f{SPEED * 150.0f, 0},
          position
     });
   }

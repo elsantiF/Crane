@@ -5,12 +5,12 @@
 #include "PlayerComponent.hpp"
 #include "Scene/World.hpp"
 
-class PlayerSystem : public Crane::Systems::IUpdateSystem {
+class PlayerSystem : public Crane::Systems::IFixedUpdateSystem {
 public:
   PlayerSystem(Crane::Scene::World &world, Crane::Scene::Entity &playerEntity);
   ~PlayerSystem() override = default;
 
-  void Update(f64 deltaTime) override;
+  void FixedUpdate(f64 deltaTime) override;
 
 private:
   void HandleKeyDown(Crane::Events::KeyDown &event);

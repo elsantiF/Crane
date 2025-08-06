@@ -76,13 +76,17 @@ protected:
       GetWorld().AddComponent<Scene::Components::BoxCollider>(ground, boxcollider);
     }
 
-    // Create a dynamic box body
-    // Id redBoxMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Red));
-    /*Id redBoxMeshId = 0;
+    Graphics::Mesh redBoxMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Red);
+    Id redBoxVertexBufferId = m_Renderer->CreateBuffer(Graphics::BufferType::Vertex, redBoxMesh.vertices.size() * sizeof(redBoxMesh.vertices[0]),
+                                                       redBoxMesh.vertices.data());
+    Id redBoxIndexBufferId =
+        m_Renderer->CreateBuffer(Graphics::BufferType::Index, redBoxMesh.indices.size() * sizeof(redBoxMesh.indices[0]), redBoxMesh.indices.data());
+
+    u32 redBoxIndexCount = redBoxMesh.indices.size();
     Scene::Entity box = GetWorld().CreateEntity();
     {
-      GetWorld().AddComponent<Scene::Components::Transform>(box, Math::Vec2f{400.0f, 100.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(box, redBoxMeshId, 0);
+      GetWorld().AddComponent<Scene::Components::Transform>(box, Math::Vec3f{400.0f, 100.0f, 0.0f});
+      GetWorld().AddComponent<Scene::Components::Renderable>(box, redBoxVertexBufferId, redBoxIndexBufferId, m_WhitePixelTextureId, redBoxIndexCount);
 
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {400, 100},
@@ -91,14 +95,21 @@ protected:
       });
       GetWorld().AddComponent<Scene::Components::RigidBody>(box, rb);
       GetWorld().AddComponent<Scene::Components::BoxCollider>(box, boxcollider);
-    }*/
+    }
 
-    // Id blueBoxMeshId = renderer.LoadMesh(Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Blue));
-    /*Id blueBoxMeshId = 0;
+    Graphics::Mesh blueBoxMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Blue);
+    Id blueBoxVertexBufferId = m_Renderer->CreateBuffer(Graphics::BufferType::Vertex, blueBoxMesh.vertices.size() * sizeof(blueBoxMesh.vertices[0]),
+                                                        blueBoxMesh.vertices.data());
+    Id blueBoxIndexBufferId = m_Renderer->CreateBuffer(Graphics::BufferType::Index, blueBoxMesh.indices.size() * sizeof(blueBoxMesh.indices[0]),
+                                                       blueBoxMesh.indices.data());
+
+    u32 blueBoxIndexCount = blueBoxMesh.indices.size();
+
     m_Player = GetWorld().CreateEntity();
     {
-      GetWorld().AddComponent<Scene::Components::Transform>(m_Player, Math::Vec2f{600.0f, 100.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(m_Player, blueBoxMeshId, 0);
+      GetWorld().AddComponent<Scene::Components::Transform>(m_Player, Math::Vec3f{600.0f, 100.0f, 0.0f});
+      GetWorld().AddComponent<Scene::Components::Renderable>(m_Player, blueBoxVertexBufferId, blueBoxIndexBufferId, m_WhitePixelTextureId,
+                                                             blueBoxIndexCount);
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {600, 100},
           {40,  40 },
@@ -109,7 +120,7 @@ protected:
       GetWorld().AddComponent<PlayerComponent>(m_Player);
     }
 
-    GetWorld().AddSystem<PlayerSystem>(m_Player);*/
+    GetWorld().AddSystem<PlayerSystem>(m_Player);
   }
 
   void OnImGui() override {
