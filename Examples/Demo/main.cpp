@@ -1,8 +1,6 @@
 #include "Application/ClientApplication.hpp"
 #include "Base/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
-#include "Graphics/Pipeline/Passes/DebugPass.hpp"
-#include "Graphics/Pipeline/Passes/DefaultPass.hpp"
 #include "Graphics/Primitives/Mesh.hpp"
 #include "Graphics/TextureManager.hpp"
 #include "Physics/PhysicsSystem.hpp"
@@ -29,9 +27,6 @@ public:
 
 protected:
   void OnInitialize() override {
-    auto &renderer = m_RenderPipeline->GetRenderer();
-    m_RenderPipeline->AddRenderPass(MakeScope<Graphics::DefaultPass>(renderer));
-    m_RenderPipeline->AddRenderPass(MakeScope<Graphics::DebugPass>(renderer, 30.0f));
     m_PhysicsSystem = GetWorld().AddSystem<Physics::PhysicsSystem>(Physics::PhysicsSystemConfig{
         Math::Vec2f{0.0f, 9.81f},
         30.0f, 4
@@ -43,11 +38,15 @@ protected:
     m_QuadIndexCount = quadMesh.indices.size();
     m_CircleIndexCount = circleMesh.indices.size();
 
-    m_QuadVertexBufferId = renderer.CreateBuffer(Graphics::BufferType::Vertex, quadMesh.vertices.size(), quadMesh.vertices.data());
-    m_QuadIndexBufferId = renderer.CreateBuffer(Graphics::BufferType::Index, quadMesh.indices.size(), quadMesh.indices.data());
+    m_QuadVertexBufferId =
+        m_Renderer->CreateBuffer(Graphics::BufferType::Vertex, quadMesh.vertices.size() * sizeof(quadMesh.vertices[0]), quadMesh.vertices.data());
+    m_QuadIndexBufferId =
+        m_Renderer->CreateBuffer(Graphics::BufferType::Index, quadMesh.indices.size() * sizeof(quadMesh.indices[0]), quadMesh.indices.data());
 
-    m_CircleVertexBufferId = renderer.CreateBuffer(Graphics::BufferType::Vertex, circleMesh.vertices.size(), circleMesh.vertices.data());
-    m_CircleIndexBufferId = renderer.CreateBuffer(Graphics::BufferType::Index, circleMesh.indices.size(), circleMesh.indices.data());
+    m_CircleVertexBufferId = m_Renderer->CreateBuffer(Graphics::BufferType::Vertex, circleMesh.vertices.size() * sizeof(circleMesh.vertices[0]),
+                                                      circleMesh.vertices.data());
+    m_CircleIndexBufferId =
+        m_Renderer->CreateBuffer(Graphics::BufferType::Index, circleMesh.indices.size() * sizeof(circleMesh.indices[0]), circleMesh.indices.data());
 
     auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
     auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();

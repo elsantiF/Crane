@@ -8,6 +8,7 @@ namespace Crane::Graphics::SDLGPURenderer {
   struct SDLGPUBuffer {
     BufferType type;
     SDL_GPUBuffer *buffer;
+    SDL_GPUIndexElementSize indexSize;
   };
 
   struct SDLGPUShader {
@@ -25,9 +26,9 @@ namespace Crane::Graphics::SDLGPURenderer {
 
     // Command buffer management
     void BeginFrame() override;
-    void EndFrame() override;
-    void BeginRenderPass(Id renderPassId) override {};
-    void EndRenderPass() override {};
+    void EndFrame() override {};
+    void BeginRenderPass() override;
+    void EndRenderPass() override;
     void SubmitCommandBuffer() override;
 
     // Resource management
@@ -35,7 +36,7 @@ namespace Crane::Graphics::SDLGPURenderer {
     void UpdateBuffer(Id bufferId, size_t offset, size_t size, const void *data) override {};
     void DestroyBuffer(Id bufferId) override {};
 
-    Id CreateShader(const ShaderType shaderType, const String &source, const String &entryPoint = "main") override;
+    Id CreateShader(const ShaderType shaderType, const u8 *source, const u32 size, const String &entryPoint = "main") override;
     void DestroyShader(Id shaderId) override {};
 
     Id CreateTexture(const Texture &texture) override {
@@ -56,7 +57,7 @@ namespace Crane::Graphics::SDLGPURenderer {
     void BindBuffer(Id bufferId, size_t offset = 0) override;
     void BindTexture(Id textureId, size_t slot = 0) override {};
 
-    void Draw(u32 vertexCount, u32 instanceCount = 1, u32 firstVertex = 0) override {};
+    void Draw(u32 vertexCount, u32 instanceCount = 1, u32 firstVertex = 0) override;
     void DrawIndexed(u32 indexCount, u32 instanceCount = 1, u32 firstIndex = 0) override;
 
     // ImGui integration

@@ -1,5 +1,4 @@
 set(GRAPHICS_SOURCES 
-    "Pipeline/RenderPipeline.cpp"
     "Renderer/SDLGPU/SDLGPURenderer.cpp"
     "Window/SDLWindow.cpp"
     "TextureManager.cpp"

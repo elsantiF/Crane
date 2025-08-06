@@ -24,7 +24,7 @@ namespace Crane::Graphics {
     // Command buffer management
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
-    virtual void BeginRenderPass(Id renderPassId) = 0;
+    virtual void BeginRenderPass() = 0;
     virtual void EndRenderPass() = 0;
     virtual void SubmitCommandBuffer() = 0; // TODO: This is temporary
 
@@ -33,7 +33,7 @@ namespace Crane::Graphics {
     virtual void UpdateBuffer(Id bufferId, size_t offset, size_t size, const void *data) = 0;
     virtual void DestroyBuffer(Id bufferId) = 0;
 
-    virtual Id CreateShader(const ShaderType shaderType, const String &source, const String &entryPoint = "main") = 0;
+    virtual Id CreateShader(const ShaderType shaderType, const u8 *source, const u32 size, const String &entryPoint = "main") = 0;
     virtual void DestroyShader(Id shaderId) = 0;
 
     virtual Id CreateTexture(const Texture &texture) = 0;

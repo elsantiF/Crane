@@ -48,22 +48,25 @@ namespace Crane::Graphics::SDLGPURenderer {
     PROFILE_SCOPE();
     m_Context.commandBuffer = SDL_AcquireGPUCommandBuffer(m_Context.gpuDevice);
     SDL_AcquireGPUSwapchainTexture(m_Context.commandBuffer, m_Context.window, &m_Context.swapchainTexture, nullptr, nullptr);
+  }
+
+  void SDLGPURenderer::BeginRenderPass() {
+    PROFILE_SCOPE();
     Color clearColor = Colors::CLEAR_COLOR;
     if (m_Context.swapchainTexture) {
       SDL_GPUColorTargetInfo targetInfo = {
           .texture = m_Context.swapchainTexture,
-          .mip_level = 0,
-          .layer_or_depth_plane = 0,
           .clear_color = SDL_FColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a},
           .load_op = SDL_GPU_LOADOP_CLEAR,
           .store_op = SDL_GPU_STOREOP_STORE,
           .cycle = false,
       };
+
       m_Context.renderPass = SDL_BeginGPURenderPass(m_Context.commandBuffer, &targetInfo, 1, nullptr);
     }
   }
 
-  void SDLGPURenderer::EndFrame() {
+  void SDLGPURenderer::EndRenderPass() {
     PROFILE_SCOPE();
     if (m_Context.renderPass) {
       SDL_EndGPURenderPass(m_Context.renderPass);
@@ -118,7 +121,7 @@ namespace Crane::Graphics::SDLGPURenderer {
       SDL_ReleaseGPUTransferBuffer(m_Context.gpuDevice, transferBuffer);
     }
 
-    SDLGPUBuffer gpuBuffer{.type = type, .buffer = buffer};
+    SDLGPUBuffer gpuBuffer{.type = type, .buffer = buffer, .indexSize = SDL_GPU_INDEXELEMENTSIZE_32BIT};
 
     Id bufferId = m_Buffers.size() + 1;
     m_Buffers[bufferId] = gpuBuffer;
@@ -127,12 +130,11 @@ namespace Crane::Graphics::SDLGPURenderer {
     return bufferId;
   }
 
-  Id SDLGPURenderer::CreateShader(const ShaderType shaderType, const String &source, const String &entryPoint) {
+  Id SDLGPURenderer::CreateShader(const ShaderType shaderType, const u8 *source, const u32 size, const String &entryPoint) {
     PROFILE_SCOPE();
-    const u8 *utf8Source = reinterpret_cast<const u8 *>(source.data());
     SDL_GPUShaderCreateInfo createInfo = {
-        .code_size = source.size(),
-        .code = utf8Source,
+        .code_size = size,
+        .code = source,
         .entrypoint = entryPoint.c_str(),
         .format = SDL_GPU_SHADERFORMAT_SPIRV,
         .stage = (shaderType == ShaderType::Vertex) ? SDL_GPU_SHADERSTAGE_VERTEX : SDL_GPU_SHADERSTAGE_FRAGMENT,
@@ -224,16 +226,24 @@ namespace Crane::Graphics::SDLGPURenderer {
       break;
     }
     case BufferType::Index: {
-      SDL_BindGPUIndexBuffer(m_Context.renderPass, &binding, SDL_GPU_INDEXELEMENTSIZE_16BIT);
+      SDL_BindGPUIndexBuffer(m_Context.renderPass, &binding, gpuBuffer.indexSize);
       break;
     }
     }
   }
 
+  void SDLGPURenderer::Draw(u32 vertexCount, u32 instanceCount, u32 firstVertex) {
+    PROFILE_SCOPE();
+    if (!m_Context.renderPass) {
+      return;
+    }
+
+    SDL_DrawGPUPrimitives(m_Context.renderPass, vertexCount, instanceCount, firstVertex, 0);
+  }
+
   void SDLGPURenderer::DrawIndexed(u32 indexCount, u32 instanceCount, u32 firstIndex) {
     PROFILE_SCOPE();
     if (!m_Context.renderPass) {
-      Logger::Error("Cannot draw indexed primitives without an active render pass");
       return;
     }
 
