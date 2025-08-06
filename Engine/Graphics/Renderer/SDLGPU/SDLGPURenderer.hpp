@@ -5,6 +5,16 @@
 #include <SDL3/SDL_gpu.h>
 
 namespace Crane::Graphics::SDLGPURenderer {
+  struct SDLGPUBuffer {
+    BufferType type;
+    SDL_GPUBuffer *buffer;
+  };
+
+  struct SDLGPUShader {
+    ShaderType type;
+    SDL_GPUShader *shader;
+  };
+
   class SDLGPURenderer : public IRenderer {
   public:
     SDLGPURenderer(SDL_Window *window) : m_Context{window, nullptr} {}
@@ -21,15 +31,11 @@ namespace Crane::Graphics::SDLGPURenderer {
     void SubmitCommandBuffer() override;
 
     // Resource management
-    Id CreateBuffer(BufferType type, size_t size, const void *data = nullptr) override {
-      return 0;
-    };
+    Id CreateBuffer(BufferType type, size_t size, const void *data = nullptr) override;
     void UpdateBuffer(Id bufferId, size_t offset, size_t size, const void *data) override {};
     void DestroyBuffer(Id bufferId) override {};
 
-    Id CreateShader(const String &source, const String &entryPoint = "main") override {
-      return 0;
-    };
+    Id CreateShader(const ShaderType shaderType, const String &source, const String &entryPoint = "main") override;
     void DestroyShader(Id shaderId) override {};
 
     Id CreateTexture(const Texture &texture) override {
@@ -37,9 +43,7 @@ namespace Crane::Graphics::SDLGPURenderer {
     };
     void DestroyTexture(Id textureId) override {};
 
-    Id CreatePipeline(const PipelineState &state) override {
-      return 0;
-    };
+    Id CreatePipeline(const PipelineCreateInfo &state) override;
     void DestroyPipeline(Id pipelineId) override {};
 
     Id CreateRenderPass() override {
@@ -48,13 +52,12 @@ namespace Crane::Graphics::SDLGPURenderer {
     void DestroyRenderPass(Id renderPassId) override {};
 
     // Drawing commands
-    void BindPipeline(Id pipelineId) override {};
-    void BindVertexBuffer(Id bufferId, size_t offset = 0) override {};
-    void BindIndexBuffer(Id bufferId, size_t offset = 0) override {};
+    void BindPipeline(Id pipelineId) override;
+    void BindBuffer(Id bufferId, size_t offset = 0) override;
     void BindTexture(Id textureId, size_t slot = 0) override {};
 
     void Draw(u32 vertexCount, u32 instanceCount = 1, u32 firstVertex = 0) override {};
-    void DrawIndexed(u32 indexCount, u32 instanceCount = 1, u32 firstIndex = 0) override {};
+    void DrawIndexed(u32 indexCount, u32 instanceCount = 1, u32 firstIndex = 0) override;
 
     // ImGui integration
     void BeginImGuiFrame() override;
@@ -73,9 +76,10 @@ namespace Crane::Graphics::SDLGPURenderer {
       SDL_GPURenderPass *renderPass = nullptr;
     } m_Context;
 
-    UnorderedMap<Id, SDL_GPUBuffer *> m_Buffers;
+    UnorderedMap<Id, SDLGPUBuffer> m_Buffers;
     UnorderedMap<Id, SDL_GPUTexture *> m_Textures;
-    UnorderedMap<Id, SDL_GPUShader *> m_Shaders;
+    UnorderedMap<Id, SDLGPUShader> m_Shaders;
+    UnorderedMap<Id, SDL_GPUGraphicsPipeline *> m_Pipelines;
     UnorderedMap<Id, SDL_GPURenderPass *> m_RenderPasses;
   };
 }

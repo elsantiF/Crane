@@ -50,14 +50,15 @@ namespace Crane::Graphics::SDLGPURenderer {
     SDL_AcquireGPUSwapchainTexture(m_Context.commandBuffer, m_Context.window, &m_Context.swapchainTexture, nullptr, nullptr);
     Color clearColor = Colors::CLEAR_COLOR;
     if (m_Context.swapchainTexture) {
-      SDL_GPUColorTargetInfo targetInfo = {};
-      targetInfo.texture = m_Context.swapchainTexture;
-      targetInfo.clear_color = SDL_FColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a};
-      targetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
-      targetInfo.store_op = SDL_GPU_STOREOP_STORE;
-      targetInfo.mip_level = 0;
-      targetInfo.layer_or_depth_plane = 0;
-      targetInfo.cycle = false;
+      SDL_GPUColorTargetInfo targetInfo = {
+          .texture = m_Context.swapchainTexture,
+          .mip_level = 0,
+          .layer_or_depth_plane = 0,
+          .clear_color = SDL_FColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a},
+          .load_op = SDL_GPU_LOADOP_CLEAR,
+          .store_op = SDL_GPU_STOREOP_STORE,
+          .cycle = false,
+      };
       m_Context.renderPass = SDL_BeginGPURenderPass(m_Context.commandBuffer, &targetInfo, 1, nullptr);
     }
   }
@@ -76,6 +77,167 @@ namespace Crane::Graphics::SDLGPURenderer {
       SDL_SubmitGPUCommandBuffer(m_Context.commandBuffer);
       m_Context.commandBuffer = nullptr;
     }
+  }
+
+  Id SDLGPURenderer::CreateBuffer(BufferType type, size_t size, const void *data) {
+    PROFILE_SCOPE();
+    SDL_GPUBufferCreateInfo createInfo = {};
+    createInfo.size = size;
+    switch (type) {
+    case BufferType::Vertex: createInfo.usage = SDL_GPU_BUFFERUSAGE_VERTEX; break;
+    case BufferType::Index:  createInfo.usage = SDL_GPU_BUFFERUSAGE_INDEX; break;
+    default:                 Assert::Crash("Unsupported buffer type"); return 0;
+    }
+
+    SDL_GPUBuffer *buffer = SDL_CreateGPUBuffer(m_Context.gpuDevice, &createInfo);
+    if (!buffer) {
+      Assert::Crash(std::format("Failed to create GPU buffer: {}", SDL_GetError()));
+    }
+
+    if (data) {
+      SDL_GPUTransferBufferCreateInfo transferInfo = {};
+      transferInfo.size = size;
+      transferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+      SDL_GPUTransferBuffer *transferBuffer = SDL_CreateGPUTransferBuffer(m_Context.gpuDevice, &transferInfo);
+      if (!transferBuffer) {
+        Assert::Crash(std::format("Failed to create GPU transfer buffer: {}", SDL_GetError()));
+      }
+
+      void *mappedData = SDL_MapGPUTransferBuffer(m_Context.gpuDevice, transferBuffer, false);
+      std::memcpy(mappedData, data, size);
+      SDL_UnmapGPUTransferBuffer(m_Context.gpuDevice, transferBuffer);
+
+      SDL_GPUCommandBuffer *commandBuffer = SDL_AcquireGPUCommandBuffer(m_Context.gpuDevice);
+      SDL_GPUCopyPass *copyPass = SDL_BeginGPUCopyPass(commandBuffer);
+      SDL_GPUTransferBufferLocation location = {.transfer_buffer = transferBuffer, .offset = 0};
+      SDL_GPUBufferRegion region = {.buffer = buffer, .offset = 0, .size = static_cast<u32>(size)};
+
+      SDL_UploadToGPUBuffer(copyPass, &location, &region, false);
+      SDL_EndGPUCopyPass(copyPass);
+      SDL_SubmitGPUCommandBuffer(commandBuffer);
+      SDL_ReleaseGPUTransferBuffer(m_Context.gpuDevice, transferBuffer);
+    }
+
+    SDLGPUBuffer gpuBuffer{.type = type, .buffer = buffer};
+
+    Id bufferId = m_Buffers.size() + 1;
+    m_Buffers[bufferId] = gpuBuffer;
+
+    Logger::Info("Created {} buffer with ID: {}", (type == BufferType::Vertex ? "vertex" : "index"), bufferId);
+    return bufferId;
+  }
+
+  Id SDLGPURenderer::CreateShader(const ShaderType shaderType, const String &source, const String &entryPoint) {
+    PROFILE_SCOPE();
+    const u8 *utf8Source = reinterpret_cast<const u8 *>(source.data());
+    SDL_GPUShaderCreateInfo createInfo = {
+        .code_size = source.size(),
+        .code = utf8Source,
+        .entrypoint = entryPoint.c_str(),
+        .format = SDL_GPU_SHADERFORMAT_SPIRV,
+        .stage = (shaderType == ShaderType::Vertex) ? SDL_GPU_SHADERSTAGE_VERTEX : SDL_GPU_SHADERSTAGE_FRAGMENT,
+    };
+
+    SDL_GPUShader *shader = SDL_CreateGPUShader(m_Context.gpuDevice, &createInfo);
+    if (!shader) {
+      Assert::Crash(std::format("Failed to create GPU shader: {}", SDL_GetError()));
+    }
+
+    SDLGPUShader gpuShader{.type = shaderType, .shader = shader};
+
+    Id shaderId = m_Shaders.size() + 1;
+    m_Shaders[shaderId] = gpuShader;
+    Logger::Info("Created {} shader with ID: {}", (shaderType == ShaderType::Vertex ? "vertex" : "fragment"), shaderId);
+    return shaderId;
+  }
+
+  Id SDLGPURenderer::CreatePipeline(const PipelineCreateInfo &state) {
+    PROFILE_SCOPE();
+    SDL_GPUShader *vertexShader = m_Shaders[state.vertexShaderId].shader;
+    SDL_GPUShader *fragmentShader = m_Shaders[state.fragmentShaderId].shader;
+    if (!vertexShader || !fragmentShader) {
+      Assert::Crash("Cannot create pipeline without valid vertex and fragment shaders");
+      return 0;
+    }
+
+    SDL_GPUColorTargetDescription colorTargetDesc = {
+        .format = SDL_GetGPUSwapchainTextureFormat(m_Context.gpuDevice, m_Context.window),
+    };
+
+    SDL_GPURasterizerState rasterizerState = {.fill_mode = SDL_GPU_FILLMODE_FILL};
+
+    SDL_GPUGraphicsPipelineCreateInfo pipelineInfo = {
+        .vertex_shader = vertexShader,
+        .fragment_shader = fragmentShader,
+        .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
+        .rasterizer_state = rasterizerState,
+        .target_info = {.color_target_descriptions = &colorTargetDesc, .num_color_targets = 1}
+    };
+
+    SDL_GPUGraphicsPipeline *pipeline = SDL_CreateGPUGraphicsPipeline(m_Context.gpuDevice, &pipelineInfo);
+    if (!pipeline) {
+      Assert::Crash(std::format("Failed to create GPU graphics pipeline: {}", SDL_GetError()));
+      return 0;
+    }
+
+    Id pipelineId = m_Pipelines.size() + 1;
+    m_Pipelines[pipelineId] = pipeline;
+
+    Logger::Info("Created graphics pipeline with ID: {}", pipelineId);
+    return pipelineId;
+  }
+
+  void SDLGPURenderer::BindPipeline(Id pipelineId) {
+    PROFILE_SCOPE();
+    auto it = m_Pipelines.find(pipelineId);
+    if (it == m_Pipelines.end()) {
+      Logger::Error("Tried to bind non-existent pipeline with ID: {}", pipelineId);
+      return;
+    }
+
+    SDL_GPUGraphicsPipeline *pipeline = it->second;
+    if (!pipeline) {
+      Logger::Error("Pipeline with ID {} is null", pipelineId);
+      return;
+    }
+
+    SDL_BindGPUGraphicsPipeline(m_Context.renderPass, pipeline);
+  }
+
+  void SDLGPURenderer::BindBuffer(Id bufferId, size_t offset) {
+    PROFILE_SCOPE();
+    auto it = m_Buffers.find(bufferId);
+    if (it == m_Buffers.end()) {
+      Logger::Error("Tried to bind non-existent buffer with ID: {}", bufferId);
+      return;
+    }
+
+    const SDLGPUBuffer &gpuBuffer = it->second;
+    const SDL_GPUBufferBinding binding = {
+        .buffer = gpuBuffer.buffer,
+        .offset = 0,
+    };
+
+    switch (gpuBuffer.type) {
+    case BufferType::Vertex: {
+      SDL_BindGPUVertexBuffers(m_Context.renderPass, 0, &binding, 1);
+      break;
+    }
+    case BufferType::Index: {
+      SDL_BindGPUIndexBuffer(m_Context.renderPass, &binding, SDL_GPU_INDEXELEMENTSIZE_16BIT);
+      break;
+    }
+    }
+  }
+
+  void SDLGPURenderer::DrawIndexed(u32 indexCount, u32 instanceCount, u32 firstIndex) {
+    PROFILE_SCOPE();
+    if (!m_Context.renderPass) {
+      Logger::Error("Cannot draw indexed primitives without an active render pass");
+      return;
+    }
+
+    SDL_DrawGPUIndexedPrimitives(m_Context.renderPass, indexCount, instanceCount, firstIndex, 0, 0);
   }
 
   void SDLGPURenderer::BeginImGuiFrame() {

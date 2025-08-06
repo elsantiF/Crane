@@ -20,8 +20,9 @@ namespace Crane::Graphics {
         const auto &[transform, renderable] = view.get<Scene::Components::Transform, Scene::Components::Renderable>(entity);
 
         m_Renderer.BindTexture(renderable.textureId);
-        m_Renderer.BindVertexBuffer(renderable.meshId);
-        m_Renderer.DrawIndexed(0);
+        m_Renderer.BindBuffer(renderable.vertexBufferId);
+        m_Renderer.BindBuffer(renderable.indexBufferId);
+        m_Renderer.DrawIndexed(renderable.indexCount);
       }
     }
 

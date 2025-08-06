@@ -4,9 +4,12 @@
 
 namespace Crane::Scene::Components {
   struct Renderable {
-    Id meshId = 0;
+    Id vertexBufferId = 0;
+    Id indexBufferId = 0;
     Id textureId = 0;
+    u32 indexCount = 0;
 
-    Renderable(Id meshId = 0, Id textureId = 0) : meshId(meshId), textureId(textureId) {}
+    Renderable(Id vertexBufferId = 0, Id indexBufferId = 0, Id textureId = 0, u32 indexCount = 0)
+        : vertexBufferId(vertexBufferId), indexBufferId(indexBufferId), textureId(textureId), indexCount(indexCount) {}
   };
 }

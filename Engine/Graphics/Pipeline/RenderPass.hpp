@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Base/Types.hpp"
+
 namespace Crane::Scene {
   class World;
 }

@@ -6,11 +6,13 @@
 namespace Crane::Graphics {
   enum class BufferType { Vertex, Index };
 
-  struct PipelineState {
+  struct PipelineCreateInfo {
     Id vertexShaderId = 0;
     Id fragmentShaderId = 0;
     Id renderPassId = 0;
   };
+
+  enum class ShaderType { Vertex, Fragment };
 
   class IRenderer {
   public:
@@ -31,13 +33,13 @@ namespace Crane::Graphics {
     virtual void UpdateBuffer(Id bufferId, size_t offset, size_t size, const void *data) = 0;
     virtual void DestroyBuffer(Id bufferId) = 0;
 
-    virtual Id CreateShader(const String &source, const String &entryPoint = "main") = 0;
+    virtual Id CreateShader(const ShaderType shaderType, const String &source, const String &entryPoint = "main") = 0;
     virtual void DestroyShader(Id shaderId) = 0;
 
     virtual Id CreateTexture(const Texture &texture) = 0;
     virtual void DestroyTexture(Id textureId) = 0;
 
-    virtual Id CreatePipeline(const PipelineState &state) = 0;
+    virtual Id CreatePipeline(const PipelineCreateInfo &state) = 0;
     virtual void DestroyPipeline(Id pipelineId) = 0;
 
     virtual Id CreateRenderPass() = 0;
@@ -45,8 +47,7 @@ namespace Crane::Graphics {
 
     // Drawing commands
     virtual void BindPipeline(Id pipelineId) = 0;
-    virtual void BindVertexBuffer(Id bufferId, size_t offset = 0) = 0;
-    virtual void BindIndexBuffer(Id bufferId, size_t offset = 0) = 0;
+    virtual void BindBuffer(Id bufferId, size_t offset = 0) = 0;
     virtual void BindTexture(Id textureId, size_t slot = 0) = 0;
 
     virtual void Draw(u32 vertexCount, u32 instanceCount = 1, u32 firstVertex = 0) = 0;
