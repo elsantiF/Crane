@@ -1,8 +1,8 @@
 #include "EntityDisplay.hpp"
 #include "Base/Profiler.hpp"
 #include "Base/Types.hpp"
+#include "Graphics/Components/Renderable.hpp"
 #include "Scene/Components/BoxCollider.hpp"
-#include "Scene/Components/Renderable.hpp"
 #include "Scene/Components/Transform.hpp"
 #include <imgui.h>
 #include <numbers>
@@ -37,8 +37,9 @@ namespace Crane::Editor {
 
     if (auto *renderable = registry.try_get<Scene::Components::Renderable>(entity)) {
       if (ImGui::CollapsingHeader("Renderable")) {
-        ImGui::Text("Vertex Buffer ID: %u", renderable->vertexBufferId);
-        ImGui::Text("Index Buffer ID: %u", renderable->indexBufferId);
+        ImGui::Text("Vertex Buffer ID: %u", renderable->mesh.vertexBufferId);
+        ImGui::Text("Index Buffer ID: %u", renderable->mesh.indexBufferId);
+        ImGui::Text("Index Count: %u", renderable->mesh.indexCount);
         ImGui::Text("Texture ID: %u", renderable->textureId);
       }
     }

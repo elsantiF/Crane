@@ -4,6 +4,12 @@
 
 namespace Crane::Graphics {
   struct Mesh {
+    Id vertexBufferId = 0;
+    Id indexBufferId = 0;
+    u32 indexCount = 0;
+  };
+
+  struct RawMesh {
     SVertex2List vertices;
     IndexList indices;
   };
@@ -13,7 +19,7 @@ namespace Crane::Graphics {
     MeshBuilder() = default;
     ~MeshBuilder() = default;
 
-    inline static Mesh CreateQuad(const Math::Vec2f &size, const Color &color = Colors::White) {
+    inline static RawMesh CreateQuad(const Math::Vec2f &size, const Color &color = Colors::White) {
       return {
           .vertices = {{{-size.x / 2, -size.y / 2, 0.0f}, color, {0.f, 0.f}},
                        {{size.x / 2, -size.y / 2, 0.0f}, color, {1.f, 0.f}},
@@ -23,7 +29,7 @@ namespace Crane::Graphics {
       };
     }
 
-    inline static Mesh CreateCircle(f32 radius, i32 segments, const Color &color = Colors::White) {
+    inline static RawMesh CreateCircle(f32 radius, i32 segments, const Color &color = Colors::White) {
       SVertex2List vertices;
       constexpr f32 PI = 3.14159265359f;
       for (i32 i = 0; i < segments; ++i) {

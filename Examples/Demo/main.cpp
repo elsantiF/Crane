@@ -1,13 +1,13 @@
 #include "Application/ClientApplication.hpp"
 #include "Base/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
+#include "Graphics/Components/Renderable.hpp"
 #include "Graphics/Primitives/Mesh.hpp"
 #include "Graphics/TextureManager.hpp"
 #include "Physics/PhysicsSystem.hpp"
 #include "PlayerComponent.hpp"
 #include "PlayerSystem.hpp"
 #include "Scene/Components/BoxCollider.hpp"
-#include "Scene/Components/Renderable.hpp"
 #include "Scene/Components/RigidBody.hpp"
 #include "Scene/Components/Transform.hpp"
 #include <imgui.h>
@@ -32,16 +32,19 @@ protected:
         30.0f, 4
     });
 
-    Graphics::Mesh quadMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f});
-    Graphics::Mesh circleMesh = Graphics::MeshBuilder::CreateCircle(20.0f, 16);
+    Graphics::RawMesh quadMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f});
+    m_QuadMesh = Graphics::Mesh{
+        .vertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, quadMesh.vertices),
+        .indexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, quadMesh.indices),
+        .indexCount = static_cast<u32>(quadMesh.indices.size()),
+    };
 
-    m_QuadVertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, quadMesh.vertices);
-    m_QuadIndexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, quadMesh.indices);
-    m_QuadIndexCount = quadMesh.indices.size();
-
-    m_CircleVertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, circleMesh.vertices);
-    m_CircleIndexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, circleMesh.indices);
-    m_CircleIndexCount = circleMesh.indices.size();
+    Graphics::RawMesh circleMesh = Graphics::MeshBuilder::CreateCircle(20.0f, 16);
+    m_CircleMesh = Graphics::Mesh{
+        .vertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, circleMesh.vertices),
+        .indexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, circleMesh.indices),
+        .indexCount = static_cast<u32>(circleMesh.indices.size()),
+    };
 
     auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
     auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();
@@ -50,15 +53,17 @@ protected:
     m_SquareTextureId = m_Renderer->CreateTexture(*squareTexture);
     m_CircleTextureId = m_Renderer->CreateTexture(*circleTexture);
 
-    Graphics::Mesh groundMesh = Graphics::MeshBuilder::CreateQuad({1000.0f, 50.0f}, Graphics::Colors::Green);
-    u32 groundMeshIndexCount = groundMesh.indices.size();
-    Id groundMeshVertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, groundMesh.vertices);
-    Id groundIndexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, groundMesh.indices);
+    Graphics::RawMesh groundRawMesh = Graphics::MeshBuilder::CreateQuad({1000.0f, 50.0f}, Graphics::Colors::Green);
+    Graphics::Mesh groundMesh = {
+        .vertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, groundRawMesh.vertices),
+        .indexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, groundRawMesh.indices),
+        .indexCount = static_cast<u32>(groundRawMesh.indices.size()),
+    };
+
     Scene::Entity ground = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(ground, Math::Vec3f{512.0f, 725.0f, 0.0f}, 0.1f);
-      GetWorld().AddComponent<Scene::Components::Renderable>(ground, groundMeshVertexBufferId, groundIndexBufferId, m_WhitePixelTextureId,
-                                                             groundMeshIndexCount);
+      GetWorld().AddComponent<Scene::Components::Renderable>(ground, groundMesh, m_WhitePixelTextureId);
 
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {512,  700},
@@ -69,15 +74,17 @@ protected:
       GetWorld().AddComponent<Scene::Components::BoxCollider>(ground, boxcollider);
     }
 
-    Graphics::Mesh redBoxMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Red);
-    Id redBoxVertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, redBoxMesh.vertices);
-    Id redBoxIndexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, redBoxMesh.indices);
+    Graphics::RawMesh redBoxRawMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Red);
+    Graphics::Mesh redBoxMesh = {
+        .vertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, redBoxRawMesh.vertices),
+        .indexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, redBoxRawMesh.indices),
+        .indexCount = static_cast<u32>(redBoxRawMesh.indices.size()),
+    };
 
-    u32 redBoxIndexCount = redBoxMesh.indices.size();
     Scene::Entity box = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(box, Math::Vec3f{400.0f, 100.0f, 0.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(box, redBoxVertexBufferId, redBoxIndexBufferId, m_WhitePixelTextureId, redBoxIndexCount);
+      GetWorld().AddComponent<Scene::Components::Renderable>(box, redBoxMesh, m_WhitePixelTextureId);
 
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {400, 100},
@@ -88,17 +95,17 @@ protected:
       GetWorld().AddComponent<Scene::Components::BoxCollider>(box, boxcollider);
     }
 
-    Graphics::Mesh blueBoxMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Blue);
-    Id blueBoxVertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, blueBoxMesh.vertices);
-    Id blueBoxIndexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, blueBoxMesh.indices);
-
-    u32 blueBoxIndexCount = blueBoxMesh.indices.size();
+    Graphics::RawMesh blueBoxRawMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Blue);
+    Graphics::Mesh blueBoxMesh = {
+        .vertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, blueBoxRawMesh.vertices),
+        .indexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, blueBoxRawMesh.indices),
+        .indexCount = static_cast<u32>(blueBoxRawMesh.indices.size()),
+    };
 
     m_Player = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(m_Player, Math::Vec3f{600.0f, 100.0f, 0.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(m_Player, blueBoxVertexBufferId, blueBoxIndexBufferId, m_WhitePixelTextureId,
-                                                             blueBoxIndexCount);
+      GetWorld().AddComponent<Scene::Components::Renderable>(m_Player, blueBoxMesh, m_WhitePixelTextureId);
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {600, 100},
           {40,  40 },
@@ -129,7 +136,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       GetWorld().AddComponent<Scene::Components::Transform>(box, Math::Vec3f{x, y, 0.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(box, m_QuadVertexBufferId, m_QuadIndexBufferId, m_SquareTextureId, m_QuadIndexCount);
+      GetWorld().AddComponent<Scene::Components::Renderable>(box, m_QuadMesh, m_SquareTextureId);
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {x,  y },
           {40, 40},
@@ -144,8 +151,7 @@ protected:
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
       GetWorld().AddComponent<Scene::Components::Transform>(circle, Math::Vec3f{x, y, 0.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(circle, m_CircleVertexBufferId, m_CircleIndexBufferId, m_CircleTextureId,
-                                                             m_CircleIndexCount);
+      GetWorld().AddComponent<Scene::Components::Renderable>(circle, m_CircleMesh, m_CircleTextureId);
       auto [rb, circlecollider] = m_PhysicsSystem->CreateCircleBody({
           {x, y},
           20, Physics::BodyType::Dynamic
@@ -160,12 +166,8 @@ protected:
 private:
   Scene::Entity m_Player;
 
-  Id m_QuadVertexBufferId = 0;
-  Id m_QuadIndexBufferId = 0;
-  Id m_CircleVertexBufferId = 0;
-  Id m_CircleIndexBufferId = 0;
-  u32 m_QuadIndexCount = 0;
-  u32 m_CircleIndexCount = 0;
+  Graphics::Mesh m_QuadMesh;
+  Graphics::Mesh m_CircleMesh;
 
   Id m_WhitePixelTextureId = 0;
   Id m_SquareTextureId = 0;

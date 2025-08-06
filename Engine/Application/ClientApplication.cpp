@@ -3,9 +3,9 @@
 #include "Base/Logger.hpp"
 #include "Base/Math/Matrix.hpp"
 #include "Base/Profiler.hpp"
-#include "Core/Scene/Components/Renderable.hpp"
 #include "Core/Scene/Components/Transform.hpp"
 #include "Events/Events.hpp"
+#include "Graphics/Components/Renderable.hpp"
 #include "Graphics/Primitives/Vertex.hpp"
 #include "Graphics/Renderer/SDLGPU/SDLGPURenderer.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -197,14 +197,14 @@ namespace Crane {
       if (renderable.textureId != 0) {
         m_Renderer->BindTexture(renderable.textureId, m_SamplerId);
       }
-      m_Renderer->BindBuffer(renderable.vertexBufferId);
-      m_Renderer->BindBuffer(renderable.indexBufferId);
+      m_Renderer->BindBuffer(renderable.mesh.vertexBufferId);
+      m_Renderer->BindBuffer(renderable.mesh.indexBufferId);
 
       mvp.model = glm::translate(Math::Mat4(1.0f), transform.transform.position);
       mvp.model = glm::rotate(mvp.model, transform.transform.rotation, Math::Vec3f(0.0f, 0.0f, 1.0f));
 
       m_Renderer->PushVertexUniformData(0, &mvp, sizeof(mvp));
-      m_Renderer->DrawIndexed(renderable.indexCount);
+      m_Renderer->DrawIndexed(renderable.mesh.indexCount);
     }
 
     m_Renderer->EndRenderPass();
