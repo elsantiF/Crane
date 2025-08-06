@@ -38,5 +38,5 @@ namespace Crane::Graphics {
 
   typedef Vector<SVertex2> SVertex2List;
 
-  typedef Vector<i32> IndexList;
+  typedef Vector<u32> IndexList;
 }

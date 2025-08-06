@@ -31,7 +31,6 @@ namespace Crane::Graphics::SDLGPURenderer {
     void EndRenderPass() override;
 
     // Resource management
-    Id CreateBuffer(BufferType type, size_t size, const void *data = nullptr) override;
     void UpdateBuffer(Id bufferId, size_t offset, size_t size, const void *data) override {};
     void DestroyBuffer(Id bufferId) override {};
 
@@ -64,6 +63,9 @@ namespace Crane::Graphics::SDLGPURenderer {
     String GetName() const override {
       return "SDLGPURenderer";
     }
+
+  protected:
+    virtual Id CreateBufferImpl(BufferType type, size_t size, const void *data) override;
 
   private:
     struct SDLGPUContext {

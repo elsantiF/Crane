@@ -35,18 +35,13 @@ protected:
     Graphics::Mesh quadMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f});
     Graphics::Mesh circleMesh = Graphics::MeshBuilder::CreateCircle(20.0f, 16);
 
+    m_QuadVertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, quadMesh.vertices);
+    m_QuadIndexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, quadMesh.indices);
     m_QuadIndexCount = quadMesh.indices.size();
+
+    m_CircleVertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, circleMesh.vertices);
+    m_CircleIndexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, circleMesh.indices);
     m_CircleIndexCount = circleMesh.indices.size();
-
-    m_QuadVertexBufferId =
-        m_Renderer->CreateBuffer(Graphics::BufferType::Vertex, quadMesh.vertices.size() * sizeof(quadMesh.vertices[0]), quadMesh.vertices.data());
-    m_QuadIndexBufferId =
-        m_Renderer->CreateBuffer(Graphics::BufferType::Index, quadMesh.indices.size() * sizeof(quadMesh.indices[0]), quadMesh.indices.data());
-
-    m_CircleVertexBufferId = m_Renderer->CreateBuffer(Graphics::BufferType::Vertex, circleMesh.vertices.size() * sizeof(circleMesh.vertices[0]),
-                                                      circleMesh.vertices.data());
-    m_CircleIndexBufferId =
-        m_Renderer->CreateBuffer(Graphics::BufferType::Index, circleMesh.indices.size() * sizeof(circleMesh.indices[0]), circleMesh.indices.data());
 
     auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
     auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();
@@ -57,10 +52,8 @@ protected:
 
     Graphics::Mesh groundMesh = Graphics::MeshBuilder::CreateQuad({1000.0f, 50.0f}, Graphics::Colors::Green);
     u32 groundMeshIndexCount = groundMesh.indices.size();
-    Id groundMeshVertexBufferId = m_Renderer->CreateBuffer(Graphics::BufferType::Vertex, groundMesh.vertices.size() * sizeof(groundMesh.vertices[0]),
-                                                           groundMesh.vertices.data());
-    Id groundIndexBufferId =
-        m_Renderer->CreateBuffer(Graphics::BufferType::Index, groundMesh.indices.size() * sizeof(groundMesh.indices[0]), groundMesh.indices.data());
+    Id groundMeshVertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, groundMesh.vertices);
+    Id groundIndexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, groundMesh.indices);
     Scene::Entity ground = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(ground, Math::Vec3f{512.0f, 725.0f, 0.0f}, 0.1f);
@@ -77,10 +70,8 @@ protected:
     }
 
     Graphics::Mesh redBoxMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Red);
-    Id redBoxVertexBufferId = m_Renderer->CreateBuffer(Graphics::BufferType::Vertex, redBoxMesh.vertices.size() * sizeof(redBoxMesh.vertices[0]),
-                                                       redBoxMesh.vertices.data());
-    Id redBoxIndexBufferId =
-        m_Renderer->CreateBuffer(Graphics::BufferType::Index, redBoxMesh.indices.size() * sizeof(redBoxMesh.indices[0]), redBoxMesh.indices.data());
+    Id redBoxVertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, redBoxMesh.vertices);
+    Id redBoxIndexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, redBoxMesh.indices);
 
     u32 redBoxIndexCount = redBoxMesh.indices.size();
     Scene::Entity box = GetWorld().CreateEntity();
@@ -98,10 +89,8 @@ protected:
     }
 
     Graphics::Mesh blueBoxMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Blue);
-    Id blueBoxVertexBufferId = m_Renderer->CreateBuffer(Graphics::BufferType::Vertex, blueBoxMesh.vertices.size() * sizeof(blueBoxMesh.vertices[0]),
-                                                        blueBoxMesh.vertices.data());
-    Id blueBoxIndexBufferId = m_Renderer->CreateBuffer(Graphics::BufferType::Index, blueBoxMesh.indices.size() * sizeof(blueBoxMesh.indices[0]),
-                                                       blueBoxMesh.indices.data());
+    Id blueBoxVertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, blueBoxMesh.vertices);
+    Id blueBoxIndexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, blueBoxMesh.indices);
 
     u32 blueBoxIndexCount = blueBoxMesh.indices.size();
 

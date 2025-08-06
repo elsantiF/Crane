@@ -40,7 +40,11 @@ namespace Crane::Graphics {
     virtual void EndRenderPass() = 0;
 
     // Resource management
-    virtual Id CreateBuffer(BufferType type, size_t size, const void *data = nullptr) = 0;
+    template <typename T>
+    Id CreateBuffer(BufferType type, Span<const T> data) {
+      return CreateBufferImpl(type, data.size_bytes(), data.data());
+    };
+
     virtual void UpdateBuffer(Id bufferId, size_t offset, size_t size, const void *data) = 0;
     virtual void DestroyBuffer(Id bufferId) = 0;
 
@@ -71,5 +75,8 @@ namespace Crane::Graphics {
     virtual void EndImGuiFrame() = 0;
 
     virtual String GetName() const = 0;
+
+  protected:
+    virtual Id CreateBufferImpl(BufferType type, size_t size, const void *data) = 0;
   };
 }

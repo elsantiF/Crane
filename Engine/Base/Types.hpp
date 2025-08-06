@@ -6,6 +6,7 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -34,6 +35,9 @@ using Array = std::array<T, N>;
 
 template <typename T>
 using Vector = std::vector<T>;
+
+template <typename T>
+using Span = std::span<T>;
 
 template <typename K, typename V>
 using Map = std::map<K, V>;

@@ -92,7 +92,7 @@ namespace Crane::Graphics::SDLGPURenderer {
     }
   }
 
-  Id SDLGPURenderer::CreateBuffer(BufferType type, size_t size, const void *data) {
+  Id SDLGPURenderer::CreateBufferImpl(BufferType type, size_t size, const void *data) {
     PROFILE_SCOPE();
     SDL_GPUBufferCreateInfo createInfo = {};
     createInfo.size = size;
