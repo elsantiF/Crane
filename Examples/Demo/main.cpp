@@ -51,6 +51,7 @@ protected:
     auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
     auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();
 
+    m_WhitePixelTextureId = m_Renderer->CreateTexture(Graphics::Texture{1, 1, {0xFFFFFFFF}});
     m_SquareTextureId = m_Renderer->CreateTexture(*squareTexture);
     m_CircleTextureId = m_Renderer->CreateTexture(*circleTexture);
 
@@ -63,7 +64,7 @@ protected:
     Scene::Entity ground = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(ground, Math::Vec3f{512.0f, 725.0f, 0.0f}, 0.1f);
-      GetWorld().AddComponent<Scene::Components::Renderable>(ground, groundMeshVertexBufferId, groundIndexBufferId, m_SquareTextureId,
+      GetWorld().AddComponent<Scene::Components::Renderable>(ground, groundMeshVertexBufferId, groundIndexBufferId, m_WhitePixelTextureId,
                                                              groundMeshIndexCount);
 
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
@@ -166,6 +167,7 @@ private:
   u32 m_QuadIndexCount = 0;
   u32 m_CircleIndexCount = 0;
 
+  Id m_WhitePixelTextureId = 0;
   Id m_SquareTextureId = 0;
   Id m_CircleTextureId = 0;
 
