@@ -51,6 +51,8 @@ namespace Crane::Graphics::SDLGPURenderer {
     void BindBuffer(Id bufferId, size_t offset = 0) override;
     void BindTexture(Id textureId, size_t slot = 0) override {};
 
+    void PushVertexUniformData(u32 slot, const void *data, size_t size) override;
+
     void Draw(u32 vertexCount, u32 instanceCount = 1, u32 firstVertex = 0) override;
     void DrawIndexed(u32 indexCount, u32 instanceCount = 1, u32 firstIndex = 0) override;
 

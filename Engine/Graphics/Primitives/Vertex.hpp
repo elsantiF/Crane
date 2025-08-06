@@ -8,7 +8,7 @@ namespace Crane::Graphics {
    * Simple 2D Vertex
    */
   struct SVertex2 {
-    Math::Vec2f position;
+    Math::Vec3f position;
     Color color;
     Math::Vec2f uv;
   };

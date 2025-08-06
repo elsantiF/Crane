@@ -2,13 +2,14 @@
 #include "Base/Assert.hpp"
 #include "Base/Profiler.hpp"
 #include "Graphics/Primitives/Color.hpp"
+#include "Graphics/Primitives/Vertex.hpp"
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlgpu3.h>
 
 namespace Crane::Graphics::SDLGPURenderer {
   void SDLGPURenderer::Initialize() {
     PROFILE_SCOPE();
-    m_Context.gpuDevice = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, false, "vulkan");
+    m_Context.gpuDevice = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, true, "vulkan");
     if (!m_Context.gpuDevice) {
       Assert::Crash(std::format("Failed to create GPU device: {}", SDL_GetError()));
     }
@@ -138,6 +139,7 @@ namespace Crane::Graphics::SDLGPURenderer {
         .entrypoint = entryPoint.c_str(),
         .format = SDL_GPU_SHADERFORMAT_SPIRV,
         .stage = (shaderType == ShaderType::Vertex) ? SDL_GPU_SHADERSTAGE_VERTEX : SDL_GPU_SHADERSTAGE_FRAGMENT,
+        .num_uniform_buffers = 1,
     };
 
     SDL_GPUShader *shader = SDL_CreateGPUShader(m_Context.gpuDevice, &createInfo);
@@ -168,12 +170,43 @@ namespace Crane::Graphics::SDLGPURenderer {
 
     SDL_GPURasterizerState rasterizerState = {.fill_mode = SDL_GPU_FILLMODE_FILL};
 
+    SDL_GPUVertexBufferDescription vertexBufferDesc[] = {
+        {.slot = 0, .pitch = sizeof(float) * 9, .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX},
+    };
+
+    // TODO: Define vertex attributes based on a vertex structure
+    SDL_GPUVertexAttribute vertexAttributes[] = {
+        {// Position
+         .location = 0,
+         .buffer_slot = 0,
+         .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+         .offset = offsetof(SVertex2, position)},
+        {// Color
+         .location = 1,
+         .buffer_slot = 0,
+         .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+         .offset = offsetof(SVertex2, color)   },
+        {// Texture coordinates
+         .location = 2,
+         .buffer_slot = 0,
+         .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+         .offset = offsetof(SVertex2, uv)      }
+    };
+
+    SDL_GPUVertexInputState vertexInputState = {
+        .vertex_buffer_descriptions = vertexBufferDesc,
+        .num_vertex_buffers = 1,
+        .vertex_attributes = vertexAttributes,
+        .num_vertex_attributes = 3,
+    };
+
     SDL_GPUGraphicsPipelineCreateInfo pipelineInfo = {
         .vertex_shader = vertexShader,
         .fragment_shader = fragmentShader,
+        .vertex_input_state = vertexInputState,
         .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
         .rasterizer_state = rasterizerState,
-        .target_info = {.color_target_descriptions = &colorTargetDesc, .num_color_targets = 1}
+        .target_info = {.color_target_descriptions = &colorTargetDesc, .num_color_targets = 1},
     };
 
     SDL_GPUGraphicsPipeline *pipeline = SDL_CreateGPUGraphicsPipeline(m_Context.gpuDevice, &pipelineInfo);
@@ -230,6 +263,16 @@ namespace Crane::Graphics::SDLGPURenderer {
       break;
     }
     }
+  }
+
+  void SDLGPURenderer::PushVertexUniformData(u32 slot, const void *data, size_t size) {
+    PROFILE_SCOPE();
+    if (!data || size == 0) {
+      Logger::Error("Invalid data or size for uniform vertex data");
+      return;
+    }
+
+    SDL_PushGPUVertexUniformData(m_Context.commandBuffer, slot, data, size);
   }
 
   void SDLGPURenderer::Draw(u32 vertexCount, u32 instanceCount, u32 firstVertex) {

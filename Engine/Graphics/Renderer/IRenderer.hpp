@@ -46,6 +46,8 @@ namespace Crane::Graphics {
     virtual void BindBuffer(Id bufferId, size_t offset = 0) = 0;
     virtual void BindTexture(Id textureId, size_t slot = 0) = 0;
 
+    virtual void PushVertexUniformData(u32 slot, const void *data, size_t size) = 0;
+
     virtual void Draw(u32 vertexCount, u32 instanceCount = 1, u32 firstVertex = 0) = 0;
     virtual void DrawIndexed(u32 indexCount, u32 instanceCount = 1, u32 firstIndex = 0) = 0;
 
