@@ -2,6 +2,7 @@
 
 #include "Base/Types.hpp"
 #include "Primitives/Texture.hpp"
+#include "Primitives/Vertex.hpp"
 
 namespace Crane::Graphics {
   enum class BufferType { Vertex, Index };
@@ -9,13 +10,14 @@ namespace Crane::Graphics {
   struct PipelineCreateInfo {
     Id vertexShaderId = 0;
     Id fragmentShaderId = 0;
-    Id renderPassId = 0;
+    Vector<VertexDefinition> vertexDefinition;
+    u32 vertexSize = 0;
   };
 
   enum class ShaderType { Vertex, Fragment };
 
   enum class FilterMode { Nearest, Linear };
-  enum class AddressMode { Repeat, MirroredRepeat, ClampToEdge, ClampToBorder };
+  enum class AddressMode { Repeat, MirroredRepeat, ClampToEdge };
   struct SamplerCreateInfo {
     FilterMode minFilter = FilterMode::Linear;
     FilterMode magFilter = FilterMode::Linear;

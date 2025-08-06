@@ -6,6 +6,7 @@
 #include "Core/Scene/Components/Renderable.hpp"
 #include "Core/Scene/Components/Transform.hpp"
 #include "Events/Events.hpp"
+#include "Graphics/Primitives/Vertex.hpp"
 #include "Graphics/Renderer/SDLGPU/SDLGPURenderer.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui_impl_sdl3.h>
@@ -128,6 +129,9 @@ namespace Crane {
     Graphics::PipelineCreateInfo pipelineInfo;
     pipelineInfo.vertexShaderId = vertexShaderId;
     pipelineInfo.fragmentShaderId = fragmentShaderId;
+    Graphics::SVertex2 vertex;
+    pipelineInfo.vertexDefinition = vertex.GetDefinition();
+    pipelineInfo.vertexSize = vertex.GetSize();
 
     m_RenderPipelineId = m_Renderer->CreatePipeline(pipelineInfo);
     m_SamplerId = m_Renderer->CreateSampler({});

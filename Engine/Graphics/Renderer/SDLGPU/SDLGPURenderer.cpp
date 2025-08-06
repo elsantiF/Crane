@@ -6,6 +6,15 @@
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlgpu3.h>
 
+static SDL_GPUSamplerAddressMode ConvertAddressMode(Crane::Graphics::AddressMode mode) {
+  switch (mode) {
+  case Crane::Graphics::AddressMode::Repeat:         return SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
+  case Crane::Graphics::AddressMode::MirroredRepeat: return SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT;
+  case Crane::Graphics::AddressMode::ClampToEdge:    return SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
+  default:                                           return SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
+  }
+}
+
 namespace Crane::Graphics::SDLGPURenderer {
   void SDLGPURenderer::Initialize() {
     PROFILE_SCOPE();
@@ -222,18 +231,9 @@ namespace Crane::Graphics::SDLGPURenderer {
     SDL_GPUSamplerCreateInfo createInfo = {
         .min_filter = (info.minFilter == FilterMode::Linear) ? SDL_GPU_FILTER_LINEAR : SDL_GPU_FILTER_NEAREST,
         .mag_filter = (info.magFilter == FilterMode::Linear) ? SDL_GPU_FILTER_LINEAR : SDL_GPU_FILTER_NEAREST,
-        .address_mode_u = (info.addressU == AddressMode::Repeat)           ? SDL_GPU_SAMPLERADDRESSMODE_REPEAT
-                          : (info.addressU == AddressMode::MirroredRepeat) ? SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT
-                          : (info.addressU == AddressMode::ClampToEdge)    ? SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE
-                                                                           : SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-        .address_mode_v = (info.addressV == AddressMode::Repeat)           ? SDL_GPU_SAMPLERADDRESSMODE_REPEAT
-                          : (info.addressV == AddressMode::MirroredRepeat) ? SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT
-                          : (info.addressV == AddressMode::ClampToEdge)    ? SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE
-                                                                           : SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-        .address_mode_w = (info.addressW == AddressMode::Repeat)           ? SDL_GPU_SAMPLERADDRESSMODE_REPEAT
-                          : (info.addressW == AddressMode::MirroredRepeat) ? SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT
-                          : (info.addressW == AddressMode::ClampToEdge)    ? SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE
-                                                                           : SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+        .address_mode_u = ConvertAddressMode(info.addressU),
+        .address_mode_v = ConvertAddressMode(info.addressV),
+        .address_mode_w = ConvertAddressMode(info.addressW),
     };
 
     SDL_GPUSampler *sampler = SDL_CreateGPUSampler(m_Context.gpuDevice, &createInfo);
@@ -263,33 +263,37 @@ namespace Crane::Graphics::SDLGPURenderer {
     SDL_GPURasterizerState rasterizerState = {.fill_mode = SDL_GPU_FILLMODE_FILL};
 
     SDL_GPUVertexBufferDescription vertexBufferDesc[] = {
-        {.slot = 0, .pitch = sizeof(float) * 9, .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX},
+        {.slot = 0, .pitch = state.vertexSize, .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX},
     };
 
     // TODO: Define vertex attributes based on a vertex structure
-    SDL_GPUVertexAttribute vertexAttributes[] = {
-        {// Position
-         .location = 0,
-         .buffer_slot = 0,
-         .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-         .offset = offsetof(SVertex2, position)},
-        {// Color
-         .location = 1,
-         .buffer_slot = 0,
-         .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-         .offset = offsetof(SVertex2, color)   },
-        {// Texture coordinates
-         .location = 2,
-         .buffer_slot = 0,
-         .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-         .offset = offsetof(SVertex2, uv)      }
-    };
+    Vector<SDL_GPUVertexAttribute> vertexAttributes;
+
+    for (const auto &attr : state.vertexDefinition) {
+      SDL_GPUVertexAttribute gpuAttr = {};
+      gpuAttr.location = attr.location;
+      gpuAttr.buffer_slot = 0;
+      gpuAttr.offset = attr.offset;
+
+      switch (attr.format) {
+      case VertexElementFormat::Float1: gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT; break;
+      case VertexElementFormat::Float2: gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2; break;
+      case VertexElementFormat::Float3: gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3; break;
+      case VertexElementFormat::Float4: gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4; break;
+      case VertexElementFormat::Int1:   gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_INT; break;
+      case VertexElementFormat::Int2:   gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_INT2; break;
+      case VertexElementFormat::Int3:   gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_INT3; break;
+      case VertexElementFormat::Int4:   gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_INT4; break;
+      default:                          Assert::Crash("Unsupported vertex element format"); break;
+      }
+      vertexAttributes.push_back(gpuAttr);
+    }
 
     SDL_GPUVertexInputState vertexInputState = {
         .vertex_buffer_descriptions = vertexBufferDesc,
         .num_vertex_buffers = 1,
-        .vertex_attributes = vertexAttributes,
-        .num_vertex_attributes = 3,
+        .vertex_attributes = vertexAttributes.data(),
+        .num_vertex_attributes = static_cast<u32>(vertexAttributes.size()),
     };
 
     SDL_GPUGraphicsPipelineCreateInfo pipelineInfo = {
