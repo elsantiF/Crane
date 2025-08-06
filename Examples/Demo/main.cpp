@@ -51,8 +51,8 @@ protected:
     auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
     auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();
 
-    /*m_SquareTextureId = renderer.LoadTexture(squareTexture);
-    m_CircleTextureId = renderer.LoadTexture(circleTexture);*/
+    m_SquareTextureId = m_Renderer->CreateTexture(*squareTexture);
+    m_CircleTextureId = m_Renderer->CreateTexture(*circleTexture);
 
     Graphics::Mesh groundMesh = Graphics::MeshBuilder::CreateQuad({1000.0f, 50.0f}, Graphics::Colors::Green);
     u32 groundMeshIndexCount = groundMesh.indices.size();
@@ -63,7 +63,8 @@ protected:
     Scene::Entity ground = GetWorld().CreateEntity();
     {
       GetWorld().AddComponent<Scene::Components::Transform>(ground, Math::Vec3f{512.0f, 725.0f, 0.0f}, 0.1f);
-      GetWorld().AddComponent<Scene::Components::Renderable>(ground, groundMeshVertexBufferId, groundIndexBufferId, 0, groundMeshIndexCount);
+      GetWorld().AddComponent<Scene::Components::Renderable>(ground, groundMeshVertexBufferId, groundIndexBufferId, m_SquareTextureId,
+                                                             groundMeshIndexCount);
 
       auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
           {512,  700},

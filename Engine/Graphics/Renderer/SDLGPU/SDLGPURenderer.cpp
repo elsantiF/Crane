@@ -133,12 +133,14 @@ namespace Crane::Graphics::SDLGPURenderer {
 
   Id SDLGPURenderer::CreateShader(const ShaderType shaderType, const u8 *source, const u32 size, const String &entryPoint) {
     PROFILE_SCOPE();
+    u32 numSamplers = (shaderType == ShaderType::Fragment) ? 1 : 0;
     SDL_GPUShaderCreateInfo createInfo = {
         .code_size = size,
         .code = source,
         .entrypoint = entryPoint.c_str(),
         .format = SDL_GPU_SHADERFORMAT_SPIRV,
         .stage = (shaderType == ShaderType::Vertex) ? SDL_GPU_SHADERSTAGE_VERTEX : SDL_GPU_SHADERSTAGE_FRAGMENT,
+        .num_samplers = numSamplers,
         .num_uniform_buffers = 1,
     };
 
@@ -153,6 +155,96 @@ namespace Crane::Graphics::SDLGPURenderer {
     m_Shaders[shaderId] = gpuShader;
     Logger::Info("Created {} shader with ID: {}", (shaderType == ShaderType::Vertex ? "vertex" : "fragment"), shaderId);
     return shaderId;
+  }
+
+  Id SDLGPURenderer::CreateTexture(const Texture &texture) {
+    PROFILE_SCOPE();
+    SDL_GPUTextureCreateInfo createInfo = {
+        .type = SDL_GPU_TEXTURETYPE_2D,
+        .format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+        .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER,
+        .width = texture.width,
+        .height = texture.height,
+        .layer_count_or_depth = 1,
+        .num_levels = 1,
+    };
+
+    SDL_GPUTexture *gpuTexture = SDL_CreateGPUTexture(m_Context.gpuDevice, &createInfo);
+    if (!gpuTexture) {
+      Assert::Crash(std::format("Failed to create GPU texture: {}", SDL_GetError()));
+    }
+
+    if (!texture.data.empty()) {
+      SDL_GPUTransferBufferCreateInfo transferInfo = {
+          .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+          .size = static_cast<u32>(texture.data.size() * sizeof(u32)),
+      };
+
+      SDL_GPUTransferBuffer *transferBuffer = SDL_CreateGPUTransferBuffer(m_Context.gpuDevice, &transferInfo);
+      if (!transferBuffer) {
+        Assert::Crash(std::format("Failed to create GPU transfer buffer: {}", SDL_GetError()));
+      }
+
+      void *mappedData = SDL_MapGPUTransferBuffer(m_Context.gpuDevice, transferBuffer, false);
+      std::memcpy(mappedData, texture.data.data(), transferInfo.size);
+      SDL_UnmapGPUTransferBuffer(m_Context.gpuDevice, transferBuffer);
+
+      SDL_GPUCommandBuffer *commandBuffer = SDL_AcquireGPUCommandBuffer(m_Context.gpuDevice);
+      SDL_GPUCopyPass *copyPass = SDL_BeginGPUCopyPass(commandBuffer);
+
+      SDL_GPUTextureTransferInfo textureTransferInfo = {
+          .transfer_buffer = transferBuffer,
+          .offset = 0,
+      };
+
+      SDL_GPUTextureRegion region = {
+          .texture = gpuTexture,
+          .w = texture.width,
+          .h = texture.height,
+          .d = 1,
+      };
+
+      SDL_UploadToGPUTexture(copyPass, &textureTransferInfo, &region, false);
+      SDL_EndGPUCopyPass(copyPass);
+
+      SDL_SubmitGPUCommandBuffer(commandBuffer);
+      SDL_ReleaseGPUTransferBuffer(m_Context.gpuDevice, transferBuffer);
+    }
+
+    Id textureId = m_Textures.size() + 1;
+    m_Textures[textureId] = gpuTexture;
+    Logger::Info("Created texture with ID: {}", textureId);
+    return textureId;
+  }
+
+  Id SDLGPURenderer::CreateSampler(const SamplerCreateInfo &info) {
+    PROFILE_SCOPE();
+    SDL_GPUSamplerCreateInfo createInfo = {
+        .min_filter = (info.minFilter == FilterMode::Linear) ? SDL_GPU_FILTER_LINEAR : SDL_GPU_FILTER_NEAREST,
+        .mag_filter = (info.magFilter == FilterMode::Linear) ? SDL_GPU_FILTER_LINEAR : SDL_GPU_FILTER_NEAREST,
+        .address_mode_u = (info.addressU == AddressMode::Repeat)           ? SDL_GPU_SAMPLERADDRESSMODE_REPEAT
+                          : (info.addressU == AddressMode::MirroredRepeat) ? SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT
+                          : (info.addressU == AddressMode::ClampToEdge)    ? SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE
+                                                                           : SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+        .address_mode_v = (info.addressV == AddressMode::Repeat)           ? SDL_GPU_SAMPLERADDRESSMODE_REPEAT
+                          : (info.addressV == AddressMode::MirroredRepeat) ? SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT
+                          : (info.addressV == AddressMode::ClampToEdge)    ? SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE
+                                                                           : SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+        .address_mode_w = (info.addressW == AddressMode::Repeat)           ? SDL_GPU_SAMPLERADDRESSMODE_REPEAT
+                          : (info.addressW == AddressMode::MirroredRepeat) ? SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT
+                          : (info.addressW == AddressMode::ClampToEdge)    ? SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE
+                                                                           : SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    };
+
+    SDL_GPUSampler *sampler = SDL_CreateGPUSampler(m_Context.gpuDevice, &createInfo);
+    if (!sampler) {
+      Assert::Crash(std::format("Failed to create GPU sampler: {}", SDL_GetError()));
+    }
+
+    Id samplerId = m_Samplers.size() + 1;
+    m_Samplers[samplerId] = sampler;
+    Logger::Info("Created sampler with ID: {}", samplerId);
+    return samplerId;
   }
 
   Id SDLGPURenderer::CreatePipeline(const PipelineCreateInfo &state) {
@@ -273,6 +365,31 @@ namespace Crane::Graphics::SDLGPURenderer {
     }
 
     SDL_PushGPUVertexUniformData(m_Context.commandBuffer, slot, data, size);
+  }
+
+  void SDLGPURenderer::BindTexture(Id textureId, Id samplerId) {
+    PROFILE_SCOPE();
+    auto texIt = m_Textures.find(textureId);
+    if (texIt == m_Textures.end()) {
+      Logger::Error("Tried to bind non-existent texture with ID: {}", textureId);
+      return;
+    }
+
+    auto sampIt = m_Samplers.find(samplerId);
+    if (sampIt == m_Samplers.end()) {
+      Logger::Error("Tried to bind non-existent sampler with ID: {}", samplerId);
+      return;
+    }
+
+    SDL_GPUTexture *texture = texIt->second;
+    SDL_GPUSampler *sampler = sampIt->second;
+
+    SDL_GPUTextureSamplerBinding textureBinding = {
+        .texture = texture,
+        .sampler = sampler,
+    };
+
+    SDL_BindGPUFragmentSamplers(m_Context.renderPass, 0, &textureBinding, 1);
   }
 
   void SDLGPURenderer::Draw(u32 vertexCount, u32 instanceCount, u32 firstVertex) {

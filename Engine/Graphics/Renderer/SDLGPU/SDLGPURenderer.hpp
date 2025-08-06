@@ -38,10 +38,11 @@ namespace Crane::Graphics::SDLGPURenderer {
     Id CreateShader(const ShaderType shaderType, const u8 *source, const u32 size, const String &entryPoint = "main") override;
     void DestroyShader(Id shaderId) override {};
 
-    Id CreateTexture(const Texture &texture) override {
-      return 0;
-    };
+    Id CreateTexture(const Texture &texture) override;
     void DestroyTexture(Id textureId) override {};
+
+    Id CreateSampler(const SamplerCreateInfo &info) override;
+    void DestroySampler(Id samplerId) override {};
 
     Id CreatePipeline(const PipelineCreateInfo &state) override;
     void DestroyPipeline(Id pipelineId) override {};
@@ -49,7 +50,7 @@ namespace Crane::Graphics::SDLGPURenderer {
     // Drawing commands
     void BindPipeline(Id pipelineId) override;
     void BindBuffer(Id bufferId, size_t offset = 0) override;
-    void BindTexture(Id textureId, size_t slot = 0) override {};
+    void BindTexture(Id textureId, Id samplerId) override;
 
     void PushVertexUniformData(u32 slot, const void *data, size_t size) override;
 
@@ -75,6 +76,7 @@ namespace Crane::Graphics::SDLGPURenderer {
 
     UnorderedMap<Id, SDLGPUBuffer> m_Buffers;
     UnorderedMap<Id, SDL_GPUTexture *> m_Textures;
+    UnorderedMap<Id, SDL_GPUSampler *> m_Samplers;
     UnorderedMap<Id, SDLGPUShader> m_Shaders;
     UnorderedMap<Id, SDL_GPUGraphicsPipeline *> m_Pipelines;
   };

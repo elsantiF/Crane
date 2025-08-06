@@ -24,5 +24,6 @@ namespace Crane {
 
     Id m_RenderPipelineId = 0;
     Id m_RenderPassId = 0;
+    Id m_SamplerId = 0;
   };
 }

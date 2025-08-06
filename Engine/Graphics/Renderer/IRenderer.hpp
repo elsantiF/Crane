@@ -14,6 +14,16 @@ namespace Crane::Graphics {
 
   enum class ShaderType { Vertex, Fragment };
 
+  enum class FilterMode { Nearest, Linear };
+  enum class AddressMode { Repeat, MirroredRepeat, ClampToEdge, ClampToBorder };
+  struct SamplerCreateInfo {
+    FilterMode minFilter = FilterMode::Linear;
+    FilterMode magFilter = FilterMode::Linear;
+    AddressMode addressU = AddressMode::Repeat;
+    AddressMode addressV = AddressMode::Repeat;
+    AddressMode addressW = AddressMode::Repeat;
+  };
+
   class IRenderer {
   public:
     virtual ~IRenderer() = default;
@@ -38,13 +48,16 @@ namespace Crane::Graphics {
     virtual Id CreateTexture(const Texture &texture) = 0;
     virtual void DestroyTexture(Id textureId) = 0;
 
+    virtual Id CreateSampler(const SamplerCreateInfo &info) = 0;
+    virtual void DestroySampler(Id samplerId) = 0;
+
     virtual Id CreatePipeline(const PipelineCreateInfo &state) = 0;
     virtual void DestroyPipeline(Id pipelineId) = 0;
 
     // Drawing commands
     virtual void BindPipeline(Id pipelineId) = 0;
     virtual void BindBuffer(Id bufferId, size_t offset = 0) = 0;
-    virtual void BindTexture(Id textureId, size_t slot = 0) = 0;
+    virtual void BindTexture(Id textureId, Id samplerId) = 0;
 
     virtual void PushVertexUniformData(u32 slot, const void *data, size_t size) = 0;
 
