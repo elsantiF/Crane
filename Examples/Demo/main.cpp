@@ -33,32 +33,20 @@ protected:
     });
 
     Graphics::RawMesh quadMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f});
-    m_QuadMesh = Graphics::Mesh{
-        .vertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, quadMesh.vertices),
-        .indexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, quadMesh.indices),
-        .indexCount = static_cast<u32>(quadMesh.indices.size()),
-    };
+    m_QuadMesh = m_RenderSystem->CreateMesh(quadMesh);
 
     Graphics::RawMesh circleMesh = Graphics::MeshBuilder::CreateCircle(20.0f, 16);
-    m_CircleMesh = Graphics::Mesh{
-        .vertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, circleMesh.vertices),
-        .indexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, circleMesh.indices),
-        .indexCount = static_cast<u32>(circleMesh.indices.size()),
-    };
+    m_CircleMesh = m_RenderSystem->CreateMesh(circleMesh);
 
     auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
     auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();
 
-    m_WhitePixelTextureId = m_Renderer->CreateTexture(Graphics::Texture{1, 1, {0xFFFFFFFF}});
-    m_SquareTextureId = m_Renderer->CreateTexture(*squareTexture);
-    m_CircleTextureId = m_Renderer->CreateTexture(*circleTexture);
+    m_WhitePixelTextureId = m_RenderSystem->CreateTexture(Graphics::Texture{1, 1, {0xFFFFFFFF}});
+    m_SquareTextureId = m_RenderSystem->CreateTexture(*squareTexture);
+    m_CircleTextureId = m_RenderSystem->CreateTexture(*circleTexture);
 
     Graphics::RawMesh groundRawMesh = Graphics::MeshBuilder::CreateQuad({1000.0f, 50.0f}, Graphics::Colors::Green);
-    Graphics::Mesh groundMesh = {
-        .vertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, groundRawMesh.vertices),
-        .indexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, groundRawMesh.indices),
-        .indexCount = static_cast<u32>(groundRawMesh.indices.size()),
-    };
+    Graphics::Mesh groundMesh = m_RenderSystem->CreateMesh(groundRawMesh);
 
     Scene::Entity ground = GetWorld().CreateEntity();
     {
@@ -75,11 +63,7 @@ protected:
     }
 
     Graphics::RawMesh redBoxRawMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Red);
-    Graphics::Mesh redBoxMesh = {
-        .vertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, redBoxRawMesh.vertices),
-        .indexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, redBoxRawMesh.indices),
-        .indexCount = static_cast<u32>(redBoxRawMesh.indices.size()),
-    };
+    Graphics::Mesh redBoxMesh = m_RenderSystem->CreateMesh(redBoxRawMesh);
 
     Scene::Entity box = GetWorld().CreateEntity();
     {
@@ -96,11 +80,7 @@ protected:
     }
 
     Graphics::RawMesh blueBoxRawMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Blue);
-    Graphics::Mesh blueBoxMesh = {
-        .vertexBufferId = m_Renderer->CreateBuffer<const Graphics::SVertex2>(Graphics::BufferType::Vertex, blueBoxRawMesh.vertices),
-        .indexBufferId = m_Renderer->CreateBuffer<const u32>(Graphics::BufferType::Index, blueBoxRawMesh.indices),
-        .indexCount = static_cast<u32>(blueBoxRawMesh.indices.size()),
-    };
+    Graphics::Mesh blueBoxMesh = m_RenderSystem->CreateMesh(blueBoxRawMesh);
 
     m_Player = GetWorld().CreateEntity();
     {
