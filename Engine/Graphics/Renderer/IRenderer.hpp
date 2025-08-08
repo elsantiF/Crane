@@ -7,11 +7,13 @@
 namespace Crane::Graphics {
   enum class BufferType { Vertex, Index };
 
+  enum class PrimitiveType { TriangleList, TriangleStrip, LineList, LineStrip, PointList };
   struct PipelineCreateInfo {
     Id vertexShaderId = 0;
     Id fragmentShaderId = 0;
     Vector<VertexDefinition> vertexDefinition;
     u32 vertexSize = 0;
+    PrimitiveType primitiveType = PrimitiveType::TriangleList;
   };
 
   enum class ShaderType { Vertex, Fragment };

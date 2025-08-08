@@ -15,6 +15,47 @@ static SDL_GPUSamplerAddressMode ConvertAddressMode(Crane::Graphics::AddressMode
   }
 }
 
+static SDL_GPUFilter ConvertFilterMode(Crane::Graphics::FilterMode mode) {
+  switch (mode) {
+  case Crane::Graphics::FilterMode::Nearest: return SDL_GPU_FILTER_NEAREST;
+  case Crane::Graphics::FilterMode::Linear:  return SDL_GPU_FILTER_LINEAR;
+  default:                                   return SDL_GPU_FILTER_LINEAR;
+  }
+}
+
+static SDL_GPUPrimitiveType ConvertPrimitiveType(Crane::Graphics::PrimitiveType type) {
+  switch (type) {
+  case Crane::Graphics::PrimitiveType::TriangleList:  return SDL_GPU_PRIMITIVETYPE_TRIANGLELIST;
+  case Crane::Graphics::PrimitiveType::TriangleStrip: return SDL_GPU_PRIMITIVETYPE_TRIANGLESTRIP;
+  case Crane::Graphics::PrimitiveType::LineList:      return SDL_GPU_PRIMITIVETYPE_LINELIST;
+  case Crane::Graphics::PrimitiveType::LineStrip:     return SDL_GPU_PRIMITIVETYPE_LINESTRIP;
+  case Crane::Graphics::PrimitiveType::PointList:     return SDL_GPU_PRIMITIVETYPE_POINTLIST;
+  default:                                            return SDL_GPU_PRIMITIVETYPE_TRIANGLELIST;
+  }
+}
+
+static SDL_GPUVertexElementFormat ConvertVertexElementFormat(Crane::Graphics::VertexElementFormat format) {
+  switch (format) {
+  case Crane::Graphics::VertexElementFormat::Float1: return SDL_GPU_VERTEXELEMENTFORMAT_FLOAT;
+  case Crane::Graphics::VertexElementFormat::Float2: return SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2;
+  case Crane::Graphics::VertexElementFormat::Float3: return SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3;
+  case Crane::Graphics::VertexElementFormat::Float4: return SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4;
+  case Crane::Graphics::VertexElementFormat::Int1:   return SDL_GPU_VERTEXELEMENTFORMAT_INT;
+  case Crane::Graphics::VertexElementFormat::Int2:   return SDL_GPU_VERTEXELEMENTFORMAT_INT2;
+  case Crane::Graphics::VertexElementFormat::Int3:   return SDL_GPU_VERTEXELEMENTFORMAT_INT3;
+  case Crane::Graphics::VertexElementFormat::Int4:   return SDL_GPU_VERTEXELEMENTFORMAT_INT4;
+  default:                                           return SDL_GPU_VERTEXELEMENTFORMAT_FLOAT;
+  }
+}
+
+static SDL_GPUShaderStage ConvertShaderStage(Crane::Graphics::ShaderType type) {
+  switch (type) {
+  case Crane::Graphics::ShaderType::Vertex:   return SDL_GPU_SHADERSTAGE_VERTEX;
+  case Crane::Graphics::ShaderType::Fragment: return SDL_GPU_SHADERSTAGE_FRAGMENT;
+  default:                                    return SDL_GPU_SHADERSTAGE_VERTEX;
+  }
+}
+
 namespace Crane::Graphics::SDLGPURenderer {
   void SDLGPURenderer::Initialize() {
     PROFILE_SCOPE();
@@ -148,7 +189,7 @@ namespace Crane::Graphics::SDLGPURenderer {
         .code = source,
         .entrypoint = entryPoint.c_str(),
         .format = SDL_GPU_SHADERFORMAT_SPIRV,
-        .stage = (shaderType == ShaderType::Vertex) ? SDL_GPU_SHADERSTAGE_VERTEX : SDL_GPU_SHADERSTAGE_FRAGMENT,
+        .stage = ConvertShaderStage(shaderType),
         .num_samplers = numSamplers,
         .num_uniform_buffers = 1,
     };
@@ -229,8 +270,8 @@ namespace Crane::Graphics::SDLGPURenderer {
   Id SDLGPURenderer::CreateSampler(const SamplerCreateInfo &info) {
     PROFILE_SCOPE();
     SDL_GPUSamplerCreateInfo createInfo = {
-        .min_filter = (info.minFilter == FilterMode::Linear) ? SDL_GPU_FILTER_LINEAR : SDL_GPU_FILTER_NEAREST,
-        .mag_filter = (info.magFilter == FilterMode::Linear) ? SDL_GPU_FILTER_LINEAR : SDL_GPU_FILTER_NEAREST,
+        .min_filter = ConvertFilterMode(info.minFilter),
+        .mag_filter = ConvertFilterMode(info.magFilter),
         .address_mode_u = ConvertAddressMode(info.addressU),
         .address_mode_v = ConvertAddressMode(info.addressV),
         .address_mode_w = ConvertAddressMode(info.addressW),
@@ -274,18 +315,7 @@ namespace Crane::Graphics::SDLGPURenderer {
       gpuAttr.location = attr.location;
       gpuAttr.buffer_slot = 0;
       gpuAttr.offset = attr.offset;
-
-      switch (attr.format) {
-      case VertexElementFormat::Float1: gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT; break;
-      case VertexElementFormat::Float2: gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2; break;
-      case VertexElementFormat::Float3: gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3; break;
-      case VertexElementFormat::Float4: gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4; break;
-      case VertexElementFormat::Int1:   gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_INT; break;
-      case VertexElementFormat::Int2:   gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_INT2; break;
-      case VertexElementFormat::Int3:   gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_INT3; break;
-      case VertexElementFormat::Int4:   gpuAttr.format = SDL_GPU_VERTEXELEMENTFORMAT_INT4; break;
-      default:                          Assert::Crash("Unsupported vertex element format"); break;
-      }
+      gpuAttr.format = ConvertVertexElementFormat(attr.format);
       vertexAttributes.push_back(gpuAttr);
     }
 
@@ -300,7 +330,7 @@ namespace Crane::Graphics::SDLGPURenderer {
         .vertex_shader = vertexShader,
         .fragment_shader = fragmentShader,
         .vertex_input_state = vertexInputState,
-        .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
+        .primitive_type = ConvertPrimitiveType(state.primitiveType),
         .rasterizer_state = rasterizerState,
         .target_info = {.color_target_descriptions = &colorTargetDesc, .num_color_targets = 1},
     };
