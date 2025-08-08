@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Base/Math/Matrix.hpp"
 #include "Core/Scene/World.hpp"
 #include "Graphics/Primitives/Mesh.hpp"
 #include "Graphics/Primitives/Texture.hpp"
 #include "Graphics/Renderer/IRenderer.hpp"
+#include "RenderPass.hpp"
 
 namespace Crane::Graphics::Systems {
   class RenderSystem {
@@ -24,19 +24,18 @@ namespace Crane::Graphics::Systems {
       m_Renderer->EndFrame();
     }
 
+    // Render passes
+    template <typename T, typename... Args>
+    void AddRenderPass(Args &&...args) {
+      m_RenderPasses.push_back(MakeScope<T>(*m_Renderer, std::forward<Args>(args)...));
+    }
+
     // Resource methods
     Mesh CreateMesh(const RawMesh &rawMesh);
     Id CreateTexture(const Texture &rawTexture);
 
   private:
     Scope<Graphics::IRenderer> m_Renderer;
-    Id m_RenderPipelineId;
-    Id m_SamplerId;
-
-    struct MVP {
-      Math::Mat4 model = Math::Mat4(1.0f);
-      Math::Mat4 view = Math::Mat4(1.0f);
-      Math::Mat4 projection = Math::Mat4(1.0f);
-    } m_MVP;
+    Vector<Scope<RenderPass>> m_RenderPasses;
   };
 }

@@ -2,6 +2,7 @@
 #include "Base/Profiler.hpp"
 #include "Editor/EntityDisplay.hpp"
 #include "Graphics/Components/Renderable.hpp"
+#include "Graphics/DefaultPass.hpp"
 #include "Graphics/Primitives/Mesh.hpp"
 #include "Graphics/TextureManager.hpp"
 #include "Physics/PhysicsSystem.hpp"
@@ -27,6 +28,8 @@ public:
 
 protected:
   void OnInitialize() override {
+    m_RenderSystem->AddRenderPass<Graphics::DefaultPass>();
+
     m_PhysicsSystem = GetWorld().AddSystem<Physics::PhysicsSystem>(Physics::PhysicsSystemConfig{
         Math::Vec2f{0.0f, 9.81f},
         30.0f, 4
