@@ -103,9 +103,19 @@ const u32 fragmentShaderSpv[] = {
 
 namespace Crane::Graphics {
   DefaultPass::DefaultPass(IRenderer &renderer) : RenderPass(renderer) {
-    Id vertexShaderId = m_Renderer.CreateShader(Graphics::ShaderType::Vertex, reinterpret_cast<const u8 *>(vertexShaderSpv), sizeof(vertexShaderSpv));
-    Id fragmentShaderId =
-        m_Renderer.CreateShader(Graphics::ShaderType::Fragment, reinterpret_cast<const u8 *>(fragmentShaderSpv), sizeof(fragmentShaderSpv));
+    Id vertexShaderId = m_Renderer.CreateShader({
+        .type = Graphics::ShaderType::Vertex,
+        .source = reinterpret_cast<const u8 *>(vertexShaderSpv),
+        .size = sizeof(vertexShaderSpv),
+        .numUniformBuffers = 1,
+    });
+    Id fragmentShaderId = m_Renderer.CreateShader({
+        .type = Graphics::ShaderType::Fragment,
+        .source = reinterpret_cast<const u8 *>(fragmentShaderSpv),
+        .size = sizeof(fragmentShaderSpv),
+        .numSamplers = 1,
+        .numUniformBuffers = 1,
+    });
 
     Graphics::PipelineCreateInfo pipelineInfo;
     pipelineInfo.vertexShaderId = vertexShaderId;

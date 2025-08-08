@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Base/Types.hpp"
+#include "Primitives/Shader.hpp"
 #include "Primitives/Texture.hpp"
 #include "Primitives/Vertex.hpp"
 
@@ -15,8 +16,6 @@ namespace Crane::Graphics {
     u32 vertexSize = 0;
     PrimitiveType primitiveType = PrimitiveType::TriangleList;
   };
-
-  enum class ShaderType { Vertex, Fragment };
 
   enum class FilterMode { Nearest, Linear };
   enum class AddressMode { Repeat, MirroredRepeat, ClampToEdge };
@@ -50,7 +49,7 @@ namespace Crane::Graphics {
     virtual void UpdateBuffer(Id bufferId, size_t offset, size_t size, const void *data) = 0;
     virtual void DestroyBuffer(Id bufferId) = 0;
 
-    virtual Id CreateShader(const ShaderType shaderType, const u8 *source, const u32 size, const String &entryPoint = "main") = 0;
+    virtual Id CreateShader(const ShaderCreateInfo &createInfo) = 0;
     virtual void DestroyShader(Id shaderId) = 0;
 
     virtual Id CreateTexture(const Texture &texture) = 0;

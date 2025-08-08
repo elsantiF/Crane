@@ -181,29 +181,28 @@ namespace Crane::Graphics::SDLGPURenderer {
     return bufferId;
   }
 
-  Id SDLGPURenderer::CreateShader(const ShaderType shaderType, const u8 *source, const u32 size, const String &entryPoint) {
+  Id SDLGPURenderer::CreateShader(const ShaderCreateInfo &createInfo) {
     PROFILE_SCOPE();
-    u32 numSamplers = (shaderType == ShaderType::Fragment) ? 1 : 0;
-    SDL_GPUShaderCreateInfo createInfo = {
-        .code_size = size,
-        .code = source,
-        .entrypoint = entryPoint.c_str(),
+    SDL_GPUShaderCreateInfo sdlCreateInfo = {
+        .code_size = createInfo.size,
+        .code = createInfo.source,
+        .entrypoint = createInfo.entryPoint.c_str(),
         .format = SDL_GPU_SHADERFORMAT_SPIRV,
-        .stage = ConvertShaderStage(shaderType),
-        .num_samplers = numSamplers,
-        .num_uniform_buffers = 1,
+        .stage = ConvertShaderStage(createInfo.type),
+        .num_samplers = createInfo.numSamplers,
+        .num_uniform_buffers = createInfo.numUniformBuffers,
     };
 
-    SDL_GPUShader *shader = SDL_CreateGPUShader(m_Context.gpuDevice, &createInfo);
+    SDL_GPUShader *shader = SDL_CreateGPUShader(m_Context.gpuDevice, &sdlCreateInfo);
     if (!shader) {
       Assert::Crash(std::format("Failed to create GPU shader: {}", SDL_GetError()));
     }
 
-    SDLGPUShader gpuShader{.type = shaderType, .shader = shader};
+    SDLGPUShader gpuShader{.type = createInfo.type, .shader = shader};
 
     Id shaderId = m_Shaders.size() + 1;
     m_Shaders[shaderId] = gpuShader;
-    Logger::Info("Created {} shader with ID: {}", (shaderType == ShaderType::Vertex ? "vertex" : "fragment"), shaderId);
+    Logger::Info("Created {} shader with ID: {}", (createInfo.type == ShaderType::Vertex ? "vertex" : "fragment"), shaderId);
     return shaderId;
   }
 

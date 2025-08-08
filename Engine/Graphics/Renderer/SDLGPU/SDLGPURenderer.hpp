@@ -34,7 +34,7 @@ namespace Crane::Graphics::SDLGPURenderer {
     void UpdateBuffer(Id bufferId, size_t offset, size_t size, const void *data) override {};
     void DestroyBuffer(Id bufferId) override {};
 
-    Id CreateShader(const ShaderType shaderType, const u8 *source, const u32 size, const String &entryPoint = "main") override;
+    Id CreateShader(const ShaderCreateInfo &createInfo) override;
     void DestroyShader(Id shaderId) override {};
 
     Id CreateTexture(const Texture &texture) override;
