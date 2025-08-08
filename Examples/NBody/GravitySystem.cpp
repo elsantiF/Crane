@@ -37,8 +37,10 @@ void GravitySystem::FixedUpdate(f64 deltaTime) {
       f64 force = (G * bodyA.mass * bodyB.mass) / (distance * distance);
 
       // Update accelerations based on the gravitational force
-      bodyA.acceleration += normalizedDirection * static_cast<f32>(force / bodyA.mass);
-      bodyB.acceleration -= normalizedDirection * static_cast<f32>(force / bodyB.mass);
+      Math::Vec2f bodyAForce = normalizedDirection * static_cast<f32>(force / bodyA.mass);
+      Math::Vec2f bodyBForce = -normalizedDirection * static_cast<f32>(force / bodyB.mass);
+      bodyA.acceleration += bodyAForce;
+      bodyB.acceleration += bodyBForce;
     }
   }
 
@@ -47,7 +49,7 @@ void GravitySystem::FixedUpdate(f64 deltaTime) {
     auto [body, transform] = view.get<CelestialBody, Scene::Components::Transform>(entity);
 
     body.velocity += body.acceleration * static_cast<f32>(deltaTime);
-    transform.transform.position += body.velocity * static_cast<f32>(deltaTime);
+    transform.transform.position += Math::Vec3f(body.velocity * static_cast<f32>(deltaTime), 0.0f);
   }
 
   for (auto entity : view) {
@@ -58,8 +60,9 @@ void GravitySystem::FixedUpdate(f64 deltaTime) {
     }
 
     auto &lastPoint = trail.points.back();
-    if (trail.points.empty() || glm::distance(lastPoint, transform.transform.position) > 3.0f) {
-      trail.points.push_back(transform.transform.position);
+    auto actualPos = Math::Vec2f{transform.transform.position.x, transform.transform.position.y};
+    if (trail.points.empty() || glm::distance(lastPoint, actualPos) > 3.0f) {
+      trail.points.push_back(actualPos);
     }
   }
 }
