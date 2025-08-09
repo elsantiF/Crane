@@ -1,12 +1,29 @@
 #include "SDLGPURenderer.hpp"
 #include "Base/Assert.hpp"
 #include "Base/Profiler.hpp"
-#include "Graphics/Primitives/Color.hpp"
 #include "Graphics/Primitives/Vertex.hpp"
+#include "Graphics/RenderPass.hpp"
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlgpu3.h>
 
-static SDL_GPUSamplerAddressMode ConvertAddressMode(Crane::Graphics::AddressMode mode) {
+static const SDL_GPULoadOp ConvertLoadOperation(Crane::Graphics::LoadOperation op) {
+  switch (op) {
+  case Crane::Graphics::LoadOperation::Clear:    return SDL_GPU_LOADOP_CLEAR;
+  case Crane::Graphics::LoadOperation::DontCare: return SDL_GPU_LOADOP_DONT_CARE;
+  case Crane::Graphics::LoadOperation::Load:     return SDL_GPU_LOADOP_LOAD;
+  default:                                       return SDL_GPU_LOADOP_CLEAR;
+  }
+}
+
+static const SDL_GPUStoreOp ConvertStoreOperation(Crane::Graphics::StoreOperation op) {
+  switch (op) {
+  case Crane::Graphics::StoreOperation::Store:    return SDL_GPU_STOREOP_STORE;
+  case Crane::Graphics::StoreOperation::DontCare: return SDL_GPU_STOREOP_DONT_CARE;
+  default:                                        return SDL_GPU_STOREOP_STORE;
+  }
+}
+
+static const SDL_GPUSamplerAddressMode ConvertAddressMode(Crane::Graphics::AddressMode mode) {
   switch (mode) {
   case Crane::Graphics::AddressMode::Repeat:         return SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
   case Crane::Graphics::AddressMode::MirroredRepeat: return SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT;
@@ -15,7 +32,7 @@ static SDL_GPUSamplerAddressMode ConvertAddressMode(Crane::Graphics::AddressMode
   }
 }
 
-static SDL_GPUFilter ConvertFilterMode(Crane::Graphics::FilterMode mode) {
+static const SDL_GPUFilter ConvertFilterMode(Crane::Graphics::FilterMode mode) {
   switch (mode) {
   case Crane::Graphics::FilterMode::Nearest: return SDL_GPU_FILTER_NEAREST;
   case Crane::Graphics::FilterMode::Linear:  return SDL_GPU_FILTER_LINEAR;
@@ -23,7 +40,7 @@ static SDL_GPUFilter ConvertFilterMode(Crane::Graphics::FilterMode mode) {
   }
 }
 
-static SDL_GPUPrimitiveType ConvertPrimitiveType(Crane::Graphics::PrimitiveType type) {
+static const SDL_GPUPrimitiveType ConvertPrimitiveType(Crane::Graphics::PrimitiveType type) {
   switch (type) {
   case Crane::Graphics::PrimitiveType::TriangleList:  return SDL_GPU_PRIMITIVETYPE_TRIANGLELIST;
   case Crane::Graphics::PrimitiveType::TriangleStrip: return SDL_GPU_PRIMITIVETYPE_TRIANGLESTRIP;
@@ -34,7 +51,7 @@ static SDL_GPUPrimitiveType ConvertPrimitiveType(Crane::Graphics::PrimitiveType 
   }
 }
 
-static SDL_GPUVertexElementFormat ConvertVertexElementFormat(Crane::Graphics::VertexElementFormat format) {
+static const SDL_GPUVertexElementFormat ConvertVertexElementFormat(Crane::Graphics::VertexElementFormat format) {
   switch (format) {
   case Crane::Graphics::VertexElementFormat::Float1: return SDL_GPU_VERTEXELEMENTFORMAT_FLOAT;
   case Crane::Graphics::VertexElementFormat::Float2: return SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2;
@@ -48,7 +65,7 @@ static SDL_GPUVertexElementFormat ConvertVertexElementFormat(Crane::Graphics::Ve
   }
 }
 
-static SDL_GPUShaderStage ConvertShaderStage(Crane::Graphics::ShaderType type) {
+static const SDL_GPUShaderStage ConvertShaderStage(Crane::Graphics::ShaderType type) {
   switch (type) {
   case Crane::Graphics::ShaderType::Vertex:   return SDL_GPU_SHADERSTAGE_VERTEX;
   case Crane::Graphics::ShaderType::Fragment: return SDL_GPU_SHADERSTAGE_FRAGMENT;
@@ -109,15 +126,14 @@ namespace Crane::Graphics::SDLGPURenderer {
     }
   }
 
-  void SDLGPURenderer::BeginRenderPass() {
+  void SDLGPURenderer::BeginRenderPass(const RenderPassConfig &config) {
     PROFILE_SCOPE();
-    Color clearColor = Colors::CLEAR_COLOR;
     if (m_Context.swapchainTexture) {
       SDL_GPUColorTargetInfo targetInfo = {
           .texture = m_Context.swapchainTexture,
-          .clear_color = SDL_FColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a},
-          .load_op = SDL_GPU_LOADOP_CLEAR,
-          .store_op = SDL_GPU_STOREOP_STORE,
+          .clear_color = SDL_FColor{config.clearColor.r, config.clearColor.g, config.clearColor.b, config.clearColor.a},
+          .load_op = ConvertLoadOperation(config.loadOp),
+          .store_op = ConvertStoreOperation(config.storeOp),
           .cycle = false,
       };
 

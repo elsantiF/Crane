@@ -27,6 +27,8 @@ namespace Crane::Graphics {
     AddressMode addressW = AddressMode::Repeat;
   };
 
+  struct RenderPassConfig;
+
   class IRenderer {
   public:
     virtual ~IRenderer() = default;
@@ -37,7 +39,7 @@ namespace Crane::Graphics {
     // Command buffer management
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
-    virtual void BeginRenderPass() = 0;
+    virtual void BeginRenderPass(const RenderPassConfig &config) = 0;
     virtual void EndRenderPass() = 0;
 
     // Resource management

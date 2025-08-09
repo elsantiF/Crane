@@ -27,7 +27,7 @@ namespace Crane::Graphics::SDLGPURenderer {
     // Command buffer management
     void BeginFrame() override;
     void EndFrame() override;
-    void BeginRenderPass() override;
+    void BeginRenderPass(const RenderPassConfig &config) override;
     void EndRenderPass() override;
 
     // Resource management

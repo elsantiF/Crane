@@ -13,7 +13,7 @@ namespace Crane::Graphics::Systems {
   void RenderSystem::Render(Scene::World &world) {
     PROFILE_SCOPE();
     for (auto &renderPass : m_RenderPasses) {
-      m_Renderer->BeginRenderPass();
+      m_Renderer->BeginRenderPass(renderPass->GetConfig());
       renderPass->Render(world);
       m_Renderer->EndRenderPass();
     }

@@ -102,7 +102,7 @@ const u32 fragmentShaderSpv[] = {
     0x00000017, 0x0000000c, 0x00000016, 0x0003003e, 0x00000009, 0x00000017, 0x000100fd, 0x00010038};
 
 namespace Crane::Graphics {
-  DefaultPass::DefaultPass(IRenderer &renderer) : RenderPass(renderer) {
+  DefaultPass::DefaultPass(IRenderer &renderer) : RenderPass(renderer, {}) {
     Id vertexShaderId = m_Renderer.CreateShader({
         .type = Graphics::ShaderType::Vertex,
         .source = reinterpret_cast<const u8 *>(vertexShaderSpv),
