@@ -22,6 +22,31 @@ const ApplicationInfo appInfo = {
 
 static Graphics::TextureManager textureManager;
 
+struct ObjectCreationInfo {
+  Graphics::Mesh mesh;
+  Id textureId;
+  Math::Vec3f position;
+  f32 rotation;
+  Math::Vec2f size;
+  Physics::BodyType bodyType;
+};
+
+Scene::Entity CreateObject(const ObjectCreationInfo &info, Scene::World &world, Physics::PhysicsSystem *physicsSystem) {
+  Scene::Entity entity = world.CreateEntity();
+  world.AddComponent<Scene::Components::Transform>(entity, info.position, info.rotation);
+  world.AddComponent<Scene::Components::Renderable>(entity, info.mesh, info.textureId);
+
+  auto [rb, boxcollider] = physicsSystem->CreateBoxBody({
+      {info.position.x, info.position.y},
+      {info.size.x,     info.size.y    },
+      info.bodyType
+  });
+  world.AddComponent<Scene::Components::RigidBody>(entity, rb);
+  world.AddComponent<Scene::Components::BoxCollider>(entity, boxcollider);
+
+  return entity;
+}
+
 class Demo : public ClientApplication {
 public:
   Demo() : ClientApplication(appInfo) {}
@@ -41,6 +66,15 @@ protected:
     Graphics::RawMesh circleMesh = Graphics::MeshBuilder::CreateCircle(20.0f, 16);
     m_CircleMesh = m_RenderSystem->CreateMesh(circleMesh);
 
+    Graphics::RawMesh groundRawMesh = Graphics::MeshBuilder::CreateQuad({1000.0f, 50.0f}, Graphics::Colors::Green);
+    Graphics::Mesh groundMesh = m_RenderSystem->CreateMesh(groundRawMesh);
+
+    Graphics::RawMesh redBoxRawMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Red);
+    Graphics::Mesh redBoxMesh = m_RenderSystem->CreateMesh(redBoxRawMesh);
+
+    Graphics::RawMesh blueBoxRawMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Blue);
+    Graphics::Mesh blueBoxMesh = m_RenderSystem->CreateMesh(blueBoxRawMesh);
+
     auto squareTexture = textureManager.LoadTexture("Resources/square.png").value();
     auto circleTexture = textureManager.LoadTexture("Resources/circle.png").value();
 
@@ -48,56 +82,27 @@ protected:
     m_SquareTextureId = m_RenderSystem->CreateTexture(*squareTexture);
     m_CircleTextureId = m_RenderSystem->CreateTexture(*circleTexture);
 
-    Graphics::RawMesh groundRawMesh = Graphics::MeshBuilder::CreateQuad({1000.0f, 50.0f}, Graphics::Colors::Green);
-    Graphics::Mesh groundMesh = m_RenderSystem->CreateMesh(groundRawMesh);
-
-    Scene::Entity ground = GetWorld().CreateEntity();
-    {
-      GetWorld().AddComponent<Scene::Components::Transform>(ground, Math::Vec3f{512.0f, 725.0f, 0.0f}, 0.1f);
-      GetWorld().AddComponent<Scene::Components::Renderable>(ground, groundMesh, m_WhitePixelTextureId);
-
-      auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
-          {512,  700},
-          {1000, 50 },
+    ObjectCreationInfo groundInfo = {
+        groundMesh, m_WhitePixelTextureId, Math::Vec3f{512.0f, 725.0f, 0.0f},
+          0.1f, Math::Vec2f{1000.0f, 50.0f},
           Physics::BodyType::Static
-      });
-      GetWorld().AddComponent<Scene::Components::RigidBody>(ground, rb);
-      GetWorld().AddComponent<Scene::Components::BoxCollider>(ground, boxcollider);
-    }
+    };
+    CreateObject(groundInfo, GetWorld(), m_PhysicsSystem);
 
-    Graphics::RawMesh redBoxRawMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Red);
-    Graphics::Mesh redBoxMesh = m_RenderSystem->CreateMesh(redBoxRawMesh);
-
-    Scene::Entity box = GetWorld().CreateEntity();
-    {
-      GetWorld().AddComponent<Scene::Components::Transform>(box, Math::Vec3f{400.0f, 100.0f, 0.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(box, redBoxMesh, m_WhitePixelTextureId);
-
-      auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
-          {400, 100},
-          {40,  40 },
+    ObjectCreationInfo redBoxInfo = {
+        redBoxMesh, m_WhitePixelTextureId, Math::Vec3f{400.0f, 100.0f, 0.0f},
+          0.0f, Math::Vec2f{40.0f, 40.0f},
           Physics::BodyType::Dynamic
-      });
-      GetWorld().AddComponent<Scene::Components::RigidBody>(box, rb);
-      GetWorld().AddComponent<Scene::Components::BoxCollider>(box, boxcollider);
-    }
+    };
+    CreateObject(redBoxInfo, GetWorld(), m_PhysicsSystem);
 
-    Graphics::RawMesh blueBoxRawMesh = Graphics::MeshBuilder::CreateQuad({40.0f, 40.0f}, Graphics::Colors::Blue);
-    Graphics::Mesh blueBoxMesh = m_RenderSystem->CreateMesh(blueBoxRawMesh);
-
-    m_Player = GetWorld().CreateEntity();
-    {
-      GetWorld().AddComponent<Scene::Components::Transform>(m_Player, Math::Vec3f{600.0f, 100.0f, 0.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(m_Player, blueBoxMesh, m_WhitePixelTextureId);
-      auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
-          {600, 100},
-          {40,  40 },
+    ObjectCreationInfo blueBoxInfo = {
+        blueBoxMesh, m_WhitePixelTextureId, Math::Vec3f{600.0f, 100.0f, 0.0f},
+          0.0f, Math::Vec2f{40.0f, 40.0f},
           Physics::BodyType::Dynamic
-      });
-      GetWorld().AddComponent<Scene::Components::RigidBody>(m_Player, rb);
-      GetWorld().AddComponent<Scene::Components::BoxCollider>(m_Player, boxcollider);
-      GetWorld().AddComponent<PlayerComponent>(m_Player);
-    }
+    };
+    m_Player = CreateObject(blueBoxInfo, GetWorld(), m_PhysicsSystem);
+    GetWorld().AddComponent<PlayerComponent>(m_Player);
 
     GetWorld().AddSystem<PlayerSystem>(m_Player);
   }
@@ -115,32 +120,25 @@ protected:
     ImGui::Begin("Demo Controls");
 
     if (ImGui::Button("Spawn Box")) {
-      Scene::Entity box = GetWorld().CreateEntity();
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
-      GetWorld().AddComponent<Scene::Components::Transform>(box, Math::Vec3f{x, y, 0.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(box, m_QuadMesh, m_SquareTextureId);
-      auto [rb, boxcollider] = m_PhysicsSystem->CreateBoxBody({
-          {x,  y },
-          {40, 40},
-          Physics::BodyType::Dynamic
-      });
-      GetWorld().AddComponent<Scene::Components::RigidBody>(box, rb);
-      GetWorld().AddComponent<Scene::Components::BoxCollider>(box, boxcollider);
+      ObjectCreationInfo boxInfo = {
+          m_QuadMesh, m_SquareTextureId, Math::Vec3f{x, y, 0.0f},
+            0.0f, Math::Vec2f{40.0f, 40.0f},
+            Physics::BodyType::Dynamic
+      };
+      CreateObject(boxInfo, GetWorld(), m_PhysicsSystem);
     }
 
     if (ImGui::Button("Spawn Circle")) {
-      Scene::Entity circle = GetWorld().CreateEntity();
       float x = static_cast<float>(rand() % 800 + 100);
       float y = static_cast<float>(rand() % 400 + 100);
-      GetWorld().AddComponent<Scene::Components::Transform>(circle, Math::Vec3f{x, y, 0.0f});
-      GetWorld().AddComponent<Scene::Components::Renderable>(circle, m_CircleMesh, m_CircleTextureId);
-      auto [rb, circlecollider] = m_PhysicsSystem->CreateCircleBody({
-          {x, y},
-          20, Physics::BodyType::Dynamic
-      });
-      GetWorld().AddComponent<Scene::Components::RigidBody>(circle, rb);
-      GetWorld().AddComponent<Scene::Components::CircleCollider>(circle, circlecollider);
+      ObjectCreationInfo circleInfo = {
+          m_CircleMesh, m_CircleTextureId, Math::Vec3f{x, y, 0.0f},
+            0.1f, Math::Vec2f{20.0f, 20.0f},
+            Physics::BodyType::Dynamic
+      };
+      CreateObject(circleInfo, GetWorld(), m_PhysicsSystem);
     }
 
     ImGui::End();
